@@ -1,0 +1,31 @@
+# --- General / OS ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Node.js (Backend & Frontend) ---
+# Ignora las carpetas de dependencias en ambos proyectos
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Seguridad (Crítico) ---
+# Ignora archivos de variables de entorno donde guardamos contraseñas de DB
+.env
+.env.local
+.env.*.local
+
+# --- Angular (Frontend: andamio-client) ---
+# Ignora archivos temporales y de compilación de Angular 17+
+.angular/
+dist/
+/tmp/
+/out-of-memory.log
+/.cache/
+
+# --- Base de Datos ---
+# Si se exportan dumps de MySQL para pruebas locales
+*.sql
+!/src/models/*.sql # 
