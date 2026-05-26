@@ -1,21 +1,47 @@
 const express = require('express');
+const mysql = require('mysql2');
 const cors = require('cors');
-require('dotenv').config();
 
 const app = express();
-const customerRoutes = require('./routes/customerRoutes');
 
 app.use(cors());
 app.use(express.json());
 
-// Registrar las rutas de clientes
-app.use('/api/customers', customerRoutes);
-
-app.get('/', (req, res) => {
-    res.send('El servidor de Andamio está funcionando correctamente 🚀');
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',      
+    password: 'Valentina$12',      
+    database: 'andamio_db' 
 });
 
-const PORT = process.env.PORT || 3000;
+db.connect((err) => {
+    if (err) {
+        console.error('Error conectando a la base de datos:', err);
+        return;
+    }
+    console.log('✅ Conectado exitosamente a la base de datos MySQL');
+});
+
+app.get('/api/customers', (req, res) => {
+    const query = 'SELECT * FROM customers';
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error al obtener clientes:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error en el servidor al obtener clientes'
+            });
+        }
+        
+        res.json({
+            success: true,
+            data: results
+        });
+    });
+});
+
+const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`🚀 Servidor de Andamio corriendo en http://localhost:${PORT}`);
 });
