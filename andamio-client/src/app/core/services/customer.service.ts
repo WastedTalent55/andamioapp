@@ -18,11 +18,16 @@ export interface ApiResponse {
 @Injectable({
   providedIn: 'root'
 })
+
 export class CustomerService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000/api/customers';
 
   getCustomers(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(this.apiUrl);
+  }
+
+  createCustomer(customer: Customer): Observable<any> {
+    return this.http.post<any>(this.apiUrl, customer);
   }
 }

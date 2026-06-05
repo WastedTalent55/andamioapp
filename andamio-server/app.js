@@ -41,6 +41,19 @@ app.get('/api/customers', (req, res) => {
     });
 });
 
+app.post('/api/customers', (req, res) => {
+    const { first_name, last_name, email, phone } = req.body;
+    const query = 'INSERT INTO customers (first_name, last_name, email, phone) VALUES (?, ?, ?, ?)';
+    
+    db.query(query, [first_name, last_name, email, phone], (err, result) => {
+        if (err) {
+            console.error('Error al insertar cliente:', err);
+            return res.status(500).json({ success: false, message: 'Error al guardar el cliente' });
+        }
+        res.json({ success: true, message: 'Cliente registrado con éxito', id: result.insertId });
+    });
+});
+
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor de Andamio corriendo en http://localhost:${PORT}`);
