@@ -1,14 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface Customer {
-  id?: number;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-}
+import { Customer } from '../models/customer.model';
 
 export interface ApiResponse {
   success: boolean;

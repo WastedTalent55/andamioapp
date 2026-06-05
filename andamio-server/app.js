@@ -54,6 +54,41 @@ app.post('/api/customers', (req, res) => {
     });
 });
 
+app.post('/api/evaluations', (req, res) => {
+    const { 
+        customer_id, 
+        scheduled_date, 
+        evaluation_cost, 
+        observations, 
+        requirements 
+    } = req.body;
+
+    const query = `
+        INSERT INTO evaluations 
+        (customer_id, scheduled_date, evaluation_cost, observations, requirements) 
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        query, 
+        [customer_id, scheduled_date, evaluation_cost || 0, observations, requirements], 
+        (err, result) => {
+            if (err) {
+                console.error('Error al agendar evaluación:', err);
+                return res.status(500).json({ 
+                    success: false, 
+                    message: 'Error al procesar la visita de evaluación' 
+                });
+            }
+            res.json({ 
+                success: true, 
+                message: 'Evaluación agendada correctamente', 
+                id: result.insertId 
+            });
+        }
+    );
+});
+
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor de Andamio corriendo en http://localhost:${PORT}`);
