@@ -1,12 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CustomerService } from '../../../core/services/customer.service';
+import { EvaluationService } from '../../../core/services/evaluation.service';
+import { Customer } from '../../../core/models/customer.model';
 
 @Component({
   selector: 'app-evaluation-form',
   standalone: true,
-  imports: [],
-  templateUrl: './evaluation-form.component.html',
-  styleUrl: './evaluation-form.component.css'
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './evaluation-form.component.html'
 })
-export class EvaluationFormComponent {
 
+export class EvaluationFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private customerService = inject(CustomerService);
+  private evaluationService = inject(EvaluationService);
+
+  customers: Customer[] = []; 
+  evaluationForm: FormGroup;
+
+  constructor() {
+    this.evaluationForm = this.fb.group({
+      customer_id: ['', [Validators.required]], 
+      scheduled_date: ['', [Validators.required]],
+      evaluation_cost: [0, [Validators.min(0)]], 
+      observations: [''],
+      requirements: ['']
+    });
+  }
+
+  ngOnInit(): void {
+    this.customerService.getCustomers().subscribe({
+      next: (res) => this.customers = res.data,
+      error: (err) => console.error('Error cargando clientes', err)
+    });
+  }
+
+  onSubmit(): void {
+    if (this.evaluationForm.valid) {
+      this.evaluationService.createEvaluation(this.evaluationForm.value).subscribe({
+        next: (res) => {
+          alert('✅ Visita técnica agendada con éxito');
+          this.evaluationForm.reset({ evaluation_cost: 0 });
+        },
+        error: (err) => console.error('Error al agendar visita', err)
+      });
+    }
+  }
 }

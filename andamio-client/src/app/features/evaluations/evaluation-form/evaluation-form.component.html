@@ -1,1 +1,31 @@
-<p>evaluation-form works!</p>
+<div class="form-container" style="padding: 20px; border: 1px solid #007bff; margin-top: 20px;">
+  <h3>Agendar Nueva Evaluación Técnica</h3>
+  
+  <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()">
+    <div style="margin-bottom: 10px;">
+      <label>Seleccionar Cliente:</label><br>
+      <select formControlName="customer_id">
+        <option value="" disabled>-- Elige un cliente --</option>
+        <option *ngFor="let c of customers" [value]="c.id">
+          {{ c.first_name }} {{ c.last_name }}
+        </option>
+      </select>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label>Fecha de Visita:</label><br>
+      <input type="datetime-local" formControlName="scheduled_date">
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label>Costo de Evaluación (Configurable):</label><br>
+      <input type="number" formControlName="evaluation_cost">
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <textarea formControlName="observations" placeholder="Observaciones iniciales"></textarea>
+    </div>
+
+    <button type="submit" [disabled]="evaluationForm.invalid">Agendar Visita</button>
+  </form>
+</div>
