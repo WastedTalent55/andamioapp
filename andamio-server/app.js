@@ -89,6 +89,31 @@ app.post('/api/evaluations', (req, res) => {
     );
 });
 
+app.get('/api/evaluations', (req, res) => {
+    const query = `
+        SELECT 
+            e.id, 
+            e.requested_work, 
+            e.evaluation_cost, 
+            e.status,
+            c.first_name, 
+            c.last_name, 
+            c.phone, 
+            ca.full_address -- <--- Ahora traemos la dirección real desde la tabla de direcciones
+        FROM evaluations e
+        JOIN customers c ON e.customer_id = c.id
+        LEFT JOIN customer_addresses ca ON e.address_id = ca.id -- Unimos con la nueva tabla
+        ORDER BY e.id DESC`;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error al consultar MySQL:', err);
+            return res.status(500).json({ success: false, error: err });
+        }
+        res.json({ success: true, data: results });
+    });
+});
+
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor de Andamio corriendo en http://localhost:${PORT}`);
