@@ -23,9 +23,10 @@ export class EvaluationFormComponent implements OnInit {
   constructor() {
     this.evaluationForm = this.fb.group({
       customer_id: ['', [Validators.required]], 
+      address_id: ['', Validators.required],
       scheduled_date: ['', [Validators.required]],
       evaluation_cost: [0, [Validators.min(0)]], 
-      observations: [''],
+      requested_work: ['', [Validators.required, Validators.maxLength(255)]],
       requirements: ['']
     });
   }

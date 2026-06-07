@@ -23,7 +23,13 @@
     </div>
 
     <div style="margin-bottom: 10px;">
-      <textarea formControlName="observations" placeholder="Observaciones iniciales"></textarea>
+      <label for="requested_work"><strong>¿Qué trabajo solicita el cliente? (Título)</strong></label>
+      <input 
+        type="text" 
+        id="requested_work" 
+        formControlName="requested_work"
+        placeholder="Ej: Tratamiento de humedad en techo de baño"
+      >
     </div>
 
     <button type="submit" [disabled]="evaluationForm.invalid">Agendar Visita</button>
