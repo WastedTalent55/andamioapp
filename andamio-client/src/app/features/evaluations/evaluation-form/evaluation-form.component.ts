@@ -18,6 +18,7 @@ export class EvaluationFormComponent implements OnInit {
   private evaluationService = inject(EvaluationService);
 
   customers: Customer[] = []; 
+  filteredAddresses: any[] = [];
   evaluationForm: FormGroup;
 
   constructor() {
@@ -49,4 +50,20 @@ export class EvaluationFormComponent implements OnInit {
       });
     }
   }
+
+  onCustomerChange(event: any) {
+  const customerId = event.target.value;
+  const selectedCustomer = this.customers.find(c => c.id == customerId);
+  
+  if (selectedCustomer && selectedCustomer.address_id) {
+    this.filteredAddresses = [
+      { id: selectedCustomer.address_id, full_address: selectedCustomer.address }
+    ];
+    
+    this.evaluationForm.patchValue({ address_id: selectedCustomer.address_id });
+  } else {
+    this.filteredAddresses = [];
+    this.evaluationForm.patchValue({ address_id: '' });
+  }
+}
 }

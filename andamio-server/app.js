@@ -23,13 +23,13 @@ db.connect((err) => {
 });
 
 app.get('/api/customers', (req, res) => {
-    // IMPORTANTE: Hacemos el JOIN para traer la dirección principal
     const query = `
         SELECT 
             c.id, 
             c.first_name, 
             c.last_name, 
             c.phone, 
+            ca.id AS address_id,
             ca.full_address AS address -- Aquí creamos el rubro 'address' que Angular espera
         FROM customers c
         LEFT JOIN customer_addresses ca ON c.id = ca.customer_id AND ca.is_primary = 1
@@ -88,10 +88,10 @@ app.post('/api/customers', (req, res) => {
 app.post('/api/evaluations', (req, res) => {
     const { 
         customer_id, 
-        address_id,
+        address_id,      
         scheduled_date, 
-        evaluation_cost,
-        requested_work, 
+        evaluation_cost, 
+        requested_work,  
         requirements 
     } = req.body;
 
@@ -107,40 +107,42 @@ app.post('/api/evaluations', (req, res) => {
         (err, result) => {
             if (err) {
                 console.error('Error al agendar evaluación:', err);
-                return res.status(500).json({ 
-                    success: false, 
-                    message: 'Error al procesar la visita de evaluación' 
-                });
+                return res.status(500).json({ success: false, message: 'Error en el servidor' });
             }
-            res.json({ 
-                success: true, 
-                message: 'Evaluación agendada correctamente', 
-                id: result.insertId 
-            });
+            res.json({ success: true, message: 'Evaluación agendada correctamente', id: result.insertId });
         }
     );
 });
 
-app.get('/api/customers', (req, res) => {
+app.get('/api/evaluations', (req, res) => {
     const query = `
         SELECT 
-            c.id, 
+            e.id, 
+            e.requested_work, 
+            e.evaluation_cost, 
+            e.status,
             c.first_name, 
             c.last_name, 
             c.phone, 
-            ca.full_address as address 
-        FROM customers c
-        LEFT JOIN customer_addresses ca ON c.id = ca.customer_id AND ca.is_primary = 1
-        ORDER BY c.id DESC`;
-    
+            ca.full_address 
+        FROM evaluations e
+        -- Cambiamos JOIN por LEFT JOIN para que no oculte registros con errores de ID
+        LEFT JOIN customers c ON e.customer_id = c.id
+        LEFT JOIN customer_addresses ca ON e.address_id = ca.id 
+        ORDER BY e.id DESC`;
+
     db.query(query, (err, results) => {
         if (err) {
-            console.error('Error al obtener clientes:', err);
-            return res.status(500).json({ success: false, message: 'Error en el servidor' });
+            console.error('Error al consultar MySQL:', err);
+            return res.status(500).json({ success: false, error: err });
         }
+        // Agregamos este log para ver qué está saliendo de la base de datos
+        console.log("Resultados enviados al frontend:", results.length, "filas");
         res.json({ success: true, data: results });
     });
 });
+
+
 
 const PORT = 3000;
 app.listen(PORT, () => {

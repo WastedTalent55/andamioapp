@@ -4,13 +4,26 @@
   <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()">
     <div style="margin-bottom: 10px;">
       <label>Seleccionar Cliente:</label><br>
-      <select formControlName="customer_id">
+      <select formControlName="customer_id" (change)="onCustomerChange($event)">
         <option value="" disabled>-- Elige un cliente --</option>
         <option *ngFor="let c of customers" [value]="c.id">
           {{ c.first_name }} {{ c.last_name }}
         </option>
       </select>
     </div>
+
+    <div style="margin-bottom: 10px;">
+  <label>Dirección de la Visita:</label><br>
+  <select formControlName="address_id">
+    <option value="" disabled>-- Selecciona la ubicación --</option>
+    <option *ngFor="let addr of filteredAddresses" [value]="addr.id">
+      {{ addr.full_address || 'Dirección Principal' }}
+    </option>
+  </select>
+  <small *ngIf="filteredAddresses.length === 0" style="color: red;">
+    ⚠️ Selecciona un cliente primero.
+  </small>
+</div>
 
     <div style="margin-bottom: 10px;">
       <label>Fecha de Visita:</label><br>
