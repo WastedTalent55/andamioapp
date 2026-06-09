@@ -42,36 +42,58 @@ app.get('/api/customers', (req, res) => {
 });
 
 app.post('/api/customers', (req, res) => {
-    const { first_name, last_name, email, phone } = req.body;
-    const query = 'INSERT INTO customers (first_name, last_name, email, phone) VALUES (?, ?, ?, ?)';
+    const { first_name, last_name, phone, address } = req.body;
+
+    const customerQuery = 'INSERT INTO customers (first_name, last_name, phone) VALUES (?, ?, ?)';
     
-    db.query(query, [first_name, last_name, email, phone], (err, result) => {
+    db.query(customerQuery, [first_name, last_name, phone], (err, result) => {
         if (err) {
             console.error('Error al insertar cliente:', err);
             return res.status(500).json({ success: false, message: 'Error al guardar el cliente' });
         }
-        res.json({ success: true, message: 'Cliente registrado con éxito', id: result.insertId });
+
+        const customerId = result.insertId;
+
+        const addressQuery = 'INSERT INTO customer_addresses (customer_id, address_label, full_address, is_primary) VALUES (?, ?, ?, ?)';
+        
+        db.query(addressQuery, [customerId, 'Principal', address, true], (err) => {
+            if (err) {
+                console.error('Error al insertar dirección:', err);
+                return res.status(201).json({ 
+                    success: true, 
+                    message: 'Cliente creado pero hubo un error al guardar la dirección', 
+                    id: customerId 
+                });
+            }
+            
+            res.json({ 
+                success: true, 
+                message: 'Cliente y dirección registrados con éxito', 
+                id: customerId 
+            });
+        });
     });
 });
 
 app.post('/api/evaluations', (req, res) => {
     const { 
         customer_id, 
+        address_id,
         scheduled_date, 
-        evaluation_cost, 
-        observations, 
+        evaluation_cost,
+        requested_work, 
         requirements 
     } = req.body;
 
     const query = `
         INSERT INTO evaluations 
-        (customer_id, scheduled_date, evaluation_cost, observations, requirements) 
-        VALUES (?, ?, ?, ?, ?)
+        (customer_id, address_id, scheduled_date, evaluation_cost, requested_work, requirements) 
+        VALUES (?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
         query, 
-        [customer_id, scheduled_date, evaluation_cost || 0, observations, requirements], 
+        [customer_id, address_id, scheduled_date, evaluation_cost || 0, requested_work, requirements], 
         (err, result) => {
             if (err) {
                 console.error('Error al agendar evaluación:', err);
