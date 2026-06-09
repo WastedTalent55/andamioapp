@@ -23,14 +23,24 @@ db.connect((err) => {
 });
 
 app.get('/api/customers', (req, res) => {
-    const query = 'SELECT * FROM customers';
+    // IMPORTANTE: Hacemos el JOIN para traer la dirección principal
+    const query = `
+        SELECT 
+            c.id, 
+            c.first_name, 
+            c.last_name, 
+            c.phone, 
+            ca.full_address AS address -- Aquí creamos el rubro 'address' que Angular espera
+        FROM customers c
+        LEFT JOIN customer_addresses ca ON c.id = ca.customer_id AND ca.is_primary = 1
+        ORDER BY c.id DESC`;
     
     db.query(query, (err, results) => {
         if (err) {
-            console.error('Error al obtener clientes:', err);
+            console.error('Error al obtener clientes con dirección:', err);
             return res.status(500).json({
                 success: false,
-                message: 'Error en el servidor al obtener clientes'
+                message: 'Error en el servidor al obtener la lista completa'
             });
         }
         
@@ -56,7 +66,7 @@ app.post('/api/customers', (req, res) => {
 
         const addressQuery = 'INSERT INTO customer_addresses (customer_id, address_label, full_address, is_primary) VALUES (?, ?, ?, ?)';
         
-        db.query(addressQuery, [customerId, 'Principal', address, true], (err) => {
+        db.query(addressQuery, [customerId, 'Principal', address, 1], (err) => {
             if (err) {
                 console.error('Error al insertar dirección:', err);
                 return res.status(201).json({ 
@@ -111,26 +121,22 @@ app.post('/api/evaluations', (req, res) => {
     );
 });
 
-app.get('/api/evaluations', (req, res) => {
+app.get('/api/customers', (req, res) => {
     const query = `
         SELECT 
-            e.id, 
-            e.requested_work, 
-            e.evaluation_cost, 
-            e.status,
+            c.id, 
             c.first_name, 
             c.last_name, 
             c.phone, 
-            ca.full_address -- <--- Ahora traemos la dirección real desde la tabla de direcciones
-        FROM evaluations e
-        JOIN customers c ON e.customer_id = c.id
-        LEFT JOIN customer_addresses ca ON e.address_id = ca.id -- Unimos con la nueva tabla
-        ORDER BY e.id DESC`;
-
+            ca.full_address as address 
+        FROM customers c
+        LEFT JOIN customer_addresses ca ON c.id = ca.customer_id AND ca.is_primary = 1
+        ORDER BY c.id DESC`;
+    
     db.query(query, (err, results) => {
         if (err) {
-            console.error('Error al consultar MySQL:', err);
-            return res.status(500).json({ success: false, error: err });
+            console.error('Error al obtener clientes:', err);
+            return res.status(500).json({ success: false, message: 'Error en el servidor' });
         }
         res.json({ success: true, data: results });
     });
