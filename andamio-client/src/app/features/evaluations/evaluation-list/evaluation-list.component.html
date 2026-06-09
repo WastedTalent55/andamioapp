@@ -7,6 +7,7 @@
   <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
     <thead style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
       <tr>
+        <th style="padding: 12px; text-align: left;">Fecha y Hora</th>
         <th style="padding: 12px; text-align: left;">Clientx</th>
         <th style="padding: 12px; text-align: left;">Contacto/Dirección</th>
         <th style="padding: 12px; text-align: left;">Trabajo Solicitado</th>
@@ -17,6 +18,10 @@
     <tbody>
       @for (ev of evaluations; track ev.id) {
         <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 12px;">
+            <strong style="color: #2c3e50;">{{ ev.scheduled_date | date:'shortDate' }}</strong><br>
+            <small style="color: #e67e22;">{{ ev.scheduled_date | date:'shortTime' }}</small>
+          </td>
           <td style="padding: 12px;"><strong>{{ ev.first_name }} {{ ev.last_name }}</strong></td>
           <td style="padding: 12px;">
             <small style="display: block;">📞 {{ ev.phone }}</small>

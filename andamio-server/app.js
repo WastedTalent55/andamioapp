@@ -118,6 +118,7 @@ app.get('/api/evaluations', (req, res) => {
     const query = `
         SELECT 
             e.id, 
+            e.scheduled_date,
             e.requested_work, 
             e.evaluation_cost, 
             e.status,
