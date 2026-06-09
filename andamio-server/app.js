@@ -124,9 +124,8 @@ app.get('/api/evaluations', (req, res) => {
             c.first_name, 
             c.last_name, 
             c.phone, 
-            ca.full_address 
+            ca.full_address AS address
         FROM evaluations e
-        -- Cambiamos JOIN por LEFT JOIN para que no oculte registros con errores de ID
         LEFT JOIN customers c ON e.customer_id = c.id
         LEFT JOIN customer_addresses ca ON e.address_id = ca.id 
         ORDER BY e.id DESC`;
@@ -136,7 +135,6 @@ app.get('/api/evaluations', (req, res) => {
             console.error('Error al consultar MySQL:', err);
             return res.status(500).json({ success: false, error: err });
         }
-        // Agregamos este log para ver qué está saliendo de la base de datos
         console.log("Resultados enviados al frontend:", results.length, "filas");
         res.json({ success: true, data: results });
     });

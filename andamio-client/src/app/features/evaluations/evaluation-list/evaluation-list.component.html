@@ -1,7 +1,7 @@
 <div class="container" style="padding: 20px;">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
+  <div>
     <h2>📋 Visitas de Evaluación Agendadas</h2>
-    <button class="btn-primary" router-link="/evaluations/new">+ Agendar Nueva Visita</button>
+    <button class="btn-primary" routerLink="/evaluations/new">+ Agendar Nueva Visita</button>
   </div>
 
   <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
@@ -15,21 +15,29 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let ev of evaluations" style="border-bottom: 1px solid #eee;">
-        <td style="padding: 12px;"><strong>{{ ev.first_name }} {{ ev.last_name }}</strong></td>
-        <td style="padding: 12px;">
-          <small>📞 {{ ev.phone }}</small><br>
-          <small>📍 {{ ev.address }}</small>
-        </td>
-        <td style="padding: 12px;">{{ ev.requested_work }}</td>
-        <td style="padding: 12px; text-align: center;">{{ ev.evaluation_cost | currency }}</td>
-        <td style="padding: 12px; text-align: center;">
-          <!-- BOTÓN CLAVE: Aquí es donde entrarás a "Bajar tus notas de casa" -->
-          <button style="background: #e67e22; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
-            📝 Añadir Detalles de Visita
-          </button>
-        </td>
-      </tr>
+      @for (ev of evaluations; track ev.id) {
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 12px;"><strong>{{ ev.first_name }} {{ ev.last_name }}</strong></td>
+          <td style="padding: 12px;">
+            <small style="display: block;">📞 {{ ev.phone }}</small>
+            <small style="color: #666;">📍 {{ ev.address }}</small>
+          </td>
+          <td style="padding: 12px;">{{ ev.requested_work }}</td>
+          <td style="padding: 12px; text-align: center;">{{ ev.evaluation_cost | currency }}</td>
+          <td style="padding: 12px; text-align: center;">
+            <!-- Este botón será el puente hacia la Fase 3 de Cotizaciones [5] -->
+            <button style="background: #e67e22; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+              📝 Añadir Detalles
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5" style="padding: 30px; text-align: center; color: #888;">
+            No hay visitas agendadas. Comienza registrando una evaluación [5].
+          </td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>
