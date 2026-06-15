@@ -30,8 +30,7 @@
           <td style="padding: 12px;">{{ ev.requested_work }}</td>
           <td style="padding: 12px; text-align: center;">{{ ev.evaluation_cost | currency }}</td>
           <td style="padding: 12px; text-align: center;">
-            <!-- Este botón será el puente hacia la Fase 3 de Cotizaciones [5] -->
-            <button style="background: #e67e22; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+            <button [routerLink]="['/evaluations', ev.id, 'details']">
               📝 Añadir Detalles
             </button>
           </td>

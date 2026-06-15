@@ -22,6 +22,9 @@ db.connect((err) => {
     console.log('✅ Conectado exitosamente a la base de datos MySQL');
 });
 
+// ==========================================
+// RUTAS PARA CLIENTXS (CUSTOMERS)
+// ==========================================
 app.get('/api/customers', (req, res) => {
     const query = `
         SELECT 
@@ -85,6 +88,9 @@ app.post('/api/customers', (req, res) => {
     });
 });
 
+// ==========================================
+// RUTAS PARA EVALUACIONES (EVALUATIONS)
+// ==========================================
 app.post('/api/evaluations', (req, res) => {
     const { 
         customer_id, 
@@ -138,6 +144,73 @@ app.get('/api/evaluations', (req, res) => {
         }
         console.log("Resultados enviados al frontend:", results.length, "filas");
         res.json({ success: true, data: results });
+    });
+});
+
+app.put('/api/evaluations/:id', (req, res) => {
+    const { id } = req.params;
+    const { requirements } = req.body; // Aquí llega el texto de tu "Hoja en Blanco"
+
+    const query = 'UPDATE evaluations SET requirements = ? WHERE id = ?';
+
+    db.query(query, [requirements, id], (err, result) => {
+        if (err) {
+            console.error('Error al guardar notas:', err);
+            return res.status(500).json({ success: false });
+        }
+        res.json({ success: true, message: 'Notas vinculadas con éxito' });
+    });
+});
+
+// ==========================================
+// RUTAS PARA COTIZACIONES (QUOTES)
+// ==========================================
+app.post('/api/quotes', (req, res) => {
+    const { evaluation_id, customer_id, delivery_time } = req.body;
+
+    const getEvalCost = "SELECT evaluation_cost FROM evaluations WHERE id = ?";
+    
+    db.query(getEvalCost, [evaluation_id], (err, results) => {
+        if (err) return res.status(500).json({ success: false, error: err });
+        
+        const discount = results?.evaluation_cost || 0;
+        const query = `
+            INSERT INTO quotes (evaluation_id, customer_id, delivery_time, evaluation_discount, status)
+            VALUES (?, ?, ?, ?, 'borrador')`;
+
+        db.query(query, [evaluation_id, customer_id, delivery_time || '2 DIAS', discount], (err, result) => {
+            if (err) return res.status(500).json({ success: false, error: err });
+            res.json({ success: true, quoteId: result.insertId, applied_discount: discount });
+        });
+    });
+});
+
+app.post('/api/quotes/items', (req, res) => {
+    const { quote_id, type, description, unit_price, quantity, unit } = req.body;
+    const total_price = unit_price * quantity;
+
+    const query = `
+        INSERT INTO quote_items (quote_id, type, description, unit_price, quantity, unit, total_price)
+        VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+    db.query(query, [quote_id, type, description, unit_price, quantity, unit, total_price], (err, result) => {
+        if (err) return res.status(500).json({ success: false, error: err });
+        res.json({ success: true, itemId: result.insertId });
+    });
+});
+
+app.get('/api/quotes/:id', (req, res) => {
+    const { id } = req.params;
+    const quoteQuery = "SELECT * FROM quotes WHERE id = ?";
+    const itemsQuery = "SELECT * FROM quote_items WHERE quote_id = ?";
+
+    db.query(quoteQuery, [id], (err, quote) => {
+        if (err) return res.status(500).json({ success: false });
+        
+        db.query(itemsQuery, [id], (err, items) => {
+            if (err) return res.status(500).json({ success: false });
+            res.json({ success: true, quote: quote, items: items });
+        });
     });
 });
 

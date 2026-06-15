@@ -19,4 +19,12 @@ export class EvaluationService {
   getEvaluations(): Observable<any> {
     return this.http.get<any>(this.apiUrl);
   }
+
+  updateEvaluation(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, data);
+  }
+
+  getEvaluationById(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${id}`);
+  }
 }
