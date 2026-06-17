@@ -13,7 +13,7 @@ export interface Quote {
 export interface QuoteItem {
   id?: number;
   quote_id: number;
-  type: 'mano_de_obra' | 'material'; [8]
+  type: 'mano_de_obra' | 'material'; 
   description: string;
   unit_price: number;
   quantity: number;

@@ -1,0 +1,184 @@
+/* Contenedor principal */
+.kanban-container {
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+/* Encabezado del tablero */
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Título */
+.board-header h2 {
+  font-family: var(--font-main, 'Inter', sans-serif);
+  font-weight: 800; 
+  font-size: 1.8rem;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+/* LAYOUT DEL TABLERO */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1rem 0;
+}
+
+/* COLUMNAS */
+.kanban-column {
+  background-color: var(--andamio-gris-oscuro, #1E293B);
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.column-header {
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--andamio-cian, #22D3EE); 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.05em;
+}
+
+.badge {
+  background-color: rgba(34, 211, 238, 0.1);
+  color: var(--andamio-cian);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--font-data);
+}
+
+/* TARJETAS */
+.kanban-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.kanban-card {
+  background-color: var(--andamio-obsidiana, #0F172A);
+  border-radius: 6px;
+  padding: 1.25rem;
+  border-left: 4px solid #475569; /* Borde base */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kanban-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Bordes específicos por fase para trazabilidad visual */
+.eval-border { border-left-color: var(--andamio-cian); }    /* Fase 2: Captura */
+.quote-border { border-left-color: var(--andamio-amarillo); } /* Fase 3: Estructura */
+.active-border { border-left-color: var(--andamio-verde); }  /* Fase 4: Ejecución */
+.finished-border { border-left-color: #64748b; }           /* Cierre */
+
+/* CONTENIDO DE TARJETA */
+.kanban-card h3 {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  color: #FFFFFF;
+}
+
+.address, .date {
+  font-size: 0.85rem;
+  color: var(--andamio-gris-claro, #F8FAFC);
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+}
+
+/* Tipografía técnica para datos financieros y fechas  */
+.total-est, .financials, .profit, .date {
+  font-family: var(--font-data, 'JetBrains Mono', monospace);
+}
+
+.financials strong {
+  color: var(--andamio-verde, #10B981); /* Resalta el dinero entrante [3] */
+}
+
+/* ETIQUETAS (TAGS) */
+.card-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-bottom: 0.75rem;
+}
+
+.card-tag.eval { background: rgba(34, 211, 238, 0.1); color: #22D3EE; }
+.card-tag.quote { background: rgba(250, 204, 21, 0.1); color: #FACC15; }
+.card-tag.project { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+
+/* ACCIONES: Botones táctiles para tablet-first */
+.card-footer {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-action {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  border-radius: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-action:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #FFFFFF;
+}
+
+/* Variaciones de botones según flujo operativo  */
+.btn-action.primary {
+  background-color: var(--andamio-amarillo);
+  color: var(--andamio-obsidiana);
+  border: none;
+}
+
+.btn-action.success {
+  background-color: var(--andamio-verde);
+  color: var(--andamio-obsidiana);
+  border: none;
+}
+
+/* ESTADOS VACÍOS */
+.empty-msg {
+  text-align: center;
+  padding: 2rem;
+  color: var(--andamio-gris-claro);
+  opacity: 0.5;
+  font-style: italic;
+  font-size: 0.9rem;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+

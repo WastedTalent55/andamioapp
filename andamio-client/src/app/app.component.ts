@@ -5,17 +5,17 @@ import { CommonModule } from '@angular/common';
 import { CustomerFormComponent } from './features/customers/customer-form/customer-form.component';
 import { EvaluationFormComponent } from './features/evaluations/evaluation-form/evaluation-form.component';
 import { EvaluationListComponent } from './features/evaluations/evaluation-list/evaluation-list.component';
+import { QuoteEditComponent } from "./features/quotes/quote-edit/quote-edit.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule,
-            RouterOutlet, 
-            CustomerListComponent, 
-            CustomerFormComponent, 
-            EvaluationFormComponent,
-            EvaluationListComponent
-          ],
+    RouterOutlet,
+    CustomerListComponent,
+    CustomerFormComponent,
+    EvaluationFormComponent,
+    EvaluationListComponent, QuoteEditComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

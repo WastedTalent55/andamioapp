@@ -1,1 +1,65 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono&display=swap');
+
+:root {
+  /* Paleta Andamio Core: Digital Industrial */
+  --andamio-obsidiana: #0F172A;   /* Fondo y solidez */
+  --andamio-amarillo: #FACC15;    /* Acción y visibilidad (Safety Yellow) */
+  --andamio-cian: #22D3EE;        /* Trazabilidad y flujo (Tech Blue) */
+  --andamio-verde: #10B981;       /* Utilidad Real e ingresos */
+  --andamio-rojo: #EF4444;        /* Gastos y alertas */
+  
+  /* Escala de Grises Técnicos */
+  --andamio-gris-oscuro: #1E293B;
+  --andamio-gris-medio: #475569;
+  --andamio-gris-claro: #F8FAFC;
+
+  /* Tipografía */
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-data: 'JetBrains Mono', 'Roboto Mono', monospace; /* Para números precisos */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--andamio-obsidiana); /* Identidad oscura por defecto */
+  color: white;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tipografía técnica para datos financieros */
+.data-number {
+  font-family: var(--font-data);
+  letter-spacing: -0.5px;
+}
+
+/* El "Lienzo" de Ingeniería (Grid de fondo) */
+.technical-grid {
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90px, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 8px 8px; /* Cuadrícula técnica de 8px */
+}
+
+.btn-andamio {
+  background-color: var(--andamio-amarillo);
+  color: var(--andamio-obsidiana);
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-andamio:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+}

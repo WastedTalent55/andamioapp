@@ -1,0 +1,106 @@
+<div class="kanban-container">
+  <header class="board-header">
+    <h2>🛠️ Tablero de Operaciones</h2>
+    <button class="btn-andamio" routerLink="/evaluations/new">+ Nueva Evaluación</button>
+  </header>
+
+  <div class="kanban-board">
+    
+    <!-- COLUMNA 1: EVALUACIONES (Fase de Captura) -->
+    <div class="kanban-column">
+      <div class="column-header">
+        📋 EVALUACIONES 
+        <span class="badge">{{ columns.evaluations?.length }}</span>
+      </div>
+      <div class="kanban-cards">
+        @for (item of columns.evaluations; track item.eval_id) {
+          <div class="kanban-card eval-border">
+            <div class="card-tag eval">Visita Pendiente</div>
+            <h3>{{ item.customer_name }}</h3>
+            <p class="address">📍 {{ item.customer_address }}</p>
+            <div class="card-footer">
+              <span class="date">📅 {{ item.eval_date | date:'dd/MM/yyyy' }}</span>
+              <button [routerLink]="['/evaluations', item.eval_id, 'details']" class="btn-action">
+                Ver Notas
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty-msg">No hay visitas agendadas.</p>
+        }
+      </div>
+    </div>
+
+    <!-- COLUMNA 2: EN COTIZACIÓN (Fase de Estructura) -->
+    <div class="kanban-column">
+      <div class="column-header">
+        🚀 EN COTIZACIÓN 
+        <span class="badge">{{ columns.quoting?.length }}</span>
+      </div>
+      <div class="kanban-cards">
+        @for (quote of columns.quoting; track quote.quote_id) {
+          <div class="kanban-card quote-border">
+            <div class="card-tag quote">V{{ quote.version_number }} - Borrador</div>
+            <h3>{{ quote.customer_name }}</h3>
+            <p class="total-est">Presupuesto: <strong>{{ quote.total_amount | currency }}</strong></p>
+            <div class="card-footer">
+              <button [routerLink]="['/evaluations', quote.eval_id, 'create-quote']" class="btn-action primary">
+                Editar Cotización
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty-msg">Sin cotizaciones en borrador.</p>
+        }
+      </div>
+    </div>
+
+    <!-- COLUMNA 3: TRABAJOS AGENDADOS (Fase de Ejecución) -->
+    <div class="kanban-column">
+      <div class="column-header">
+        ⚡ PROYECTOS ACTIVOS 
+        <span class="badge">{{ columns.active?.length }}</span>
+      </div>
+      <div class="kanban-cards">
+        @for (project of columns.active; track project.quote_id) {
+          <div class="kanban-card active-border">
+            <div class="card-tag project">En Ejecución</div>
+            <h3>{{ project.customer_name }}</h3>
+            <!-- Aquí el sistema ya muestra el anticipo calculado del 50% [5, 6] -->
+            <p class="financials">Anticipo: <strong>{{ (project.total_amount / 2) | currency }}</strong></p>
+            <div class="card-footer">
+              <button [routerLink]="['/projects', project.quote_id, 'execution']" class="btn-action success">
+                Control de Gastos
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty-msg">No hay trabajos activos actualmente.</p>
+        }
+      </div>
+    </div>
+
+    <!-- COLUMNA 4: FINALIZADOS (Fase de Rentabilidad) -->
+    <div class="kanban-column">
+      <div class="column-header">
+        ✅ FINALIZADOS 
+        <span class="badge">{{ columns.finished?.length }}</span>
+      </div>
+      <div class="kanban-cards">
+        @for (done of columns.finished; track done.quote_id) {
+          <div class="kanban-card finished-border">
+            <div class="card-tag finished">Completado</div>
+            <h3>{{ done.customer_name }}</h3>
+            <p class="profit">Utilidad calculada...</p>
+            <div class="card-footer">
+              <button class="btn-action">Ver Resumen</button>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty-msg">Aún no hay proyectos cerrados.</p>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -214,6 +214,44 @@ app.get('/api/quotes/:id', (req, res) => {
     });
 });
 
+// ==========================================
+// RUTAS PARA TABLERO (BOARD)
+// ==========================================
+app.get('/api/board/summary', (req, res) => {
+    const query = `
+        SELECT 
+            e.id as eval_id, 
+            e.scheduled_date as eval_date, 
+            CONCAT(c.first_name, ' ', IFNULL(c.last_name, '')) as customer_name, 
+            ca.full_address as customer_address,
+            q.id as quote_id,
+            q.total_amount,
+            q.status as quote_status,
+            q.version_number
+        FROM evaluations e
+        JOIN customers c ON e.customer_id = c.id
+        LEFT JOIN customer_addresses ca ON e.address_id = ca.id
+        LEFT JOIN quotes q ON e.id = q.evaluation_id
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("❌ Error SQL:", err);
+            return res.status(500).json({ success: false, error: err.message });
+        }
+
+        const data = results || [];
+        const summary = {
+            evaluations: data.filter(r => !r.quote_id),
+            quoting: data.filter(r => r.quote_id && r.quote_status === 'borrador'),
+            active: data.filter(r => r.quote_status === 'aceptada'),
+            finished: data.filter(r => r.quote_status === 'finalizada')
+        };
+        
+        res.json({ success: true, data: summary });
+    });
+});
+
 
 
 const PORT = 3000;
