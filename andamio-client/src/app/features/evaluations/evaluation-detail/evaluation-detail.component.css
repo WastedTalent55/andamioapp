@@ -1,62 +1,80 @@
-/* 1. CONTENEDOR PRINCIPAL */
 .canvas-container {
-  padding: 2rem;
-  min-height: 100vh;
-  background-color: var(--andamio-obsidiana); /* Identidad oscura [4] */
-  color: white;
+  padding: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* 2. HEADER */
+/* --- HEADER Y ACCIONES --- */
 header {
   margin-bottom: 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 1.5rem;
 }
 
-header div {
+.header-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-header h2 {
+/* Botones del Header */
+.btn-header {
   font-family: var(--font-main);
-  font-weight: 800; /* Estética de señalética industrial [5] */
+  font-weight: 700;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  color: var(--andamio-amarillo); /* Safety Yellow [4] */
-}
-
-header p {
-  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  background: var(--andamio-gris-oscuro);
   color: var(--andamio-gris-claro);
-  opacity: 0.8;
+  border: 1px solid var(--andamio-gris-medio);
 }
 
-header strong {
-  color: var(--andamio-cian); /* Color de trazabilidad [4] */
+.btn-header:hover {
+  border-color: white;
 }
 
-/* 3. EL LIENZO (Paper Effect) */
+.btn-quote {
+  border-color: var(--andamio-cian);
+  color: var(--andamio-cian);
+  background: rgba(34, 211, 238, 0.05);
+}
+
+.btn-quote:hover {
+  background: var(--andamio-cian);
+  color: var(--andamio-obsidiana);
+}
+
+/* --- INFORMACIÓN DE TRAZABILIDAD --- */
+.project-info {
+  background-color: rgba(30, 41, 59, 0.5);
+  padding: 12px 16px;
+  border-radius: 4px;
+  border-left: 4px solid var(--andamio-cian);
+  font-size: 0.9rem;
+}
+
+.project-info strong {
+  color: var(--andamio-cian);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+/* --- EL LIENZO --- */
 .paper-effect {
   position: relative;
-  background-color: #1e293b; /* Gris oscuro industrial */
-  /* Cuadrícula técnica de 12px para el "Lienzo de Hoja en Blanco" [2, 6] */
-  background-image: 
-    linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
-  background-size: 12px 12px;
-  border: 1px solid rgba(34, 211, 238, 0.2);
+  background-color: var(--andamio-gris-oscuro);
+  border: 1px solid rgba(34, 211, 238, 0.15);
   border-radius: 8px;
   margin-bottom: 2rem;
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+  box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 textarea {
   width: 100%;
-  min-height: 400px;
+  min-height: 450px;
   background: transparent;
   border: none;
   padding: 2rem;
@@ -68,36 +86,8 @@ textarea {
   outline: none;
 }
 
-textarea::placeholder {
-  color: #475569;
-  font-style: italic;
-}
-
-/* 4. BOTONES */
-button {
-  font-family: var(--font-main);
-}
-
-/* Botón Volver: Neutral y Técnico */
-button[routerLink="/board"] {
-  background: transparent;
-  color: var(--andamio-gris-claro);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0.5rem 1rem;
-  font-size: 0.75rem;
-  cursor: pointer;
-}
-
-button[routerLink="/board"]:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: white;
-}
-
-/* Botón Guardar */
-button[type="submit"] {
-  width: 100%;
-}
-
-button[type="submit"]:active {
-  transform: translateY(0);
+.form-actions {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 3rem;
 }

@@ -1,80 +1,100 @@
-<div class="quote-container" style="display: flex; gap: 20px; padding: 20px; height: 92vh; background: #f4f7f6;">
-  
-  <!-- PANEL IZQUIERDO: Referencia de la Evaluación -->
-  <aside style="flex: 1; background: #fffdfa; border: 1px dashed #e67e22; padding: 20px; overflow-y: auto; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);">
-    <h3 style="color: #d35400; margin-top: 0; border-bottom: 2px solid;">📋 Notas de Campo (Referencia)</h3>
-    <div style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 0.95rem; line-height: 1.5; color: #444;">
-      {{ evaluationNotes || 'Cargando notas de la visita...' }}
-    </div>
-    <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #eee;">
-      <small><b>Costo de Visita a descontar:</b> {{ discountValue | currency }}</small>
-    </div>
+<div class="quote-container">
+  <!-- PANEL IZQUIERDO: Mantener Trazabilidad de Notas -->
+  <aside class="reference-panel">
+    <h3>📋 Referencia de Evaluación</h3>
+    <div class="notes-content">{{ evaluationNotes }}</div>
   </aside>
 
-  <!-- PANEL DERECHO: Formulario de Cotización-->
-  <main style="flex: 2; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow-y: auto;">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h2 style="margin: 0; color: #2c3e50;">🚀 Crear Cotización Formal</h2>
-      <span class="badge" style="background: #e67e22; color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem;">Versión 1</span>
+  <main>
+    <header class="quote-header">
+      <h2>🚀 Generar Cotización</h2>
+      <button class="btn-header" (click)="saveAsDraft()">Borrador</button>
     </header>
 
     <form [formGroup]="quoteForm" (ngSubmit)="onSubmit()">
-      <!-- Sección: Mano de Obra -->
-      <section style="margin-bottom: 25px;">
-        <label style="display: block; font-weight: bold; margin-bottom: 8px;">Descripción del Servicio (Mano de Obra):</label>
-        <textarea formControlName="description" 
-                  placeholder="Ej: Tratamiento de humedad en techo de baño. (INCLUYE: limpieza profunda, sellador y pintura...)"
-                  style="width: 100%; height: 90px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
-        
-        <div style="display: flex; gap: 20px; margin-top: 10px;">
-          <div style="flex: 1;">
-            <label>Precio Mano de Obra ($):</label>
-            <input type="number" formControlName="labor_price" style="width: 100%; padding: 8px; border: 1px solid #ddd;">
+      
+      <!-- SECCIÓN 1: MANO DE OBRA (TRABAJOS) -->
+      <section class="form-section">
+        <div class="section-header">
+          <h4>🛠️ Mano de Obra / Servicios</h4>
+          <button type="button" class="btn-add" (click)="addRow('labor')">+ Añadir Trabajo</button>
+        </div>
+
+        <div class="table-header grid-row">
+          <span>Descripción del Trabajo</span>
+          <span>P. Unitario</span>
+          <span>Cant.</span>
+          <span>Unid.</span>
+          <span>Total</span>
+        </div>
+
+        <div formArrayName="laborItems" class="items-list">
+          <div *ngFor="let item of laborItems.controls; let i=index" [formGroupName]="i" class="grid-row item-row">
+            <input formControlName="description" placeholder="Ej: Pintura de cocina">
+            <input type="number" formControlName="price" class="data-number" placeholder="0.00">
+            <input type="number" formControlName="quantity" class="data-number" placeholder="1">
+            <input formControlName="unit" placeholder="Servicio">
+            <!-- Cálculo automático por renglón -->
+            <span class="row-total data-number">{{ calculateRowTotal('labor', i) | currency }}</span>
+            <button type="button" class="btn-remove" (click)="removeRow('labor', i)">×</button>
           </div>
-          <div style="flex: 1;">
-            <label>Tiempo de Entrega:</label>
-            <input type="text" formControlName="delivery_time" placeholder="Ej: 2 DIAS" style="width: 100%; padding: 8px; border: 1px solid #ddd;">
-          </div>
+        </div>
+
+        <div class="section-subtotal">
+          <span>SUBTOTAL MANO DE OBRA:</span>
+          <span class="data-number">{{ laborTotal | currency }}</span>
         </div>
       </section>
 
-      <!-- Sección: Materiales -->
-      <section style="margin-bottom: 25px;">
-        <h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px; color: #34495e;">Materiales Requeridos:</h4>
-        <div formArrayName="items">
-          <div *ngFor="let item of items.controls; let i=index" [formGroupName]="i" 
-               style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
-            <input formControlName="description" placeholder="Material (Ej: Pintura Real Flex)" style="flex: 3; padding: 8px;">
-            <input type="number" formControlName="price" placeholder="Precio" style="flex: 1; padding: 8px;">
-            <input type="number" formControlName="quantity" placeholder="Cant." style="flex: 0.5; padding: 8px;">
-            <input formControlName="unit" placeholder="Unid." style="flex: 0.8; padding: 8px;">
-            <button type="button" (click)="removeItem(i)" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer;">×</button>
+      <!-- SECCIÓN 2: MATERIALES -->
+      <section class="form-section">
+        <div class="section-header">
+          <h4>📦 Suministros y Materiales</h4>
+          <button type="button" class="btn-add" (click)="addRow('material')">+ Añadir Material</button>
+        </div>
+
+        <div class="table-header grid-row">
+          <span>Nombre del Material</span>
+          <span>Costo</span>
+          <span>Cant.</span>
+          <span>Unid.</span>
+          <span>Total</span>
+        </div>
+
+        <div formArrayName="materialItems" class="items-list">
+          <div *ngFor="let item of materialItems.controls; let i=index" [formGroupName]="i" class="grid-row item-row">
+            <input formControlName="description" placeholder="Ej: Sellador Alkafin">
+            <input type="number" formControlName="price" class="data-number">
+            <input type="number" formControlName="quantity" class="data-number">
+            <input formControlName="unit" placeholder="Lt">
+            <span class="row-total data-number">{{ calculateRowTotal('material', i) | currency }}</span>
+            <button type="button" class="btn-remove" (click)="removeRow('material', i)">×</button>
           </div>
         </div>
-        <button type="button" (click)="addItem()" style="background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
-          + Añadir Material
-        </button>
-      </section>
-
-      <!-- Resumen de Cálculos -->
-      <section style="background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 5px solid #e67e22;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-          <span>Suma Total (M.O. + Materiales):</span> <strong>{{ totals.sumaTotal | currency }}</strong>
-        </div>
-        <div style="display: flex; justify-content: space-between; color: #e74c3c; margin-bottom: 5px;">
-          <span>- Descuento de Evaluación:</span> <strong>({{ discountValue | currency }})</strong>
-        </div>
-        <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: bold; border-top: 1px solid #ccc; padding-top: 10px;">
-          <span>TOTAL FINAL:</span> <span>{{ totals.finalTotal | currency }}</span>
-        </div>
-        <div style="margin-top: 15px; color: #2980b9; font-weight: bold;">
-          💰 Anticipo (50%): {{ totals.anticipo | currency }}
+        <div class="section-subtotal">
+          <span>SUMA TOTAL DE MATERIALES:</span> <!-- Texto exacto del ejemplo de Charly [1] -->
+          <span class="data-number">{{ materialTotal | currency }}</span>
         </div>
       </section>
 
-      <button type="submit" style="width: 100%; background: #27ae60; color: white; padding: 15px; margin-top: 25px; border: none; font-size: 1.1rem; font-weight: bold; border-radius: 5px; cursor: pointer;">
-        💾 Guardar y Generar Cotización
-      </button>
+      <!-- RESUMEN ECONÓMICO FINAL -->
+      <footer class="quote-summary">
+        <div class="summary-grid">
+          <div class="summary-line">
+            <span>Suma Subtotales:</span>
+            <span class="data-number">{{ grandTotal | currency }}</span>
+          </div>
+          <div class="summary-line highlight-discount">
+            <span>- Descuento Evaluación:</span>
+            <span class="data-number">({{ discountValue | currency }})</span>
+          </div>
+          <div class="summary-line final-total">
+            <span>TOTAL A PAGAR:</span>
+            <span class="data-number">{{ finalAmount | currency }}</span>
+          </div>
+        </div>
+        <button type="submit" class="btn-andamio">💾 Finalizar y Generar PDF</button>
+      </footer>
     </form>
   </main>
 </div>

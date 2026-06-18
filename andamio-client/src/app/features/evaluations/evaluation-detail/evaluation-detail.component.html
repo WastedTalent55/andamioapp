@@ -1,26 +1,33 @@
 <div class="canvas-container">
   <header>
-    <div>
+    <div class="header-main">
       <h2>📝 Notas de Evaluación</h2>
-      <button routerLink="/board">Volver</button>
+      <button 
+          *ngIf="evaluation?.requirements" 
+          (click)="convertToQuote()" 
+          class="btn-header btn-quote">
+          🏗️ Crear Cotización
+          </button>
+      <button routerLink="/board" class="btn-header btn-back">Volver al Tablero</button>
     </div>
-    <p *ngIf="evaluation">
-      <strong>Cliente:</strong> {{ evaluation.first_name }} {{ evaluation.last_name }} | 
-      <strong>Proyecto:</strong> {{ evaluation.requested_work || 'Sin título definido' }}
+    
+    <p *ngIf="evaluation" class="project-info">
+      <strong>Cliente:</strong> <span class="data-text">{{ evaluation.first_name }} {{ evaluation.last_name }}</span> | 
+      <strong>Proyecto:</strong> <span class="data-text">{{ evaluation.requested_work || 'Sin título definido' }}</span>
     </p>
   </header>
 
   <form [formGroup]="notesForm" (ngSubmit)="saveNotes()">
-    <div class="paper-effect">
+    <div class="paper-effect technical-grid">
       <textarea 
         formControlName="notes"
         placeholder="Escribe aquí medidas, observaciones técnicas, materiales vistos o requerimientos del cliente..."
       ></textarea>
     </div>
 
-    <div>
+    <div class="form-actions">
       <button class="btn-andamio" type="submit">
-        💾 Guardar Notas de Visita
+        {{ evaluation?.requirements ? '💾 Guardar Cambios' : '💾 Guardar Notas de Visita' }}
       </button>
     </div>
   </form>

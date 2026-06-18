@@ -1,0 +1,162 @@
+.quote-container {
+  display: grid;
+  /* Columna 1: Referencia (Fija) | Columna 2: Formulario (Fluido) */
+  grid-template-columns: 350px 1fr; 
+  gap: 2rem;
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* 2. PANEL IZQUIERDO (ASIDE): Trazabilidad de Notas */
+aside {
+  background-color: var(--andamio-gris-oscuro);
+  border-left: 4px solid var(--andamio-cian); /* Traceability Blue [6] */
+  padding: 1.5rem;
+  border-radius: 8px;
+  position: sticky;
+  top: 1.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+aside h3 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--andamio-cian);
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.notes-content {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--andamio-gris-claro);
+  opacity: 0.8;
+  white-space: pre-wrap; /* Respeta los saltos de línea de la evaluación */
+}
+
+/* 3. PANEL DERECHO (MAIN): Motor de Cotización */
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.quote-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 1rem;
+}
+
+.quote-header h2 {
+  color: var(--andamio-amarillo); /* Safety Yellow [6] */
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+/* 4. SECCIONES Y TABLAS DINÁMICAS */
+.form-section {
+  background: rgba(30, 41, 59, 0.4); /* Obsidiana translúcido */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Tu Grid Row Mejorado */
+.grid-row {
+  display: grid;
+  /* Distribución técnica: Desc, Precio, Cant, Unid, Total, Acción */
+  grid-template-columns: 2fr 120px 80px 100px 120px 40px;
+  gap: 12px;
+  align-items: center;
+}
+
+.table-header {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--andamio-cian);
+  font-weight: 800;
+  padding: 0 10px;
+  margin-bottom: 0.5rem;
+  opacity: 0.7;
+}
+
+.item-row {
+  background: var(--andamio-obsidiana);
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  border: 1px solid transparent;
+  transition: border 0.2s;
+}
+
+.item-row:hover {
+  border-color: rgba(34, 211, 238, 0.3); /* Brillo sutil de trazabilidad [7] */
+}
+
+/* Inputs Estilo Industrial */
+.item-row input {
+  background: #0a0f1d;
+  border: 1px solid var(--andamio-gris-medio);
+  color: white;
+  padding: 8px 12px;
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  border-radius: 4px;
+}
+
+.item-row input:focus {
+  border-color: var(--andamio-amarillo);
+  outline: none;
+}
+
+/* Números Precisos (JetBrains Mono) */
+.row-total {
+  text-align: right;
+  font-family: var(--font-data); /* Roboto/JetBrains Mono [5, 8] */
+  font-weight: 700;
+  color: var(--andamio-amarillo);
+}
+
+/* 5. RESUMEN ECONÓMICO (FOOTER) */
+.quote-summary {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: var(--andamio-gris-oscuro);
+  border-top: 2px solid var(--andamio-amarillo);
+  border-radius: 8px;
+}
+
+.summary-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  width: 350px;
+  font-size: 1rem;
+}
+
+.final-total {
+  font-size: 1.5rem;
+  color: var(--andamio-amarillo);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 10px;
+  margin-top: 5px;
+}

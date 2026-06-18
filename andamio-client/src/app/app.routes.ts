@@ -19,7 +19,7 @@ export const routes: Routes = [
     { path: 'evaluations/:id/details', component: EvaluationDetailComponent },
     
     // 4. Fase de Cotización y Versionamiento
-    { path: 'evaluations/:id/create-quote', component: QuoteEditComponent },
+    { path: 'evaluations/:evaluationId/create-quote', component: QuoteEditComponent },
     { path: 'quotes', component: QuoteListComponent },
     
     // 5. Fase de Ejecución y Rentabilidad (El trabajo ya agendado)

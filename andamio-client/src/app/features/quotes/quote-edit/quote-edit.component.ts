@@ -8,11 +8,7 @@ import { QuoteService } from '../../../core/services/quote.service';
 @Component({
   selector: 'app-quote-edit',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,  
-    RouterModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './quote-edit.component.html',
   styleUrls: ['./quote-edit.component.css']
 })
@@ -30,54 +26,77 @@ export class QuoteEditComponent implements OnInit {
   customerId!: number;
 
   ngOnInit() {
-    this.evaluationId = Number(this.route.snapshot.paramMap.get('id'));
+    // 1. Usamos 'evaluationId' que es como definimos la ruta técnica
+    this.evaluationId = Number(this.route.snapshot.paramMap.get('evaluationId'));
     this.initForm();
     this.loadEvaluationData();
   }
 
   private initForm() {
     this.quoteForm = this.fb.group({
-      description: ['', Validators.required],
-      labor_price: [0, [Validators.required, Validators.min(0)]],
-      delivery_time: ['2 DIAS'],
-      items: this.fb.array([])
+      // Ahora tenemos dos listas dinámicas para cumplir con la flexibilidad del sistema [4, 5]
+      laborItems: this.fb.array([]),
+      materialItems: this.fb.array([]),
+      delivery_time: ['2 DIAS', Validators.required]
     });
+
+    // Agregamos un renglón inicial de cada uno por defecto
+    this.addRow('labor');
+    this.addRow('material');
   }
 
+  // --- GETTERS PARA LAS LISTAS ---
+  get laborItems() { return this.quoteForm.get('laborItems') as FormArray; }
+  get materialItems() { return this.quoteForm.get('materialItems') as FormArray; }
+
+  // --- GESTIÓN DE FILAS DINÁMICAS ---
+  addRow(type: 'labor' | 'material') {
+    const group = this.fb.group({
+      description: ['', Validators.required],
+      price: [0, [Validators.required, Validators.min(0)]],
+      quantity: [1, [Validators.required, Validators.min(1)]],
+      unit: [type === 'labor' ? 'SERVICIO' : 'LT', Validators.required]
+    });
+
+    if (type === 'labor') this.laborItems.push(group);
+    else this.materialItems.push(group);
+  }
+
+  removeRow(type: 'labor' | 'material', index: number) {
+    if (type === 'labor') this.laborItems.removeAt(index);
+    else this.materialItems.removeAt(index);
+  }
+
+  // --- CARGA DE DATOS (TRAZABILIDAD) ---
   private loadEvaluationData() {
-    this.evalService.getEvaluationById(this.evaluationId).subscribe(res => {
-      this.evaluationNotes = res.data.requirements; 
-      this.discountValue = res.data.evaluation_cost; 
-      this.customerId = res.data.customer_id;
+    this.evalService.getEvaluationById(this.evaluationId).subscribe(data => {
+      // Recordamos el ajuste que hicimos: 'data' ya es el objeto directo
+      this.evaluationNotes = data.requirements; 
+      this.discountValue = Number(data.evaluation_cost); 
+      this.customerId = data.customer_id;
     });
   }
 
-  get items() { return this.quoteForm.get('items') as FormArray; }
-
-  addItem() {
-    this.items.push(this.fb.group({
-      description: ['', Validators.required],
-      price: [0, Validators.required],
-      quantity: [1, Validators.required],
-      unit: ['LT']
-    }));
+  // --- CÁLCULO DINÁMICO DE TOTALES [6] ---
+  calculateRowTotal(type: 'labor' | 'material', index: number): number {
+    const group = type === 'labor' ? this.laborItems.at(index) : this.materialItems.at(index);
+    return (group.value.price || 0) * (group.value.quantity || 0);
   }
 
-  removeItem(index: number) { this.items.removeAt(index); }
+  get laborTotal(): number {
+    return this.laborItems.controls.reduce((acc, _, i) => acc + this.calculateRowTotal('labor', i), 0);
+  }
 
-  get totals() {
-    const labor = this.quoteForm.value.labor_price || 0;
-    const materials = this.items.controls.reduce((acc, ctrl) => 
-      acc + (ctrl.value.price * ctrl.value.quantity), 0);
-    
-    const sumaTotal = labor + materials;
-    const finalTotal = Math.max(0, sumaTotal - this.discountValue);
-    
-    return {
-      sumaTotal,
-      finalTotal,
-      anticipo: finalTotal / 2 
-    };
+  get materialTotal(): number {
+    return this.materialItems.controls.reduce((acc, _, i) => acc + this.calculateRowTotal('material', i), 0);
+  }
+
+  get grandTotal(): number {
+    return this.laborTotal + this.materialTotal;
+  }
+
+  get finalAmount(): number {
+    return Math.max(0, this.grandTotal - this.discountValue);
   }
 
   onSubmit() {
@@ -87,12 +106,18 @@ export class QuoteEditComponent implements OnInit {
       evaluation_id: this.evaluationId,
       customer_id: this.customerId,
       ...this.quoteForm.value,
-      total_amount: this.totals.finalTotal
+      total_amount: this.finalAmount,
+      anticipo: this.finalAmount / 2 // Estándar del 50% según ejemplo de Charly Pulenta [7]
     };
 
+    console.log('🚀 Enviando Cotización Formal:', finalData);
     this.quoteService.createQuote(finalData).subscribe(() => {
-      alert('Cotización creada con éxito.');
-      this.router.navigate(['/quotes']);
+      alert('¡Cotización creada y lista para el cliente!');
+      this.router.navigate(['/board']); // Volvemos al tablero para ver el flujo real [3]
     });
+  }
+
+  saveAsDraft() {
+
   }
 }

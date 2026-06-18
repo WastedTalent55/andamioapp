@@ -70,4 +70,14 @@ export class EvaluationDetailComponent implements OnInit {
         });
     }
   }
+
+  convertToQuote(): void {
+    if (this.evaluationId) {
+      console.log('🏗️ Iniciando transformación técnica hacia cotización...');
+      
+      // 3. Navegamos usando la ruta que tienes en app.routes
+      // Usamos el ID de la evaluación para mantener la trazabilidad [4, 5]
+      this.router.navigate(['/evaluations', this.evaluationId, 'create-quote']);
+    }
+  }
 }
