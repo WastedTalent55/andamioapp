@@ -21,7 +21,7 @@
             <div class="card-footer">
               <span class="date">📅 {{ item.eval_date | date:'dd/MM/yyyy' }}</span>
               <button [routerLink]="['/evaluations', item.eval_id, 'details']" class="btn-action">
-                Ver Notas
+                {{ item.requirements ? 'Ver Notas' : 'Crear Notas' }}
               </button>
             </div>
           </div>

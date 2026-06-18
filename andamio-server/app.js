@@ -149,7 +149,7 @@ app.get('/api/evaluations', (req, res) => {
 
 app.put('/api/evaluations/:id', (req, res) => {
     const { id } = req.params;
-    const { requirements } = req.body; // Aquí llega el texto de tu "Hoja en Blanco"
+    const { requirements } = req.body; 
 
     const query = 'UPDATE evaluations SET requirements = ? WHERE id = ?';
 
@@ -159,6 +159,29 @@ app.put('/api/evaluations/:id', (req, res) => {
             return res.status(500).json({ success: false });
         }
         res.json({ success: true, message: 'Notas vinculadas con éxito' });
+    });
+});
+
+app.get('/api/evaluations/:id', (req, res) => {
+    const { id } = req.params;
+    const query = `
+        SELECT 
+            e.*, 
+            c.first_name, 
+            c.last_name 
+        FROM evaluations e
+        JOIN customers c ON e.customer_id = c.id
+        WHERE e.id = ?
+    `;
+    
+    db.query(query, [id], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        
+        if (results.length > 0) {
+            res.json(results[0]); 
+        } else {
+            res.status(404).json({ message: "Evaluación no encontrada" });
+        }
     });
 });
 
@@ -222,6 +245,7 @@ app.get('/api/board/summary', (req, res) => {
         SELECT 
             e.id as eval_id, 
             e.scheduled_date as eval_date, 
+            e.requirements,
             CONCAT(c.first_name, ' ', IFNULL(c.last_name, '')) as customer_name, 
             ca.full_address as customer_address,
             q.id as quote_id,

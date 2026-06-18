@@ -1,8 +1,8 @@
-<div class="form-container" style="padding: 20px; border: 1px solid #007bff; margin-top: 20px;">
+<div class="form-container">
   <h3>Agendar Nueva Evaluación Técnica</h3>
   
   <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()">
-    <div style="margin-bottom: 10px;">
+    <div>
       <label>Seleccionar Cliente:</label><br>
       <select formControlName="customer_id" (change)="onCustomerChange($event)">
         <option value="" disabled>-- Elige un cliente --</option>
@@ -12,7 +12,7 @@
       </select>
     </div>
 
-    <div style="margin-bottom: 10px;">
+    <div>
   <label>Dirección de la Visita:</label><br>
   <select formControlName="address_id">
     <option value="" disabled>-- Selecciona la ubicación --</option>
@@ -20,22 +20,22 @@
       {{ addr.full_address || 'Dirección Principal' }}
     </option>
   </select>
-  <small *ngIf="filteredAddresses.length === 0" style="color: red;">
+  <small *ngIf="filteredAddresses.length === 0">
     ⚠️ Selecciona un cliente primero.
   </small>
 </div>
 
-    <div style="margin-bottom: 10px;">
+    <div>
       <label>Fecha de Visita:</label><br>
       <input type="datetime-local" formControlName="scheduled_date">
     </div>
 
-    <div style="margin-bottom: 10px;">
+    <div>
       <label>Costo de Evaluación (Configurable):</label><br>
       <input type="number" formControlName="evaluation_cost">
     </div>
 
-    <div style="margin-bottom: 10px;">
+    <div>
       <label for="requested_work"><strong>¿Qué trabajo solicita el cliente? (Título)</strong></label>
       <input 
         type="text" 
