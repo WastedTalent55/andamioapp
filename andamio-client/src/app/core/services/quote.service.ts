@@ -25,4 +25,8 @@ export class QuoteService {
   updateQuote(id: number, data: Partial<Quote>): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
+
+  getQuoteByEvaluationId(evaluationId: number): Observable<any> {
+  return this.http.get(`${this.apiUrl}/evaluation/${evaluationId}`);
+}
 }

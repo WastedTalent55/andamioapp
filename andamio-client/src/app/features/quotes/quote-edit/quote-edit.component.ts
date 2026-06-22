@@ -26,10 +26,10 @@ export class QuoteEditComponent implements OnInit {
   customerId!: number;
 
   ngOnInit() {
-    // 1. Usamos 'evaluationId' que es como definimos la ruta técnica
     this.evaluationId = Number(this.route.snapshot.paramMap.get('evaluationId'));
     this.initForm();
     this.loadEvaluationData();
+    this.loadExistingQuoteData();
   }
 
   private initForm() {
@@ -67,6 +67,37 @@ export class QuoteEditComponent implements OnInit {
     else this.materialItems.removeAt(index);
   }
 
+  private loadExistingQuoteData() {
+  this.quoteService.getQuoteByEvaluationId(this.evaluationId).subscribe((res: any) => {
+    const quote = res.data ? res.data : res;
+
+    if (quote && quote.items) {
+      this.laborItems.clear();
+      this.materialItems.clear();
+
+      quote.items.forEach((item: any) => {
+        const group = this.fb.group({
+          description: [item.description, Validators.required],
+          price: [item.unit_price, Validators.required],
+          quantity: [item.quantity, Validators.required],
+          unit: [item.unit, Validators.required]
+        });
+
+        if (item.type === 'labor') {
+          this.laborItems.push(group);
+        } else if (item.type === 'material') {
+          this.materialItems.push(group);
+        }
+      });
+
+      this.quoteForm.patchValue({
+        delivery_time: quote.delivery_time || '2 DIAS'
+      });
+    }
+  });
+}
+
+
   // --- CARGA DE DATOS (TRAZABILIDAD) ---
   private loadEvaluationData() {
     this.evalService.getEvaluationById(this.evaluationId).subscribe(data => {
@@ -80,7 +111,7 @@ export class QuoteEditComponent implements OnInit {
   // --- CÁLCULO DINÁMICO DE TOTALES [6] ---
   calculateRowTotal(type: 'labor' | 'material', index: number): number {
     const group = type === 'labor' ? this.laborItems.at(index) : this.materialItems.at(index);
-    return (group.value.price || 0) * (group.value.quantity || 0);
+    return (group.value.unit_price || 0) * (group.value.quantity || 0);
   }
 
   get laborTotal(): number {
@@ -120,4 +151,5 @@ export class QuoteEditComponent implements OnInit {
   saveAsDraft() {
 
   }
+  
 }

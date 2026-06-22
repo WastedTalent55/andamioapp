@@ -225,7 +225,7 @@ app.post('/api/quotes/items', (req, res) => {
 app.get('/api/quotes/:id', (req, res) => {
     const { id } = req.params;
     const quoteQuery = "SELECT * FROM quotes WHERE id = ?";
-    const itemsQuery = "SELECT * FROM quote_items WHERE quote_id = ?";
+    const itemsQuery = "SELECT * FROM quote_items WHERE quote_version_id = ?";
 
     db.query(quoteQuery, [id], (err, quote) => {
         if (err) return res.status(500).json({ success: false });
@@ -233,6 +233,45 @@ app.get('/api/quotes/:id', (req, res) => {
         db.query(itemsQuery, [id], (err, items) => {
             if (err) return res.status(500).json({ success: false });
             res.json({ success: true, quote: quote, items: items });
+        });
+    });
+});
+
+app.get('/api/quotes/evaluation/:evaluationId', (req, res) => {
+    const { evaluationId } = req.params;
+
+    // Usamos LEFT JOIN para que si no hay versión aún, NO se borren los requirements
+    const query = `
+        SELECT q.id as quote_id, v.id as version_id, e.requirements, q.status
+        FROM evaluations e
+        LEFT JOIN quotes q ON q.evaluation_id = e.id
+        LEFT JOIN quote_versions v ON v.quote_id = q.id
+        WHERE e.id = ? 
+        ORDER BY v.version_number DESC LIMIT 1`;
+
+    db.query(query, [evaluationId], (err, results) => {
+        if (err) return res.status(500).json({ success: false, error: err.message });
+        
+        // AQUÍ EL ÍNDICE  YA NO TE DARÁ ERROR
+        // Porque el LEFT JOIN garantiza que al menos vengan los requirements de la evaluación
+        const data = results; 
+
+        if (!data || !data.version_id) {
+            // Si hay notas pero no hay cotización, enviamos solo las notas
+            return res.json({ success: true, data: { requirements: data?.requirements || '', items: [] } });
+        }
+
+        const itemsQuery = "SELECT * FROM quote_items WHERE quote_version_id = ?";
+        db.query(itemsQuery, [data.version_id], (err, items) => {
+            if (err) return res.status(500).json({ success: false });
+            
+            res.json({
+                success: true,
+                data: {
+                    ...data,
+                    items: items // Aquí deben aparecer la "Pintura Real Flex" y el "Sellador Alkafin" [3, 4]
+                }
+            });
         });
     });
 });

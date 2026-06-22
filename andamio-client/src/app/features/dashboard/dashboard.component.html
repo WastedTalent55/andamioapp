@@ -1,1 +1,33 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <header class="utility-header">
+    <div class="kpi-box">
+      <span class="label">UTILIDAD REAL (NETA)</span>
+      <h1 class="data-number success-text">$45,280.00</h1>
+    </div>
+  </header>
+
+  <div class="widgets-grid">
+    <div class="widget">
+      <h3>PROYECTOS ACTIVOS</h3>
+      <p class="data-number">12</p>
+    </div>
+    <div class="widget">
+      <h3>EVALUACIONES PENDIENTES</h3>
+      <p class="data-number warning-text">5</p>
+    </div>
+  </div>
+
+  <div class="fab-container">
+  <!-- El menú ahora está físicamente arriba del botón en el orden visual -->
+  <div class="fab-menu">
+    <button class="fab-item" title="Agendar Trabajo">🏗️</button>
+    <button class="fab-item" title="Nueva Cotización">📝</button>
+    <button class="fab-item" title="Cita Evaluación">📅</button>
+    <button class="fab-item" title="Agregar Cliente" routerLink="/customer/new">👤</button>
+  </div>
+  
+  <!-- El botón "+" es el anclaje fijo -->
+  <button class="fab-main">
+    <span>+</span>
+  </button>
+</div>

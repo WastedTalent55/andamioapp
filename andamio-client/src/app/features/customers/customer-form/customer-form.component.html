@@ -1,36 +1,35 @@
 <div class="form-container">
-  <h3>👤 Registro de Nuevo Clientx</h3>
-  
-  <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+  <div class="form-header">
+    <h3>👤 REGISTRO DE NUEVO CLIENTX</h3>
+    <button type="button" class="btn-close" routerLink="/dashboard">&times;</button>
+  </div>
+
+  <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="andamio-form">
     
-    <div class="form-group">
-      <label>Nombre(s):</label>
-      <input type="text" formControlName="first_name" class="form-control" placeholder="Ej: Charly" required>
+    <!-- GRID DE IDENTIDAD: Nombre y Apellido en la misma línea -->
+    <div class="grid-row">
+      <div class="form-group">
+        <label>NOMBRE(S)</label>
+        <input type="text" formControlName="first_name" class="form-control" placeholder="Ej: Charly">
+      </div>
+      <div class="form-group">
+        <label>APELLIDO(S)</label>
+        <input type="text" formControlName="last_name" class="form-control" placeholder="Ej: Pulenta">
+      </div>
     </div>
 
     <div class="form-group">
-      <label>Apellido(s):</label>
-      <input type="text" formControlName="last_name" class="form-control" placeholder="Ej: Pulenta" required>
+      <label>TELÉFONO DE CONTACTO</label>
+      <input type="text" formControlName="phone" class="form-control" placeholder="55 1234 5678">
     </div>
 
     <div class="form-group">
-      <label>Teléfono de Contacto:</label>
-      <input type="text" formControlName="phone" class="form-control" placeholder="55 1234 5678" required>
+      <label>DIRECCIÓN PRINCIPAL (OBRA/CASA)</label>
+      <textarea formControlName="address" class="form-control" rows="4" placeholder="Calle, número, colonia"></textarea>
     </div>
 
-    <div class="form-group">
-      <label>Dirección Principal (Obra/Casa):</label>
-      <textarea 
-        formControlName="address" 
-        class="form-control" 
-        placeholder="Calle, número, colonia y CP..." 
-        rows="3"
-        required></textarea>
-    </div>
-    
-    <button type="submit" 
-            [disabled]="customerForm.invalid">
-      Guardar y Dar de Alta
+    <button type="submit" class="btn-andamio full-width" [disabled]="customerForm.invalid">
+      GUARDAR Y DAR DE ALTA
     </button>
   </form>
 </div>

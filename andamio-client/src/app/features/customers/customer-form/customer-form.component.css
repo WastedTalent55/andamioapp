@@ -1,0 +1,77 @@
+:host {
+  display: flex; /* Convierte el componente en un contenedor flexible */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  min-height: 100vh; /* Ocupa todo el alto de la pantalla */
+  width: 100%;
+  background-color: var(--andamio-obsidiana); /* Color del chasis [4] */
+  padding: 20px;
+}
+
+/* 2. EL CONTENEDOR (Ficha Técnica) */
+.form-container {
+  background-color: var(--andamio-gris-oscuro);
+  width: 100%;
+  max-width: 600px; /* Ancho profesional para formularios [5] */
+  padding: 2.5rem;
+  border-radius: 4px;
+  border-left: 5px solid var(--andamio-amarillo); /* Acento Safety Yellow [4] */
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* 3. ACOMODO DE COLUMNAS (Para que no esté todo apilado) */
+.grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Fuerza dos columnas iguales */
+  gap: 20px; /* Espaciado técnico */
+  margin-bottom: 1rem;
+}
+
+/* 4. ESTILO DE CABECERA */
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--andamio-gris-medio);
+  padding-bottom: 1rem;
+}
+
+.form-header h3 {
+  font-family: var(--font-main);
+  font-weight: 800; /* Inter Extra Bold [6] */
+  color: var(--andamio-amarillo);
+  letter-spacing: 1px;
+}
+
+/* 5. INPUTS INDUSTRIALES */
+.form-group label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.75rem;
+  margin-bottom: 8px;
+  color: var(--andamio-gris-claro);
+  text-transform: uppercase;
+}
+
+.form-control {
+  width: 100%;
+  background-color: var(--andamio-obsidiana);
+  border: 1px solid var(--andamio-gris-medio);
+  color: white;
+  padding: 12px;
+  font-family: var(--font-main);
+  border-radius: 2px;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--andamio-cian); /* Tech Blue para enfoque [4] */
+}
+
+/* Botón de ancho completo */
+.full-width {
+  width: 100%;
+  margin-top: 1.5rem;
+}
