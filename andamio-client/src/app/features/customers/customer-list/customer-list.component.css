@@ -1,0 +1,120 @@
+:host {
+  display: block;
+  padding: 2rem;
+  background-color: var(--andamio-obsidiana);
+}
+
+/* Herramientas Superiores */
+.tools-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  gap: 20px;
+}
+
+.search-box {
+  flex-grow: 1;
+  max-width: 600px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  background-color: var(--andamio-gris-oscuro);
+  border: 2px solid var(--andamio-gris-medio);
+  padding: 12px 15px 12px 45px;
+  color: white;
+  border-radius: 4px;
+  font-family: var(--font-main);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: var(--andamio-cian); /* Traceability Blue */
+  outline: none;
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+}
+
+/* Grid de Tarjetas */
+.client-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+/* La Tarjeta "Andamio" */
+.client-card {
+  background-color: var(--andamio-gris-oscuro);
+  border-radius: 4px;
+  display: flex;
+  overflow: hidden;
+  border: 1px solid var(--andamio-gris-medio);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.client-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  border-color: var(--andamio-amarillo);
+}
+
+.card-status-bar {
+  width: 6px;
+  background-color: var(--andamio-amarillo); /* Safety Yellow */
+}
+
+.card-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.client-name {
+  font-weight: 800; /* Inter Extra Bold */
+  color: var(--andamio-gris-claro);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.phone {
+  color: var(--andamio-cian);
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.address {
+  font-size: 0.85rem;
+  color: var(--andamio-gris-medio);
+  line-height: 1.4;
+}
+
+/* Botones de Acción Internos */
+.card-actions {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.btn-action {
+  background-color: transparent;
+  border: 1px solid var(--andamio-gris-medio);
+  color: var(--andamio-gris-claro);
+  padding: 8px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+.btn-action:hover {
+  background-color: var(--andamio-amarillo);
+  color: var(--andamio-obsidiana);
+  border-color: var(--andamio-amarillo);
+}

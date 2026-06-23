@@ -1,29 +1,43 @@
-<div class="container">
-  <h2>Gestión de Clientes</h2>
-  <p>Punto de partida para evaluaciones y cotizaciones.</p>
+<div class="client-feature-container">
+  <!-- Barra de Herramientas de Precisión -->
+  <header class="tools-header">
+    <div class="search-box">
+      <span class="icon">🔍</span>
+      <input 
+        type="text" 
+        placeholder="FILTRAR POR NOMBRE O DIRECCIÓN..." 
+        (input)="onSearch($event)"
+        class="search-input">
+    </div>
+    <button class="btn-andamio" routerLink="/customer/new">+ NUEVO CLIENTE</button>
+  </header>
 
-  <table border="1" style="width: 100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Apellido</th>
-        <th>Teléfono</th>
-        <th>Dirección</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (customer of customers; track customer.id) {
-        <tr>
-          <td>{{ customer.first_name }}</td>
-          <td>{{ customer.last_name }}</td>
-          <td>{{ customer.phone }}</td>
-          <td>{{ customer.address || 'Sin dirección registrada' }}</td>
-        </tr>
-      } @empty {
-        <tr>
-          <td colspan="4">No hay clientes registrados aún.</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+  <!-- Grid de Infraestructura de Clientes -->
+  <div class="client-grid">
+    @for (customer of filteredCustomers; track customer.id) {
+      <div class="client-card">
+        <!-- Acento lateral de seguridad -->
+        <div class="card-status-bar"></div>
+        
+        <div class="card-body">
+          <div class="info-group">
+            <h3 class="client-name">{{ customer.first_name }} {{ customer.last_name }}</h3>
+            <!-- Tipografía técnica para números -->
+            <p class="data-number phone">{{ customer.phone }}</p>
+            <p class="address">{{ customer.address || 'SIN DIRECCIÓN REGISTRADA' }}</p>
+          </div>
+
+          <!-- Acciones de Flujo Operativo -->
+          <div class="card-actions">
+            <button class="btn-action" routerLink="/evaluations/new" title="Agendar Evaluación">📅 Agendar Evaluación</button>
+            <button class="btn-action" title="Crear Cotización">📄 Cotizar</button>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <p>⚠️ NO SE ENCONTRÓ INFRAESTRUCTURA DE CLIENTES CON ESE FILTRO.</p>
+      </div>
+    }
+  </div>
 </div>
