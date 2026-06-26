@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { QuoteFormComponent } from './quote-form.component';
 
-import { QuoteEditComponent } from './quote-edit.component';
-
-describe('QuoteEditComponent', () => {
-  let component: QuoteEditComponent;
-  let fixture: ComponentFixture<QuoteEditComponent>;
+describe('QuoteFormComponent', () => {
+  let component: QuoteFormComponent;
+  let fixture: ComponentFixture<QuoteFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QuoteEditComponent]
+      imports: [QuoteFormComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(QuoteEditComponent);
+    fixture = TestBed.createComponent(QuoteFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

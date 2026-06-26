@@ -36,7 +36,7 @@ app.get('/api/customers', (req, res) => {
             ca.full_address AS address -- Aquí creamos el rubro 'address' que Angular espera
         FROM customers c
         LEFT JOIN customer_addresses ca ON c.id = ca.customer_id AND ca.is_primary = 1
-        ORDER BY c.id DESC`;
+        ORDER BY c.first_name ASC`;
     
     db.query(query, (err, results) => {
         if (err) {
@@ -295,7 +295,7 @@ app.get('/api/board/summary', (req, res) => {
         JOIN customers c ON e.customer_id = c.id
         LEFT JOIN customer_addresses ca ON e.address_id = ca.id
         LEFT JOIN quotes q ON e.id = q.evaluation_id
-    `;
+        ORDER BY e.scheduled_date ASC`;
 
     db.query(query, (err, results) => {
         if (err) {

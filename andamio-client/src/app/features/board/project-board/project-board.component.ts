@@ -26,9 +26,7 @@ export class ProjectBoardComponent implements OnInit {
 
   loadBoard() {
   this.boardService.getBoardData().subscribe(res => {
-    console.log('Lo que llega del server:', res); // 👈 Revisa esto en la consola del F12
     if (res.success) {
-      // Debemos asignar 'res.data', no solo 'res'
       this.columns = res.data; 
     }
   });
@@ -36,7 +34,6 @@ export class ProjectBoardComponent implements OnInit {
 
   refreshBoard() {
   this.boardService.getBoardData().subscribe(res => {
-    console.log('Datos recibidos del server:', res); // 👈 AÑADE ESTO
     if (res.success) {
       this.columns = res.data;
     }

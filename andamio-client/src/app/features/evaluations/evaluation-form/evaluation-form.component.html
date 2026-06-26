@@ -1,50 +1,61 @@
 <div class="form-container">
-  <h3>Agendar Nueva Evaluación Técnica</h3>
+  <div class="form-header">
+    <h3>📋 AGENDAR NUEVA EVALUACIÓN TÉCNICA</h3>
+    <button type="button" class="btn-close" (click)="closeForm()" title="Cancelar">&times;</button>
+  </div>
   
-  <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()">
-    <div>
-      <label>Seleccionar Cliente:</label><br>
-      <select formControlName="customer_id" (change)="onCustomerChange($event)">
-        <option value="" disabled>-- Elige un cliente --</option>
-        <option *ngFor="let c of customers" [value]="c.id">
-          {{ c.first_name }} {{ c.last_name }}
-        </option>
-      </select>
+  <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()" class="andamio-form">
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label>CLIENTX</label>
+        <select formControlName="customer_id" (change)="onCustomerChange($event)" class="form-control">
+          <option value="" disabled>-- Elige un cliente --</option>
+          <option *ngFor="let c of customers" [value]="c.id">
+            {{ c.first_name }} {{ c.last_name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>UBICACIÓN DE OBRA</label>
+        <select formControlName="address_id" class="form-control">
+          <option value="" disabled>-- Selecciona ubicación --</option>
+          <option *ngFor="let addr of filteredAddresses" [value]="addr.id">
+            {{ addr.full_address || 'Dirección Principal' }}
+          </option>
+        </select>
+        <small class="alert-text" *ngIf="filteredAddresses.length === 0">
+          ⚠️ SELECCIONA UN CLIENTE PRIMERO.
+        </small>
+      </div>
     </div>
 
-    <div>
-  <label>Dirección de la Visita:</label><br>
-  <select formControlName="address_id">
-    <option value="" disabled>-- Selecciona la ubicación --</option>
-    <option *ngFor="let addr of filteredAddresses" [value]="addr.id">
-      {{ addr.full_address || 'Dirección Principal' }}
-    </option>
-  </select>
-  <small *ngIf="filteredAddresses.length === 0">
-    ⚠️ Selecciona un cliente primero.
-  </small>
-</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>FECHA Y HORA DE VISITA</label>
+        <input type="datetime-local" formControlName="scheduled_date" class="form-control">
+      </div>
 
-    <div>
-      <label>Fecha de Visita:</label><br>
-      <input type="datetime-local" formControlName="scheduled_date">
+      <div class="form-group">
+        <label>COSTO DE EVALUACIÓN (MXN)</label>
+        <input type="number" formControlName="evaluation_cost" class="form-control data-number" placeholder="0.00">
+      </div>
     </div>
 
-    <div>
-      <label>Costo de Evaluación (Configurable):</label><br>
-      <input type="number" formControlName="evaluation_cost">
-    </div>
-
-    <div>
-      <label for="requested_work"><strong>¿Qué trabajo solicita el cliente? (Título)</strong></label>
+    <div class="form-group">
+      <label>TÍTULO DEL TRABAJO SOLICITADO</label>
       <input 
         type="text" 
-        id="requested_work" 
         formControlName="requested_work"
+        class="form-control highlight-input"
         placeholder="Ej: Tratamiento de humedad en techo de baño"
       >
+      <p class="field-hint">Este título aparecerá en la descripción de la cotización final.</p>
     </div>
 
-    <button type="submit" [disabled]="evaluationForm.invalid">Agendar Visita</button>
+    <button type="submit" class="btn-andamio full-width" [disabled]="evaluationForm.invalid">
+      CONFIRMAR Y AGENDAR VISITA
+    </button>
   </form>
 </div>

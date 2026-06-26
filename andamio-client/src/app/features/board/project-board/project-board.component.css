@@ -1,10 +1,8 @@
-/* Contenedor principal */
 .kanban-container {
   padding: 2rem;
   min-height: 100vh;
 }
 
-/* Encabezado del tablero */
 .board-header {
   display: flex;
   justify-content: space-between;
@@ -14,7 +12,6 @@
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Título */
 .board-header h2 {
   font-family: var(--font-main, 'Inter', sans-serif);
   font-weight: 800; 
@@ -24,7 +21,6 @@
   letter-spacing: -0.02em;
 }
 
-/* LAYOUT DEL TABLERO */
 .kanban-board {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -33,7 +29,6 @@
   padding: 1rem 0;
 }
 
-/* COLUMNAS */
 .kanban-column {
   background-color: var(--andamio-gris-oscuro, #1E293B);
   border-radius: 8px;
@@ -65,7 +60,6 @@
   font-family: var(--font-data);
 }
 
-/* TARJETAS */
 .kanban-cards {
   display: flex;
   flex-direction: column;
@@ -76,7 +70,7 @@
   background-color: var(--andamio-obsidiana, #0F172A);
   border-radius: 6px;
   padding: 1.25rem;
-  border-left: 4px solid #475569; /* Borde base */
+  border-left: 4px solid #475569; 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -86,13 +80,11 @@
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
 }
 
-/* Bordes específicos por fase para trazabilidad visual */
-.eval-border { border-left-color: var(--andamio-cian); }    /* Fase 2: Captura */
-.quote-border { border-left-color: var(--andamio-amarillo); } /* Fase 3: Estructura */
-.active-border { border-left-color: var(--andamio-verde); }  /* Fase 4: Ejecución */
-.finished-border { border-left-color: #64748b; }           /* Cierre */
+.eval-border { border-left-color: var(--andamio-cian); }    
+.quote-border { border-left-color: var(--andamio-amarillo); } 
+.active-border { border-left-color: var(--andamio-verde); }  
+.finished-border { border-left-color: #64748b; }          
 
-/* CONTENIDO DE TARJETA */
 .kanban-card h3 {
   font-size: 1.1rem;
   margin: 0.5rem 0;
@@ -106,16 +98,14 @@
   opacity: 0.8;
 }
 
-/* Tipografía técnica para datos financieros y fechas  */
 .total-est, .financials, .profit, .date {
   font-family: var(--font-data, 'JetBrains Mono', monospace);
 }
 
 .financials strong {
-  color: var(--andamio-verde, #10B981); /* Resalta el dinero entrante [3] */
+  color: var(--andamio-verde, #10B981);
 }
 
-/* ETIQUETAS (TAGS) */
 .card-tag {
   display: inline-block;
   font-size: 0.7rem;
@@ -130,7 +120,6 @@
 .card-tag.quote { background: rgba(250, 204, 21, 0.1); color: #FACC15; }
 .card-tag.project { background: rgba(16, 185, 129, 0.1); color: #10B981; }
 
-/* ACCIONES: Botones táctiles para tablet-first */
 .card-footer {
   margin-top: 1.25rem;
   display: flex;
@@ -157,7 +146,6 @@
   border-color: #FFFFFF;
 }
 
-/* Variaciones de botones según flujo operativo  */
 .btn-action.primary {
   background-color: var(--andamio-amarillo);
   color: var(--andamio-obsidiana);
@@ -170,7 +158,6 @@
   border: none;
 }
 
-/* ESTADOS VACÍOS */
 .empty-msg {
   text-align: center;
   padding: 2rem;

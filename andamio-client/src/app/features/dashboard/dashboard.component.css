@@ -5,11 +5,9 @@
   position: relative;
 }
 
-/* Tipografía técnica para montos */
 .success-text { color: var(--andamio-verde); }
 .warning-text { color: var(--andamio-amarillo); }
 
-/* Estilo del Botón Flotante (FAB) */
 .fab-container {
   position: fixed;
   bottom: 2rem;
@@ -34,7 +32,6 @@
   z-index: 100;
 }
 
-/* Lógica de Hover para desplegar */
 .fab-container:hover .fab-menu {
   display: flex;
   opacity: 1;
@@ -46,10 +43,10 @@
   display: flex;
   flex-direction: column-reverse;
   gap: 12px;
-  margin-bottom: 15px; /* Espacio entre el "+" y el primer botón */
+  margin-bottom: 15px; 
   opacity: 0;
-  pointer-events: none; /* Evita clics accidentales cuando está oculto */
-  transform: translateY(50px) scale(0.5); /* Inicia "dentro" del botón + */
+  pointer-events: none;
+  transform: translateY(50px) scale(0.5);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -70,5 +67,5 @@
   transform: scale(1.1);
   background-color: var(--andamio-amarillo);
   color: var(--andamio-obsidiana);
-  box-shadow: 0 0 15px var(--andamio-amarillo); /* Efecto Glow Industrial */
+  box-shadow: 0 0 15px var(--andamio-amarillo); 
 }

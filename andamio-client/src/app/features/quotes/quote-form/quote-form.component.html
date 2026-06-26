@@ -1,0 +1,92 @@
+<div class="quote-container">
+  <aside class="reference-panel">
+    <h3>📋 Observaciones de Evaluación</h3>
+    <div class="notes-content">{{ evaluationNotes }}</div>
+  </aside>  
+
+  <main class="quote-main-container">
+  <header class="quote-header">
+    <div class="title-group">
+      <h2>🚀 GENERAR COTIZACIÓN</h2>
+      <p class="subtitle">ESTABLECIENDO INFRAESTRUCTURA DE COSTOS</p>
+    </div>
+    <button type="button" class="btn-close-quote" (click)="closeForm()" title="Cerrar y volver">
+      &times;
+    </button>
+  </header>
+
+  <form [formGroup]="quoteForm" (ngSubmit)="onSubmit()" class="quote-form-body">
+    
+    <section class="form-section">
+      <div class="section-header">
+        <h4>🛠️ MANO DE OBRA / SERVICIOS</h4>
+        <button type="button" class="btn-add-industrial" (click)="addRow('labor')">
+          <span class="icon">+</span> AÑADIR TRABAJO
+        </button>
+      </div>
+
+      <div class="table-header grid-row">
+        <span>DESCRIPCIÓN DEL TRABAJO</span>
+        <span>P. UNITARIO</span>
+        <span>CANT.</span>
+        <span>UNID.</span>
+        <span>TOTAL</span>
+      </div>
+
+      <div formArrayName="laborItems" class="items-list">
+        @for (item of laborItems.controls; track $index) {
+          <div [formGroupName]="$index" class="grid-row item-row">
+            <input formControlName="description" placeholder="Ej: Pintura de cocina" class="input-desc">
+            <input type="number" formControlName="price" class="data-number input-num" placeholder="0.00">
+            <input type="number" formControlName="quantity" class="data-number input-num" placeholder="1">
+            <input formControlName="unit" placeholder="Servicio" class="input-unit">
+            <span class="row-total data-number">{{ calculateRowTotal('labor', $index) | currency }}</span>
+            <button type="button" class="btn-remove" (click)="removeRow('labor', $index)">×</button>
+          </div>
+        } @empty {
+          <div class="empty-item-msg">NO HAY SERVICIOS REGISTRADOS EN ESTA COTIZACIÓN.</div>
+        }
+      </div>
+      
+      <div class="section-subtotal">
+        <span>SUBTOTAL MANO DE OBRA:</span>
+        <span class="data-number">{{ laborTotal | currency }}</span>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-header">
+        <h4>📦 SUMINISTROS Y MATERIALES</h4>
+        <button type="button" class="btn-add-industrial" (click)="addRow('material')">
+          <span class="icon">+</span> AÑADIR MATERIAL
+        </button>
+      </div>
+
+
+      <div class="section-subtotal">
+        <span>SUMA TOTAL DE MATERIALES:</span>
+        <span class="data-number">{{ materialTotal | currency }}</span>
+      </div>
+    </section>
+
+    <footer class="quote-summary">
+      <div class="summary-grid">
+        <div class="summary-line">
+          <span>SUMA SUBTOTALES:</span>
+          <span class="data-number">{{ grandTotal | currency }}</span>
+        </div>
+        <div class="summary-line highlight-discount">
+          <span>- DESCUENTO EVALUACIÓN:</span>
+          <span class="data-number">({{ discountValue | currency }})</span>
+        </div>
+        <div class="summary-line final-total">
+          <span>TOTAL A PAGAR:</span>
+          <span class="data-number">{{ finalAmount | currency }}</span>
+        </div>
+      </div>
+      <button type="submit" class="btn-andamio full-width">💾 FINALIZAR Y GENERAR PDF</button>
+    </footer>
+  </form>
+</main>
+  
+</div>

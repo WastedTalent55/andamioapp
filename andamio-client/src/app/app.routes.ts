@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { EvaluationDetailComponent } from './features/evaluations/evaluation-detail/evaluation-detail.component';
 import { EvaluationFormComponent } from './features/evaluations/evaluation-form/evaluation-form.component';
-import { QuoteEditComponent } from './features/quotes/quote-edit/quote-edit.component';
+import { QuoteFormComponent } from './features/quotes/quote-form/quote-form.component';
 import { QuoteListComponent } from './features/quotes/quote-list/quote-list.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component'; 
 import { ProjectBoardComponent } from './features/board/project-board/project-board.component'; 
@@ -32,7 +32,8 @@ export const routes: Routes = [
     { path: 'evaluations/:id/details', component: EvaluationDetailComponent },
     
     // 5. Fase de Cotización y Versionamiento
-    { path: 'evaluations/:evaluationId/create-quote', component: QuoteEditComponent },
+    { path: 'evaluations/:evaluationId/create-quote', component: QuoteFormComponent },
+    { path: 'quotes/new', component: QuoteFormComponent },
     { path: 'quotes', component: QuoteListComponent },
     
     // 6. Fase de Ejecución y Rentabilidad (El trabajo ya agendado)

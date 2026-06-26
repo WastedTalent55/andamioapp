@@ -4,7 +4,6 @@
   margin: 0 auto;
 }
 
-/* --- HEADER Y ACCIONES --- */
 header {
   margin-bottom: 2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -18,7 +17,6 @@ header {
   margin-bottom: 1.25rem;
 }
 
-/* Botones del Header */
 .btn-header {
   font-family: var(--font-main);
   font-weight: 700;
@@ -47,7 +45,6 @@ header {
   color: var(--andamio-obsidiana);
 }
 
-/* --- INFORMACIÓN DE TRAZABILIDAD --- */
 .project-info {
   background-color: rgba(30, 41, 59, 0.5);
   padding: 12px 16px;
@@ -62,7 +59,6 @@ header {
   font-size: 0.75rem;
 }
 
-/* --- EL LIENZO --- */
 .paper-effect {
   position: relative;
   background-color: var(--andamio-gris-oscuro);

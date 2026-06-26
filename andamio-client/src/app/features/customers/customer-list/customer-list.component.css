@@ -4,7 +4,6 @@
   background-color: var(--andamio-obsidiana);
 }
 
-/* Herramientas Superiores */
 .tools-header {
   display: flex;
   justify-content: space-between;
@@ -33,19 +32,17 @@
 }
 
 .search-input:focus {
-  border-color: var(--andamio-cian); /* Traceability Blue */
+  border-color: var(--andamio-cian); 
   outline: none;
   box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
 }
 
-/* Grid de Tarjetas */
 .client-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 25px;
 }
 
-/* La Tarjeta "Andamio" */
 .client-card {
   background-color: var(--andamio-gris-oscuro);
   border-radius: 4px;
@@ -63,7 +60,7 @@
 
 .card-status-bar {
   width: 6px;
-  background-color: var(--andamio-amarillo); /* Safety Yellow */
+  background-color: var(--andamio-amarillo); 
 }
 
 .card-body {
@@ -75,7 +72,7 @@
 }
 
 .client-name {
-  font-weight: 800; /* Inter Extra Bold */
+  font-weight: 800; 
   color: var(--andamio-gris-claro);
   margin-bottom: 8px;
   text-transform: uppercase;
@@ -93,7 +90,6 @@
   line-height: 1.4;
 }
 
-/* Botones de Acción Internos */
 .card-actions {
   margin-top: 1.5rem;
   display: grid;

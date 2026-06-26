@@ -2,18 +2,20 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomerService } from '../../../core/services/customer.service';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-customer-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink], 
+  imports: [CommonModule, ReactiveFormsModule], 
   templateUrl: './customer-form.component.html',
   styleUrl: './customer-form.component.css'
 })
 export class CustomerFormComponent {
   constructor(private router: Router ) {}
 
+  private location = inject(Location);
   private fb = inject(FormBuilder);
   private customerService = inject(CustomerService);
 
@@ -25,26 +27,22 @@ export class CustomerFormComponent {
   });
 
   closeForm() {
-    this.router.navigate(['/dashboard']);
+    this.location.back();
   }
 
   onSubmit() {
   if (this.customerForm.valid) {
-    // 1. Llamada al servicio para persistir en MySQL
     this.customerService.createCustomer(this.customerForm.value).subscribe({
       next: (response) => {
-        // 2. Invitación estratégica (Tecnología Honesta)
+        // Invitación estratégica 
         const confirmEval = confirm("✅ Cliente guardado con éxito.\n\n¿Deseas agendar la cita de evaluación ahora mismo?");
 
         if (confirmEval) {
-          // Navegamos al siguiente paso del flujo operativo [1]
-          // Pasamos el ID del cliente para que el siguiente form ya sepa de quién se trata
           this.router.navigate(['/evaluations/new'], { 
             queryParams: { clientId: response.id } 
           });
         } else {
-          // Si no, regresamos al Centro de Mando (Dashboard)
-          this.router.navigate(['/dashboard']);
+          this.location.back();
         }
       },
       error: (err) => {

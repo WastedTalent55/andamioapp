@@ -1,12 +1,12 @@
 <div class="kanban-container">
   <header class="board-header">
-    <h2>🛠️ Tablero de Operaciones</h2>
+    <h2>Tablero de Operaciones</h2>
     <button class="btn-andamio" routerLink="/evaluations/new">+ Nueva Evaluación</button>
   </header>
 
   <div class="kanban-board">
     
-    <!-- COLUMNA 1: EVALUACIONES (Fase de Captura) -->
+    <!-- COLUMNA 1: EVALUACIONES -->
     <div class="kanban-column">
       <div class="column-header">
         📋 EVALUACIONES 
@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <!-- COLUMNA 2: EN COTIZACIÓN (Fase de Estructura) -->
+    <!-- COLUMNA 2: EN COTIZACIÓN -->
     <div class="kanban-column">
       <div class="column-header">
         🚀 EN COTIZACIÓN 
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <!-- COLUMNA 3: TRABAJOS AGENDADOS (Fase de Ejecución) -->
+    <!-- COLUMNA 3: TRABAJOS AGENDADOS -->
     <div class="kanban-column">
       <div class="column-header">
         ⚡ PROYECTOS ACTIVOS 
@@ -66,7 +66,6 @@
           <div class="kanban-card active-border">
             <div class="card-tag project">En Ejecución</div>
             <h3>{{ project.customer_name }}</h3>
-            <!-- Aquí el sistema ya muestra el anticipo calculado del 50% [5, 6] -->
             <p class="financials">Anticipo: <strong>{{ (project.total_amount / 2) | currency }}</strong></p>
             <div class="card-footer">
               <button [routerLink]="['/projects', project.quote_id, 'execution']" class="btn-action success">
@@ -80,7 +79,7 @@
       </div>
     </div>
 
-    <!-- COLUMNA 4: FINALIZADOS (Fase de Rentabilidad) -->
+    <!-- COLUMNA 4: FINALIZADOS -->
     <div class="kanban-column">
       <div class="column-header">
         ✅ FINALIZADOS 

@@ -1,19 +1,19 @@
 .andamio-sidebar {
   width: 260px;
   height: 100vh;
-  background-color: var(--andamio-obsidiana); /* Chasis sólido [7] */
+  background-color: var(--andamio-obsidiana); 
   border-right: 1px solid var(--andamio-gris-oscuro);
   display: flex;
   flex-direction: column;
   padding: 2.5rem 1.5rem;
-  position: fixed; /* Fijo para navegación persistente */
+  position: fixed; 
   left: 0;
   top: 0;
 }
 
 .brand h2 {
   font-family: var(--font-main);
-  font-weight: 800; /* Inter Extra Bold [13] */
+  font-weight: 800; 
   color: var(--andamio-gris-claro);
   letter-spacing: 2px;
 }
@@ -35,7 +35,6 @@
   transition: all 0.3s ease;
 }
 
-/* Estado Activo: Safety Yellow para visibilidad técnica [7] */
 .nav-links li a.active {
   background-color: var(--andamio-gris-oscuro);
   color: var(--andamio-amarillo);
@@ -43,7 +42,7 @@
 }
 
 .tenant-tag {
-  font-family: var(--font-data); /* JetBrains Mono para datos [13] */
+  font-family: var(--font-data);
   font-size: 0.75rem;
   color: var(--andamio-gris-medio);
 }
