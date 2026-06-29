@@ -37,7 +37,7 @@
         @for (item of laborItems.controls; track $index) {
           <div [formGroupName]="$index" class="grid-row item-row">
             <input formControlName="description" placeholder="Ej: Pintura de cocina" class="input-desc">
-            <input type="number" formControlName="price" class="data-number input-num" placeholder="0.00">
+            <input type="number" formControlName="unit_price" class="data-number input-num" placeholder="0.00">
             <input type="number" formControlName="quantity" class="data-number input-num" placeholder="1">
             <input formControlName="unit" placeholder="Servicio" class="input-unit">
             <span class="row-total data-number">{{ calculateRowTotal('labor', $index) | currency }}</span>
@@ -62,10 +62,45 @@
         </button>
       </div>
 
+      <div class="table-header grid-row">
+        <span>NOMBRE DEL MATERIAL</span>
+        <span>P. UNITARIO</span>
+        <span>CANT.</span>
+        <span>UNID.</span>
+        <span>TOTAL</span>
+      </div>
+
+      <div formArrayName="materialItems" class="items-list">
+  @for (item of materialItems.controls; track $index) {
+    <div [formGroupName]="$index" class="grid-row item-row">
+      <input formControlName="description" placeholder="Ej: Sellador Alkafin" class="input-desc">
+      <input type="number" formControlName="unit_price" class="data-number input-num" placeholder="0.00">
+      <input type="number" formControlName="quantity" class="data-number input-num" placeholder="1">
+      <input formControlName="unit" placeholder="Lt" class="input-unit">
+      <span class="row-total data-number">{{ calculateRowTotal('material', $index) | currency }}</span>
+      <button type="button" class="btn-remove" (click)="removeRow('material', $index)">×</button>
+    </div>
+  } @empty {
+    <div class="empty-item-msg">AÑADE MATERIALES PARA CALCULAR LA UTILIDAD REAL.</div>
+  }
+</div>
 
       <div class="section-subtotal">
         <span>SUMA TOTAL DE MATERIALES:</span>
         <span class="data-number">{{ materialTotal | currency }}</span>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="delivery-container">
+            
+        <label>Días estimados de entrega</label>
+            
+        <input
+            type="number"
+            min="1"
+            formControlName="delivery_time"
+            placeholder="3">  
       </div>
     </section>
 
@@ -77,7 +112,7 @@
         </div>
         <div class="summary-line highlight-discount">
           <span>- DESCUENTO EVALUACIÓN:</span>
-          <span class="data-number">({{ discountValue | currency }})</span>
+          <span class="data-number">({{ evaluation_discount | currency }})</span>
         </div>
         <div class="summary-line final-total">
           <span>TOTAL A PAGAR:</span>

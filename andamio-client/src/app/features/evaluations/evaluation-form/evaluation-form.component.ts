@@ -50,7 +50,7 @@ export class EvaluationFormComponent implements OnInit {
       this.evaluationService.createEvaluation(this.evaluationForm.value).subscribe({
         next: (res) => {
           alert('✅ Visita técnica agendada con éxito');
-          this.location.back();
+          this.router.navigate(['/board']);
         },
         error: (err) => console.error('Error al agendar visita técnica', err)
       });

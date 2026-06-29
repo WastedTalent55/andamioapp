@@ -3,7 +3,7 @@ export interface Quote {
   evaluation_id: number;
   customer_id: number;
   version_number: number;
-  delivery_time: string; 
+  delivery_time: number; 
   status: 'borrador' | 'enviada' | 'aceptada' | 'rechazada';
   evaluation_discount: number; 
   total_amount: number;

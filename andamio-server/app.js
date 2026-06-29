@@ -33,7 +33,7 @@ app.get('/api/customers', (req, res) => {
             c.last_name, 
             c.phone, 
             ca.id AS address_id,
-            ca.full_address AS address -- Aquí creamos el rubro 'address' que Angular espera
+            ca.full_address AS address 
         FROM customers c
         LEFT JOIN customer_addresses ca ON c.id = ca.customer_id AND ca.is_primary = 1
         ORDER BY c.first_name ASC`;
@@ -189,24 +189,65 @@ app.get('/api/evaluations/:id', (req, res) => {
 // RUTAS PARA COTIZACIONES (QUOTES)
 // ==========================================
 app.post('/api/quotes', (req, res) => {
-    const { evaluation_id, customer_id, delivery_time } = req.body;
+    const { 
+        evaluation_id, 
+        customer_id, 
+        delivery_time, 
+        total_amount, 
+        version_number, 
+        items,
+        evaluation_discount
+    } = req.body;
 
-    const getEvalCost = "SELECT evaluation_cost FROM evaluations WHERE id = ?";
-    
-    db.query(getEvalCost, [evaluation_id], (err, results) => {
+    const quoteQuery = `
+        INSERT INTO quotes (evaluation_id, customer_id, delivery_time, evaluation_discount, total_amount, version_number, status)
+        VALUES (?, ?, ?, ?, ?, ?, 'borrador')`;
+    db.query(quoteQuery, [evaluation_id, customer_id, delivery_time, evaluation_discount, total_amount, version_number || 1], (err, result) => {
         if (err) return res.status(500).json({ success: false, error: err });
         
-        const discount = results?.evaluation_cost || 0;
-        const query = `
-            INSERT INTO quotes (evaluation_id, customer_id, delivery_time, evaluation_discount, status)
-            VALUES (?, ?, ?, ?, 'borrador')`;
+        const quoteId = result.insertId;
+        
+        if (items && items.length > 0) {
+            const itemQuery = `
+                INSERT INTO quote_items (quote_id, type, description, unit_price, quantity, unit, total_price)
+                VALUES ?`;
+                
+            const itemValues = items.map(item => [
+                quoteId, 
+                item.type, 
+                item.description, 
+                item.unit_price, 
+                item.quantity, 
+                item.unit, 
+                item.total_price
+            ]);
 
-        db.query(query, [evaluation_id, customer_id, delivery_time || '2 DIAS', discount], (err, result) => {
-            if (err) return res.status(500).json({ success: false, error: err });
-            res.json({ success: true, quoteId: result.insertId, applied_discount: discount });
+                db.query(itemQuery, [itemValues], (err) => {
+                    if (err) return res.status(500).json({ success: false, error: err });
+                    res.json({ success: true, quoteId });
+                });
+            } else {
+                res.json({ success: true, quoteId });
+            }
         });
-    });
 });
+
+
+app.get('/api/quotes', (req, res) => {
+    const query = `
+        SELECT q.*, CONCAT(c.first_name, ' ', c.last_name) as customer_name 
+        FROM quotes q
+        JOIN customers c ON q.customer_id = c.id
+        ORDER BY q.id DESC`;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error al obtener cotizaciones:', err);
+            return res.status(500).json({ success: false, error: err });
+        }
+        res.json({ success: true, data: results });
+    });
+});    
 
 app.post('/api/quotes/items', (req, res) => {
     const { quote_id, type, description, unit_price, quantity, unit } = req.body;
@@ -225,53 +266,34 @@ app.post('/api/quotes/items', (req, res) => {
 app.get('/api/quotes/:id', (req, res) => {
     const { id } = req.params;
     const quoteQuery = "SELECT * FROM quotes WHERE id = ?";
-    const itemsQuery = "SELECT * FROM quote_items WHERE quote_version_id = ?";
+    const itemsQuery = "SELECT * FROM quote_items WHERE quote_id = ?";
 
-    db.query(quoteQuery, [id], (err, quote) => {
-        if (err) return res.status(500).json({ success: false });
+    db.query(quoteQuery, [id], (err, results) => {
+        if (err || results.length === 0) return res.status(404).json({ success: false });
         
         db.query(itemsQuery, [id], (err, items) => {
             if (err) return res.status(500).json({ success: false });
-            res.json({ success: true, quote: quote, items: items });
+            res.json({ success: true, data: { ...results, items: items } }); 
         });
     });
 });
 
 app.get('/api/quotes/evaluation/:evaluationId', (req, res) => {
     const { evaluationId } = req.params;
-
-    // Usamos LEFT JOIN para que si no hay versión aún, NO se borren los requirements
     const query = `
-        SELECT q.id as quote_id, v.id as version_id, e.requirements, q.status
+        SELECT q.id as quote_id, e.requirements, q.status, q.total_amount, q.evaluation_discount
         FROM evaluations e
         LEFT JOIN quotes q ON q.evaluation_id = e.id
-        LEFT JOIN quote_versions v ON v.quote_id = q.id
-        WHERE e.id = ? 
-        ORDER BY v.version_number DESC LIMIT 1`;
+        WHERE e.id = ?
+        ORDER BY q.id DESC LIMIT 1`; 
 
     db.query(query, [evaluationId], (err, results) => {
-        if (err) return res.status(500).json({ success: false, error: err.message });
+        if (err || results.length === 0) return res.json({ success: true, data: { items: [] } });
         
-        // AQUÍ EL ÍNDICE  YA NO TE DARÁ ERROR
-        // Porque el LEFT JOIN garantiza que al menos vengan los requirements de la evaluación
-        const data = results; 
-
-        if (!data || !data.version_id) {
-            // Si hay notas pero no hay cotización, enviamos solo las notas
-            return res.json({ success: true, data: { requirements: data?.requirements || '', items: [] } });
-        }
-
-        const itemsQuery = "SELECT * FROM quote_items WHERE quote_version_id = ?";
-        db.query(itemsQuery, [data.version_id], (err, items) => {
-            if (err) return res.status(500).json({ success: false });
-            
-            res.json({
-                success: true,
-                data: {
-                    ...data,
-                    items: items // Aquí deben aparecer la "Pintura Real Flex" y el "Sellador Alkafin" [3, 4]
-                }
-            });
+        const quoteData = results[0];
+        const itemsQuery = "SELECT * FROM quote_items WHERE quote_id = ?";
+        db.query(itemsQuery, [quoteData.quote_id], (err, items) => {
+            res.json({ success: true, data: { ...quoteData, items: items } });
         });
     });
 });
@@ -284,6 +306,7 @@ app.get('/api/board/summary', (req, res) => {
         SELECT 
             e.id as eval_id, 
             e.scheduled_date as eval_date, 
+            c.phone,
             e.requirements,
             CONCAT(c.first_name, ' ', IFNULL(c.last_name, '')) as customer_name, 
             ca.full_address as customer_address,
