@@ -278,6 +278,54 @@ app.get('/api/quotes/:id', (req, res) => {
     });
 });
 
+app.put('/api/quotes/:id', (req, res) => {
+    const { id } = req.params;
+    const { delivery_time, total_amount, items, evaluation_discount } = req.body;
+
+    const updateQuoteQuery = "UPDATE quotes SET delivery_time = ?, evaluation_discount = ?, total_amount = ? WHERE id = ?";
+    
+    db.query(updateQuoteQuery, [delivery_time, evaluation_discount, total_amount, id], (err) => {
+        if (err) {
+            console.error('❌ Error al actualizar tabla quotes:', err);
+            return res.status(500).json({ success: false, error: err });
+        }
+
+        const deleteItemsQuery = "DELETE FROM quote_items WHERE quote_id = ?";
+        db.query(deleteItemsQuery, [id], (err) => {
+            if (err) {
+                console.error('❌ Error al refrescar ítems:', err);
+                return res.status(500).json({ success: false, error: err });
+            }
+
+            if (items && items.length > 0) {
+                const itemQuery = `
+                    INSERT INTO quote_items (quote_id, type, description, unit_price, quantity, unit, total_price)
+                    VALUES ?`;
+                
+                const itemValues = items.map(item => [
+                    id,
+                    item.type,
+                    item.description,
+                    item.unit_price,
+                    item.quantity,
+                    item.unit,
+                    item.total_price
+                ]);
+
+                db.query(itemQuery, [itemValues], (err) => {
+                    if (err) {
+                        console.error('❌ Error al insertar nuevos ítems:', err);
+                        return res.status(500).json({ success: false, error: err });
+                    }
+                    res.json({ success: true, message: '✅ Cotización e ítems actualizados con éxito' });
+                });
+            } else {
+                res.json({ success: true, message: '✅ Cotización actualizada (sin ítems nuevos)' });
+            }
+        });
+    });
+});
+
 app.get('/api/quotes/evaluation/:evaluationId', (req, res) => {
     const { evaluationId } = req.params;
     const query = `

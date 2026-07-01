@@ -7,7 +7,7 @@
   <main class="quote-main-container">
   <header class="quote-header">
     <div class="title-group">
-      <h2>🚀 GENERAR COTIZACIÓN</h2>
+      <h2>{{ isEditMode ? '🛠️ EDITAR COTIZACIÓN' : '🚀 GENERAR COTIZACIÓN' }}</h2>
       <p class="subtitle">ESTABLECIENDO INFRAESTRUCTURA DE COSTOS</p>
     </div>
     <button type="button" class="btn-close-quote" (click)="closeForm()" title="Cerrar y volver">
@@ -119,7 +119,14 @@
           <span class="data-number">{{ finalAmount | currency }}</span>
         </div>
       </div>
-      <button type="submit" class="btn-andamio full-width">💾 FINALIZAR Y GENERAR PDF</button>
+      <button type="button" (click)="onSubmit()" class="btn-andamio full-width">
+        {{ isEditMode ? 'GUARDAR CAMBIOS' : 'FINALIZAR COTIZACIÓN' }}
+      </button>
+      <button type="button" *ngIf="isEditMode" 
+              class="btn-secondary" 
+              style="background-color: var(--andamio-cian); color: var(--andamio-obsidiana);">
+        DESCARGAR PDF
+      </button>
     </footer>
   </form>
 </main>
