@@ -1,0 +1,104 @@
+.welcome-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  background-color: var(--andamio-obsidiana); 
+  overflow: hidden;
+}
+
+/* PANEL IZQUIERDO */
+.brand-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+}
+
+/* EL LOGO */
+.logo-wrapper {
+  position: absolute;
+  left: 50vw; 
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  max-width: 900px;
+  /* Animación: Se desplaza al centro del panel izquierdo y se encoge */
+  animation: logoToSplit 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+  animation-delay: 5s; 
+}
+
+@keyframes logoToSplit {
+  to { 
+    left: 25vw; 
+    width: 35vw; 
+  }
+}
+
+/* PANEL DERECHO */
+.action-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  transform: translateX(50px);
+  animation: panelReveal 1s ease-out forwards;
+  animation-delay: 5.5s;
+}
+
+@keyframes panelReveal {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ANIMACIONES DEL LOGO */
+.symbol-group {
+  transform: translate(135px, 15px); /* Centrado dentro del SVG */
+  animation: moveToLeft 0.8s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+  animation-delay: 2.8s;
+}
+
+@keyframes moveToLeft {
+  to { transform: translate(15px, 15px); }
+}
+
+.line-draw {
+  stroke-dasharray: 150;
+  stroke-dashoffset: 150;
+  animation: drawing 1.5s ease-out forwards;
+}
+@keyframes drawing { to { stroke-dashoffset: 0; } }
+
+.text-fade {
+  opacity: 0;
+  font-family: 'Archivo', sans-serif;
+  font-weight: 900;
+  animation: fadeInText 0.8s ease-out forwards;
+  animation-delay: 3.8s;
+}
+@keyframes fadeInText { to { opacity: 1; } }
+
+/* ESTILO DE BOTONES Y CONTENIDO */
+.auth-box {
+  max-width: 350px;
+  width: 90%;
+}
+
+.auth-box h1 {
+  font-size: 2.5rem;
+  color: var(--andamio-amarillo);
+  margin-bottom: 0.5rem;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 2rem;
+}
+
+.remache { opacity: 0; animation: popIn 0.4s forwards; animation-delay: 1.8s; }
+@keyframes popIn { to { opacity: 1; transform: scale(1); } }

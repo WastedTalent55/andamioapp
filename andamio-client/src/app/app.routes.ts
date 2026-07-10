@@ -8,10 +8,16 @@ import { ProjectBoardComponent } from './features/board/project-board/project-bo
 import { ProjectExecutionComponent } from './features/projects/project-execution/project-execution.component';
 import { CustomerFormComponent } from './features/customers/customer-form/customer-form.component';
 import { CustomerListComponent } from './features/customers/customer-list/customer-list.component';
+import { WelcomeComponent } from './features/auth/welcome/welcome.component';
+import { LoginComponent } from './features/auth/login/login.component';
+import { RegisterComponent } from './features/auth/register/register.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-    
+    // 0. Flujo de Bienvenida y Acceso
+    { path: '', component: WelcomeComponent },
+    { path: 'login', component: LoginComponent },
+    { path: 'register', component: RegisterComponent },
+
     // 1. Centro de Mando y Métricas
     { path: 'dashboard', component: DashboardComponent }, 
 
