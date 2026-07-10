@@ -5,6 +5,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EvaluationService } from '../../../core/services/evaluation.service'; 
 import { QuoteService } from '../../../core/services/quote.service'; 
 import { Location } from '@angular/common';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-quote-form',
@@ -81,11 +83,11 @@ export class QuoteFormComponent implements OnInit {
     this.quoteService.getQuoteByEvaluationId(this.evaluationId).subscribe((res: any) => {
       const quote = res.data ? res.data : res;
     
-      if (quote && quote.items) {
+      if (quote && quote.quote_id) {
         this.laborItems.clear();
         this.materialItems.clear();
         this.isEditMode = true; 
-        this.quoteId = quote.id || quote.quote_id;
+        this.quoteId = quote.quote_id;
 
         quote.items.forEach((item: any) => {
           const group = this.fb.group({
@@ -104,12 +106,13 @@ export class QuoteFormComponent implements OnInit {
         });
 
         this.quoteForm.patchValue({
-          delivery_time: quote.delivery_time || '2 DIAS',
+          delivery_time: parseInt(quote.delivery_time),
           evaluation_discount: quote.evaluation_discount > 0 ? quote.evaluation_discount : this.evaluation_discount,
           total_amount: quote.total_amount
         });
       } else {
         this.isEditMode = false;
+        this.quoteId = undefined;
       }
     });
   }
@@ -143,7 +146,7 @@ export class QuoteFormComponent implements OnInit {
 
   onSubmit() {
     if (this.quoteForm.invalid) {
-      alert('❌ Por favor, completa todos los campos técnicos antes de finalizar.');
+      alert('❌ Por favor, completa todos los campos antes de finalizar.');
       return;
     }
 
@@ -179,14 +182,14 @@ export class QuoteFormComponent implements OnInit {
         error: () => alert('❌ Error al actualizar en MySQL')
       });
     } else {
-      this.quoteService.createQuote(finalData).subscribe({
+        this.quoteService.createQuote(finalData).subscribe({
         next: () => {
-          alert('✅ COTIZACIÓN CREADA');
+          alert('✅ ¡COTIZACIÓN FINALIZADA Y GUARDADA!');
           this.router.navigate(['/board']);
         },
-        error: (err) => alert('❌ Error al crear la cotización')
+        error: () => alert('❌ Error al crear la cotización')
       });
-    }
+    }              
   }
 
   updateTotals(): void {
@@ -204,6 +207,75 @@ export class QuoteFormComponent implements OnInit {
     grandTotal: this.grandTotal,
     finalAmount: this.finalAmount
   }, { emitEvent: false }); 
-}
+  }
   
+  generatePDF() {
+    const doc = new jsPDF();
+    const formValues = this.quoteForm.getRawValue();
+  
+    // 1. COLORES Y ESTILO
+    const cianAndamio: [number, number, number] = [34, 211, 238]; // --andamio-cian
+    const obsidiana: [number, number, number] = [15, 23,42];     // --andamio-obsidiana
+
+    // 2. ENCABEZADO
+    doc.setFontSize(22);
+    doc.setTextColor(...obsidiana);
+    doc.text('HANDY QUEER', 14, 20); // Aquí irá tu logo después
+  
+    doc.setFontSize(10);
+    doc.text(`CLIENTX: ${this.evaluationNotes}`, 14, 30); // Usamos las notas o nombre del cliente
+    doc.text(`FECHA: ${new Date().toLocaleDateString()}`, 160, 30);
+
+    // 3. TABLAS DE ÍTEMS (Mano de Obra y Materiales)
+    const laborRows = this.laborItems.value.map((item: any) => [
+      item.description, 
+      `$${(+item.unit_price).toFixed(2)}`, 
+      item.quantity, 
+      item.unit, 
+      `$${(+item.unit_price * +item.quantity).toFixed(2)}`
+    ]);
+
+    const materialRows = this.materialItems.value.map((item: any) => [
+      item.description, 
+      `$${(+item.unit_price).toFixed(2)}`, 
+      item.quantity, 
+      item.unit, 
+      `$${(+item.unit_price * +item.quantity).toFixed(2)}`
+    ]);
+
+    // Dibujar tabla de Mano de Obra
+    autoTable(doc, {
+      startY: 40,
+      head: [['MANO DE OBRA', 'PRECIO UNITARIO', 'CANTIDAD', 'UNIDAD', 'PRECIO TOTAL']],
+      body: laborRows,
+      headStyles: { fillColor: cianAndamio }
+    });
+
+    // Dibujar tabla de Materiales
+    autoTable(doc, {
+      startY: (doc as any).lastAutoTable.finalY + 10,
+      head: [['MATERIALES', 'PRECIO UNITARIO', 'CANTIDAD', 'UNIDAD', 'PRECIO TOTAL']],
+      body: materialRows,
+      headStyles: { fillColor: obsidiana }
+    });
+
+    // 4. RESUMEN FINANCIERO
+    const finalY = (doc as any).lastAutoTable.finalY + 10;
+    doc.setFontSize(12);
+    doc.text(`SUMA TOTAL: $${this.grandTotal.toFixed(2)}`, 140, finalY);
+    doc.text(`- COTIZACIÓN EVALUACIÓN: $${this.evaluation_discount.toFixed(2)}`, 140, finalY + 7);
+  
+    doc.setFontSize(14);
+    doc.setTextColor(...cianAndamio);
+    doc.text(`TOTAL FINAL: $${this.finalAmount.toFixed(2)}`, 140, finalY + 15);
+
+    // 5. ANTICIPO Y FINIQUITO
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.text(`ANTICIPO (50%): $${(this.finalAmount / 2).toFixed(2)}`, 140, finalY + 25);
+    doc.text(`FINIQUITO VS ENTREGA: $${(this.finalAmount / 2).toFixed(2)}`, 140, finalY + 32);
+
+    // Guardar el PDF
+    doc.save(`Cotizacion_Andamio_${this.evaluationId}.pdf`);
+  }
 }

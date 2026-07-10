@@ -34,7 +34,6 @@ export class CustomerFormComponent {
   if (this.customerForm.valid) {
     this.customerService.createCustomer(this.customerForm.value).subscribe({
       next: (response) => {
-        // Invitación estratégica 
         const confirmEval = confirm("✅ Cliente guardado con éxito.\n\n¿Deseas agendar la cita de evaluación ahora mismo?");
 
         if (confirmEval) {

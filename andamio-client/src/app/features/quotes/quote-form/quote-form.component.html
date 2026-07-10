@@ -123,8 +123,8 @@
         {{ isEditMode ? 'GUARDAR CAMBIOS' : 'FINALIZAR COTIZACIÓN' }}
       </button>
       <button type="button" *ngIf="isEditMode" 
-              class="btn-secondary" 
-              style="background-color: var(--andamio-cian); color: var(--andamio-obsidiana);">
+              (click)="generatePDF()" 
+              class="btn-andamio">
         DESCARGAR PDF
       </button>
     </footer>
