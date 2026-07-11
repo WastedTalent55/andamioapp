@@ -1,25 +1,29 @@
 <div class="welcome-container">
-  <!-- PANEL IZQUIERDO -->
+  <!-- PANEL IZQUIERDO: Marca (Inicia ocupando todo el ancho) -->
   <div class="brand-panel">
     <div class="logo-wrapper">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" class="logo-svg">
-        <g class="symbol-group">
-          <line class="line-draw" x1="25" y1="5" x2="5" y2="45" stroke="#FFB800" stroke-width="5" stroke-linecap="square"/>
-          <line class="line-draw" x1="25" y1="5" x2="45" y2="45" stroke="#FFB800" stroke-width="5" stroke-linecap="square"/>
-          <line class="line-draw line-delay" x1="2" y1="32" x2="48" y2="32" stroke="#FFB800" stroke-width="5" stroke-linecap="square"/>
-          <circle class="remache" cx="14" cy="27" r="2.5" fill="#0A0A0A"/>
-          <circle class="remache" cx="36" cy="27" r="2.5" fill="#0A0A0A"/>
+        <!-- Grupo de Compensación: Centra el conjunto total -->
+        <g class="full-logo-group">
+          <!-- Símbolo 'A': Inicia al centro visual -->
+          <g class="symbol-group">
+            <line class="line-draw" x1="25" y1="5" x2="5" y2="45" stroke="#FFB800" stroke-width="5" stroke-linecap="square"/>
+            <line class="line-draw" x1="25" y1="5" x2="45" y2="45" stroke="#FFB800" stroke-width="5" stroke-linecap="square"/>
+            <line class="line-draw line-delay" x1="2" y1="32" x2="48" y2="32" stroke="#FFB800" stroke-width="5" stroke-linecap="square"/>
+            <circle class="remache" cx="14" cy="27" r="2.5" fill="#0A0A0A"/>
+            <circle class="remache" cx="36" cy="27" r="2.5" fill="#0A0A0A"/>
+          </g>
+          <text class="text-fade" x="80" y="52" fill="#FAFAFA">NDAMIO</text>
         </g>
-        <text class="text-fade" x="80" y="52" fill="#FAFAFA">NDAMIO</text>
       </svg>
     </div>
   </div>
 
-  <!-- PANEL DERECHO -->
+  <!-- PANEL DERECHO: Acciones (Inicia sin ancho) -->
   <div class="action-panel">
-    <div class="auth-box">
+    <div class="auth-content">
       <h1>BIENVENIDO</h1>
-      <p>Infraestructura digital para el trabajo independiente.</p>
+      <p>Infraestructura operativa para tu proyecto.</p>
       <div class="button-group">
         <button class="btn-andamio" (click)="goToLogin()">INICIAR SESIÓN</button>
         <button class="btn-outline" (click)="goToRegister()">CREAR CUENTA</button>

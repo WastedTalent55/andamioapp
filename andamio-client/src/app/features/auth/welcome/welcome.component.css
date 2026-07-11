@@ -1,104 +1,156 @@
 .welcome-container {
   height: 100vh;
-  width: 100vw;
+  width: 100%; 
   display: flex;
-  background-color: var(--andamio-obsidiana); 
+  background-color: var(--andamio-obsidiana);
   overflow: hidden;
+  position: relative;
 }
 
 /* PANEL IZQUIERDO */
 .brand-panel {
-  flex: 1;
+  flex: 1 0 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  z-index: 10;
+  transition: flex-basis 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+  animation: shrinkToSplit 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+  animation-delay: 6s;
 }
 
-/* EL LOGO */
-.logo-wrapper {
-  position: absolute;
-  left: 50vw; 
-  top: 50vh;
-  transform: translate(-50%, -50%);
-  width: 80vw;
-  max-width: 900px;
-  /* Animación: Se desplaza al centro del panel izquierdo y se encoge */
-  animation: logoToSplit 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
-  animation-delay: 5s; 
-}
-
-@keyframes logoToSplit {
-  to { 
-    left: 25vw; 
-    width: 35vw; 
-  }
+@keyframes shrinkToSplit {
+  to { flex-basis: 50%; } 
 }
 
 /* PANEL DERECHO */
 .action-panel {
-  flex: 1;
+  flex: 0 0 0%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(255, 255, 255, 0.01);
   border-left: 1px solid rgba(255, 255, 255, 0.05);
-  opacity: 0;
-  transform: translateX(50px);
-  animation: panelReveal 1s ease-out forwards;
-  animation-delay: 5.5s;
+  overflow: hidden;
+  animation: growActionPanel 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+  animation-delay: 6s;
 }
 
-@keyframes panelReveal {
-  to { opacity: 1; transform: translateX(0); }
+@keyframes growActionPanel {
+  to { flex-basis: 50%; } /* El derecho toma el 45% */
 }
 
-/* ANIMACIONES DEL LOGO */
+/* EL LOGO: Siempre ocupa el 80% de su panel disponible */
+.logo-wrapper {
+  width: 80%; 
+  max-width: 1000px;
+  display: flex;
+  justify-content: center;
+}
+
+.logo-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* FASE 1: Centrar la 'A' sola (x=135 es el centro de un SVG de 320) */
 .symbol-group {
-  transform: translate(135px, 15px); /* Centrado dentro del SVG */
-  animation: moveToLeft 0.8s cubic-bezier(0.85, 0, 0.15, 1) forwards;
-  animation-delay: 2.8s;
+  transform: translateX(135px); 
+  animation: moveSymbolLeft 0.8s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+  animation-delay: 3s; 
 }
 
-@keyframes moveToLeft {
-  to { transform: translate(15px, 15px); }
+@keyframes moveSymbolLeft {
+  to { transform: translateX(30px); } 
 }
 
+/* FASE 2: Compensar el logo completo (A + NDAMIO) para que esté centrado */
+.full-logo-group {
+  /* Al inicio compensamos para que la A parezca el centro del mundo */
+  transform: translateX(0px); 
+  animation: balanceFullLogo 0.8s cubic-bezier(0.10, 0, 0.15, 1) forwards;
+  animation-delay: 3s;
+}
+
+@keyframes balanceFullLogo {
+  /* Ajuste para que la palabra completa quede centrada en el eje de la pantalla */
+  to { transform: translateX(60px); } 
+}
+
+/* ANIMACIONES TÉCNICAS (Líneas y Texto) */
 .line-draw {
   stroke-dasharray: 150;
   stroke-dashoffset: 150;
-  animation: drawing 1.5s ease-out forwards;
+  animation: drawLine 1.5s ease-out forwards;
 }
-@keyframes drawing { to { stroke-dashoffset: 0; } }
+@keyframes drawLine { to { stroke-dashoffset: 0; } }
 
 .text-fade {
   opacity: 0;
   font-family: 'Archivo', sans-serif;
   font-weight: 900;
-  animation: fadeInText 0.8s ease-out forwards;
-  animation-delay: 3.8s;
+  animation: fadeIn 0.8s forwards;
+  animation-delay: 3.3s;
 }
-@keyframes fadeInText { to { opacity: 1; } }
+@keyframes fadeIn { to { opacity: 1; } }
 
-/* ESTILO DE BOTONES Y CONTENIDO */
-.auth-box {
-  max-width: 350px;
-  width: 90%;
+/* CONTENIDO DE ACCIÓN */
+.auth-content {
+  padding: 40px;
+  opacity: 0;
+  animation: fadeInContent 0.8s ease-out forwards;
+  animation-delay: 6.5s;
 }
+@keyframes fadeInContent { to { opacity: 1; } }
 
-.auth-box h1 {
-  font-size: 2.5rem;
-  color: var(--andamio-amarillo);
-  margin-bottom: 0.5rem;
+/* AJUSTE PARA TABLETS Y MÓVILES (Layout Vertical) */
+@media (max-width: 1024px) {
+  .welcome-container {
+    flex-direction: column; /* Apila los bloques: Logo arriba, Botones abajo */
+    overflow: hidden;
+  }
+
+  /* PANEL SUPERIOR: De pantalla completa a Cabecera */
+  .brand-panel {
+    width: 100%;
+    flex: 1 0 100%; /* Inicia ocupando toda la altura */
+    transition: flex-basis 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+    animation: shrinkToHeader 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+    animation-delay: 6s; /* Se mueve después de mostrar el logo completo */
+  }
+
+  @keyframes shrinkToHeader {
+    to { flex-basis: 30%; } /* Se convierte en una cabecera del 30% de la altura */
+  }
+
+  /* EL LOGO EN MÓVIL: Se mantiene legible y centrado en la cabecera */
+  .logo-wrapper {
+    width: 85%; /* Un poco más ancho que en desktop para legibilidad */
+    max-width: 500px;
+  }
+
+  /* PANEL INFERIOR: Los botones entran desde abajo */
+  .action-panel {
+    width: 100%;
+    flex: 0 0 0%; /* Inicia invisible */
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.05); /* División técnica horizontal */
+    background-color: rgba(255, 255, 255, 0.01);
+    animation: growActionsMobile 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+    animation-delay: 6s;
+  }
+
+  @keyframes growActionsMobile {
+    to { flex-basis: 70%; opacity: 1; } /* Toma el 70% inferior para los botones */
+  }
+
+  .auth-content {
+    padding: 30px;
+    text-align: center; /* Centramos el mensaje para mejor balance en móvil */
+  }
+
+  .auth-content h1 {
+    font-size: 1.8rem; /* Tamaño optimizado para pantallas pequeñas */
+    margin-bottom: 10px;
+  }
 }
-
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 2rem;
-}
-
-.remache { opacity: 0; animation: popIn 0.4s forwards; animation-delay: 1.8s; }
-@keyframes popIn { to { opacity: 1; transform: scale(1); } }
