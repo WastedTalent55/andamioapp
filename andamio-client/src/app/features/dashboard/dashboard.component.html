@@ -1,31 +1,52 @@
-<div class="dashboard-container">
+<div class="dashboard-header">
+  <h2>Proyectos en Curso</h2>
+     
+  <div class="desktop-menu-wrapper">
+    <button class="btn-dashboard-header">
+      <span>+</span> AGREGAR
+    </button>
+    
+    <div class="desktop-dropdown-menu">
+      <button class="dropdown-item" title="Agregar Fotografia">📷 Foto Obra</button>
+      <button class="dropdown-item" title="Agregar Gasto">💸 Registrar Gasto</button>
+      <button class="dropdown-item" title="Agregar Ingreso">💰 Registrar Ingreso</button>
+      <button class="dropdown-item" title="Agendar Trabajo">🏗️ Nueva Tarea</button>
+      <button class="dropdown-item" title="Nueva Cotización" routerLink="/quotes/new">📝 Cotización</button>
+      <button class="dropdown-item" title="Cita Evaluación" routerLink="/evaluations/new">📅 Cita</button>
+      <button class="dropdown-item" title="Agregar Cliente" routerLink="/customer/new">👤 Cliente</button>
+    </div>
+  </div>
+</div>
+ 
+<div class="dashboard-content">
   <header class="utility-header">
     <div class="kpi-box">
       <span class="label">UTILIDAD REAL (NETA)</span>
       <h1 class="data-number success-text">$45,280.00</h1>
     </div>
   </header>
-
+   
   <div class="widgets-grid">
     <div class="widget">
       <h3>PROYECTOS ACTIVOS</h3>
       <p class="data-number">12</p>
     </div>
-    <div class="widget">
-      <h3>EVALUACIONES PENDIENTES</h3>
-      <p class="data-number warning-text">5</p>
-    </div>
-  </div>
-
-  <div class="fab-container">
-  <div class="fab-menu">
-    <button class="fab-item" title="Agendar Trabajo">🏗️</button>
-    <button class="fab-item" title="Nueva Cotización" routerLink="/quotes/new">📝</button>
-    <button class="fab-item" title="Cita Evaluación" routerLink="/evaluations/new">📅</button>
-    <button class="fab-item" title="Agregar Cliente" routerLink="/customer/new">👤</button>
-  </div>
   
-  <button class="fab-main">
-    <span>+</span>
-  </button>
+    <div class="widget">
+      </div>
+  </div>
+</div>
+
+<div class="fab-container">
+  <button class="fab-main"><span>+</span></button>
+  
+  <div class="fab-menu">
+    <button class="fab-item" title="Foto Obra">📷</button>
+    <button class="fab-item" title="Registrar Gasto">💸</button>
+    <button class="fab-item" title="Registrar Ingreso">💰</button>
+    <button class="fab-item" title="Nueva Tarea">🏗️</button>
+    <button class="fab-item" title="Cotización" routerLink="/quotes/new">📝</button>
+    <button class="fab-item" title="Cita" routerLink="/evaluations/new">📅</button>
+    <button class="fab-item" title="Cliente" routerLink="/customer/new">👤</button>
+  </div>
 </div>

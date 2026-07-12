@@ -1,1 +1,28 @@
-<p>register works!</p>
+<div class="register-container">
+  <div class="auth-card">
+    <div class="logo-mini">
+       <!-- Usamos el isotipo en Oro Activo para identidad digital [1] -->
+       <img src="assets/isotopo.svg" alt="Andamio Logo">
+    </div>
+    
+    <h1>Crea tu Infraestructura</h1>
+    <p>Inicia tu andamio digital y profesionaliza tus proyectos.</p>
+
+    <!-- 1. EL HUECO PARA GOOGLE: Debe estar vacío. 
+         Google pondrá su botón oficial aquí automáticamente [Artifact 5] -->
+    <div id="google-btn" class="google-wrapper"></div>
+
+    <!-- 2. SEPARADOR VISUAL (Opcional pero recomendado) -->
+    <div class="separator">o también</div>
+
+    <!-- 3. BOTÓN DE EMAIL: Este sí es manual y usa tu estilo [2] -->
+    <button class="btn-andamio-outline" (click)="signUpWithEmail()">
+        <img src="assets/mailIcon.svg" alt="mail" width="20">
+        REGISTRARME CON MI CORREO
+    </button>
+
+    <p class="footer-text">
+      ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a>
+    </p>
+  </div>
+</div>

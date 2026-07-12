@@ -1,71 +1,225 @@
-.dashboard-container {
-  background-color: var(--andamio-obsidiana);
-  min-height: 100vh;
-  padding: 2rem;
+/* ==========================================================================
+   ANDAMIO DASHBOARD - ARQUITECTURA LIMPIA Y PREMIUM (COMPORTAMIENTO TOTAL)
+   ========================================================================== */
+
+/* --- ALERTAS SEMÁNTICAS --- */
+.success-text { color: var(--andamio-verde-obra); font-weight: 600; }
+.warning-text { color: var(--andamio-oro-activo); font-weight: 600; }
+
+/* --------------------------------------------------------------------------
+   1. MÓVIL (PANTALLAS VERTICALES < 768px): Botón Flotante e Interacciones
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .fab-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; 
+    gap: 12px;            
+    z-index: 1000;
+  }
+
+  .fab-main {
+    width: 56px;         
+    height: 56px;
+    background-color: var(--andamio-oro-activo);
+    color: #0F172A;
+    border-radius: 16px;
+    border: none;
+    font-size: 1.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(255, 184, 0, 0.25);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .fab-main:hover {
+    transform: scale(1.05);
+    background-color: #FFAE00;
+  }
+
+  .fab-menu {
+    display: flex;
+    flex-direction: row-reverse; 
+    gap: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(20px) scale(0.9);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .fab-container:hover .fab-menu,
+  .fab-container.menu-active .fab-menu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0) scale(1);
+  }
+
+  .fab-item {
+    width: 46px;
+    height: 46px;
+    background-color: var(--andamio-antracita);
+    border: 1px solid var(--andamio-gris-oscuro);
+    color: var(--andamio-tiza);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
+  }
+
+  /* Escondemos el contenedor de escritorio en celular */
+  .desktop-menu-wrapper {
+    display: none;
+  }
+}
+
+/* --- ORDEN ESTRUCTURAL --- */
+.main-layout app-sidebar {
   position: relative;
+  z-index: 90;
+  display: block;
 }
 
-.success-text { color: var(--andamio-verde); }
-.warning-text { color: var(--andamio-amarillo); }
+/* --------------------------------------------------------------------------
+   2. DESKTOP / TABLET HORIZONTAL (> 768px): Menú Desplegable Corregido de Raíz
+   -------------------------------------------------------------------------- */
+@media (min-width: 769px) {
+  
+  /* Desaparece el FAB móvil */
+  .fab-container {
+    display: none !important;
+  }
 
-.fab-container {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  /* El contenedor del encabezado debe dejar respirar a los elementos hijos */
+  .dashboard-header {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-bottom: 50px;
+    /* IMPORTANTE: Evitamos que el encabezado corte lo que se despliegue debajo */
+    position: relative; 
+    overflow: visible !important; 
+  }
+
+  /* Contenedor relativo exacto para el botón y su menú */
+  .desktop-menu-wrapper {
+    position: relative;
+    display: inline-block;
+    overflow: visible !important; /* Asegura que el dropdown no genere scroll interno */
+  }
+
+  /* Botón del Header */
+  .btn-dashboard-header {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--andamio-oro-activo);
+    color: #0F172A;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 24px;
+    border-radius: var(--radius-interactive, 12px);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(255, 184, 0, 0.15);
+    margin-left: var(--spacing-md, 24px);
+  }
+
+  .desktop-menu-wrapper:hover .btn-dashboard-header {
+    background-color: #FFAE00;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 184, 0, 0.25);
+  }
+
+  /* MENÚ DESPLEGABLE CORREGIDO (Alineación perfecta y sin romper el layout) */
+  .desktop-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px); /* Se posiciona milimétricamente abajo del botón */
+    
+    /* CORRECCIÓN DE UBICACIÓN: Se alinea perfectamente al borde derecho del botón, 
+       desplegándose de manera natural hacia la izquierda sin salirse de la pantalla */
+    right: 0; 
+    
+    width: 240px; /* Un poco más ancho para albergar los textos cómodamente */
+    background-color: var(--andamio-antracita);
+    border: 1px solid var(--andamio-gris-oscuro);
+    border-radius: var(--radius-card, 16px);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    
+    /* CORRECCIÓN DE SCROLL: Al ser absolute con z-index alto, flotará por ENCIMA 
+       de la utilidad y los widgets sin empujarlos ni generar barras de scroll */
+    box-shadow: 0 15px 35px rgba(7, 11, 22, 0.6);
+    z-index: 9999 !important; 
+    
+    /* Animación elástica suave */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px) scale(0.96);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Activación por Hover */
+  .desktop-menu-wrapper:hover .desktop-dropdown-menu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+
+  /* Filas del menú */
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 11px 14px;
+    background: transparent;
+    border: none;
+    color: var(--andamio-tiza);
+    font-family: var(--font-main);
+    font-size: 13.5px;
+    font-weight: 500;
+    text-align: left;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-item:hover {
+    background-color: rgba(255, 184, 0, 0.08);
+    color: var(--andamio-oro-activo);
+    transform: translateX(4px);
+  }
 }
 
-.fab-main {
-  width: 60px;
-  height: 60px;
-  background-color: var(--andamio-amarillo);
-  color: var(--andamio-obsidiana);
-  border-radius: 50%;
-  border: none;
-  font-size: 2rem;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  transition: transform 0.2s ease;
-  z-index: 100;
+/* --------------------------------------------------------------------------
+   3. REVISIÓN GENERAL DEL CONTENEDOR (Bloquea el scroll roto en tu Layout)
+   -------------------------------------------------------------------------- */
+.content-container {
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto; /* Permite scroll general de la página completa, no a la mitad */
+  position: relative;
+  overflow-x: hidden;
 }
 
-.fab-container:hover .fab-menu {
-  display: flex;
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.fab-menu {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 12px;
-  margin-bottom: 15px; 
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(50px) scale(0.5);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.fab-item {
-  width: 50px;
-  height: 50px;
-  background-color: var(--andamio-gris-oscuro);
-  border: 2px solid var(--andamio-amarillo);
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-}
-
-.fab-item:hover {
-  transform: scale(1.1);
-  background-color: var(--andamio-amarillo);
-  color: var(--andamio-obsidiana);
-  box-shadow: 0 0 15px var(--andamio-amarillo); 
+/* Asegura que los headers no bloqueen las capas flotantes superiores */
+.utility-header, .widgets-grid {
+  position: relative;
+  z-index: 1; /* Nivel bajo para que el menú de arriba pase flotando por encima sin problemas */
 }

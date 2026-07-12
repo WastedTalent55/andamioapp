@@ -11,6 +11,7 @@ import { CustomerListComponent } from './features/customers/customer-list/custom
 import { WelcomeComponent } from './features/auth/welcome/welcome.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
+import { TenantFormComponent } from './features/tenant/tenant-form/tenant-form.component';
 
 export const routes: Routes = [
     // 0. Flujo de Bienvenida y Acceso
@@ -43,5 +44,8 @@ export const routes: Routes = [
     { path: 'quotes', component: QuoteListComponent },
     
     // 6. Fase de Ejecución y Rentabilidad (El trabajo ya agendado)
-    { path: 'projects/:id/execution', component: ProjectExecutionComponent }
+    { path: 'projects/:id/execution', component: ProjectExecutionComponent },
+
+    //7. Ajustes del tenant
+    { path: 'settings', component: TenantFormComponent },
 ];

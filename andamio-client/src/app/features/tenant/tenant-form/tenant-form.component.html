@@ -1,0 +1,84 @@
+<div class="content-container">
+  <div class="tenant-header">
+    <h1>Configuración de Empresa</h1>
+    <p>Estos datos aparecerán en tus cotizaciones profesionales.</p>
+  </div>
+
+  <form [formGroup]="tenantForm" (ngSubmit)="saveTenant()" class="card-andamio">
+    
+    <!-- SECCIÓN DE IDENTIDAD VISUAL: CARGA DE LOGO -->
+    <div class="logo-upload-section" [class.has-logo]="logoPreview">
+      <h3 class="section-title">Logo de Empresa</h3>
+      
+      <div class="upload-container">
+        <!-- Vista previa: solo aparece si hay un archivo cargado -->
+        <div class="logo-preview-box" *ngIf="logoPreview">
+          <img [src]="logoPreview" alt="Vista previa del logo">
+        </div>
+
+        <div class="upload-controls">
+          <label class="btn-andamio-outline">
+            <span>📷 SELECCIONAR LOGOTIPO</span>
+            <!-- Dispara la lógica de procesamiento en el TS -->
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
+          </label>
+          
+          <!-- Mensaje de confirmación: Alta Visibilidad en Verde Obra [1] -->
+          <div class="upload-confirmation" *ngIf="logoPreview">
+            <span class="success-text">✅ ARCHIVO LISTO PARA PROCESAR</span>
+          </div>
+          
+          <p class="tenant-tag">Formatos: PNG, JPG (Se recomienda cuadrado)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nombre Comercial (Ej: Handy Queer)</label>
+        <input type="text" formControlName="company_name" placeholder="Tu marca">
+      </div>
+
+      <div class="form-group">
+        <label>Tu Nombre Profesional</label>
+        <input type="text" formControlName="owner_name">
+      </div>
+
+      <!-- Datos de Contacto -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email de Negocio</label>
+          <input type="email" formControlName="email">
+        </div>
+        <div class="form-group">
+          <label>Teléfono / WhatsApp</label>
+          <input type="text" formControlName="phone">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Dirección Física</label>
+        <input type="text" formControlName="address">
+      </div>
+
+      <!-- Datos Bancarios -->
+      <h3 class="section-title">Información de Pago</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Banco</label>
+          <input type="text" formControlName="bank_name" placeholder="Ej: BBVA">
+        </div>
+        <div class="form-group">
+          <label>CLABE Interbancaria (18 dígitos)</label>
+          <input type="text" formControlName="bank_clabe" class="data-number">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-andamio" [disabled]="tenantForm.invalid">
+        ACTUALIZAR INFRAESTRUCTURA
+      </button>
+    </div>
+  </form>
+</div>

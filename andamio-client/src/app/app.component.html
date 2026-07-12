@@ -1,7 +1,7 @@
-<div class="app-container" [class.no-sidebar]="!showSidebar">
-  <app-sidebar *ngIf="showSidebar"></app-sidebar> 
+<div class="main-layout">
+  <app-sidebar *ngIf="showSidebar" class="sidebar-andamio"></app-sidebar> 
   
-  <main class="main-content">
+  <main class="content-container">
     <router-outlet></router-outlet> 
   </main>
 </div>

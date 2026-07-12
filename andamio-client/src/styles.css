@@ -1,23 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono&display=swap');
+/* ==========================================================================
+   ANDAMIO BRANDING SYSTEM - AMIGABLE, PREMIUM & CÁLIDO
+   Concepto: "Estructura Orgánica sobre Lienzo Marino/Slate"
+   Optimizado para una experiencia fluida con fondos oscuros suaves
+   ========================================================================== */
+
+/* Importación de las Tipografías Oficiales */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
-  /* Paleta Andamio Core: Digital Industrial */
-  --andamio-obsidiana: #0F172A;   /* Fondo y solidez */
-  --andamio-amarillo: #FACC15;    /* Acción y visibilidad (Safety Yellow) */
-  --andamio-cian: #22D3EE;        /* Trazabilidad y flujo (Tech Blue) */
-  --andamio-verde: #10B981;       /* Utilidad Real e ingresos */
-  --andamio-rojo: #EF4444;        /* Gastos y alertas */
+  /* --- 1. REVOLUCIÓN CROMÁTICA: ADIÓS AL NEGRO PURO --- */
+  --andamio-fondo: #0F172A;          /* Slate/Azul Marino Profundo: Oscuro, sumamente amigable y elegante */
+  --andamio-antracita: #1E293B;      /* Superficie de tarjetas: Un tono más claro que genera capas suaves */
+  --andamio-oro-activo: #FFB800;     /* Tu amarillo insignia: Resalta de forma espectacular sobre el fondo azulado */
+  --andamio-azul-plano: #38BDF8;     /* Un cian/azul cielo brillante para enlaces y detalles amigables */
   
-  /* Escala de Grises Técnicos */
-  --andamio-gris-oscuro: #1E293B;
-  --andamio-gris-medio: #475569;
-  --andamio-gris-claro: #F8FAFC;
+  /* Indicadores Semánticos Suavizados */
+  --andamio-verde-obra: #34D399;     /* Ingresos y éxito con un tono esmeralda suave */
+  --andamio-rojo-alerta: #FB7185;    /* Alertas y gastos en un rosa/rojo pastel muy moderno */
 
-  /* Tipografía */
-  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-data: 'JetBrains Mono', 'Roboto Mono', monospace; /* Para números precisos */
+  /* Grises de Interfaz adaptados a la nueva base */
+  --andamio-gris-oscuro: #334155;    /* Bordes sutiles que delimitan los bloques sin golpear la vista */
+  --andamio-concreto: #94A3B8;       /* Texto secundario y etiquetas técnicas */
+  --andamio-tiza: #F8FAFC;           /* Blanco principal limpio, suave y con contraste óptimo */
+
+  /* --- 2. TIPOGRAFÍA --- */
+  --font-display: 'Archivo', system-ui, sans-serif;
+  --font-main: 'Inter', system-ui, sans-serif;
+  --font-technical: 'Space Mono', monospace;
+
+  /* --- 3. ESTRUCTURA ERGONÓMICA Y AMIGABLE --- */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+
+  /* Bordes hiper-suaves */
+  --radius-card: 16px;         /* Esquinas redondeadas acogedoras */
+  --radius-interactive: 12px;  /* Botones ergonómicos y campos de texto orgánicos */
+  
+  /* Curva de animación con rebote/pop orgánico */
+  --transition-friendly: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* ==========================================================================
+   RESET & ESTILOS BASE
+   ========================================================================== */
 * {
   margin: 0;
   padding: 0;
@@ -26,40 +53,110 @@
 
 body {
   font-family: var(--font-main);
-  background-color: var(--andamio-obsidiana); /* Identidad oscura por defecto */
-  color: white;
-  line-height: 1.5;
+  background-color: var(--andamio-fondo);
+  color: var(--andamio-tiza);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Tipografía técnica para datos financieros */
-.data-number {
-  font-family: var(--font-data);
-  letter-spacing: -0.5px;
+h1, h2, h3, h4, .brand-heading {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--andamio-tiza);
 }
 
-/* El "Lienzo" de Ingeniería (Grid de fondo) */
-.technical-grid {
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(90px, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 8px 8px; /* Cuadrícula técnica de 8px */
+.data-number {
+  font-family: var(--font-technical);
+  font-weight: 700;
 }
+
+/* ==========================================================================
+   SUPERFICIES Y RETÍCULAS
+   ========================================================================== */
+
+/* La cuadrícula de puntos ahora usa una opacidad azulada muy tenue, simulando un plano moderno */
+.technical-grid {
+  background-image: radial-gradient(rgba(56, 189, 248, 0.05) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+/* Tarjeta Modular Amigable sobre Fondo Azulado */
+.card-andamio {
+  background-color: var(--andamio-antracita);
+  border: 1px solid var(--andamio-gris-oscuro);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-md);
+  transition: var(--transition-friendly);
+}
+
+/* Brillo interactivo en el hover con el color oro de tu logo */
+.card-andamio:hover {
+  border-color: rgba(255, 184, 0, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);
+}
+
+/* ==========================================================================
+   COMPONENTES INTERACTIVOS (EFECTO POP CON ALTA ENERGÍA)
+   ========================================================================== */
 
 .btn-andamio {
-  background-color: var(--andamio-amarillo);
-  color: var(--andamio-obsidiana);
-  font-weight: 800;
-  text-transform: uppercase;
-  padding: 12px 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  background-color: var(--andamio-oro-activo);
+  color: #0F172A; /* Contraste perfecto contra el azul marino oscuro */
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 14px 28px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-interactive);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-friendly);
+  box-shadow: 0 4px 14px rgba(255, 184, 0, 0.2);
 }
 
 .btn-andamio:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-  box-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+  transform: scale(1.04);
+  box-shadow: 0 6px 22px rgba(255, 184, 0, 0.35);
+  background-color: #FFAE00;
+}
+
+.btn-andamio:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   LAYOUT Y ARQUITECTURA
+   ========================================================================== */
+.main-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--andamio-fondo);
+  overflow: hidden;
+}
+
+/* Sidebar flotante perfectamente integrada en el ecosistema azul marino */
+.sidebar-andamio {
+  width: 260px;
+  height: calc(100% - 32px);
+  margin: 16px 0 16px 16px;
+  background-color: var(--andamio-antracita);
+  border: 1px solid var(--andamio-gris-oscuro);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.content-container {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+  background-color: var(--andamio-fondo);
 }

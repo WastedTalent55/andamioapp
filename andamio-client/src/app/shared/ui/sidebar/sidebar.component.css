@@ -1,14 +1,16 @@
 .andamio-sidebar {
   width: 260px;
-  height: 100vh;
-  background-color: var(--andamio-obsidiana); 
-  border-right: 1px solid var(--andamio-gris-oscuro);
+  height: 100%;
+  background-color: var(--andamio-antracita); 
+  border-right: var(--border-thin);
+  padding: var(--spacing-md); 
   display: flex;
   flex-direction: column;
-  padding: 2.5rem 1.5rem;
   position: fixed; 
   left: 0;
   top: 0;
+  top: 0;
+  z-index: 1000;
 }
 
 .brand h2 {

@@ -1,26 +1,34 @@
-<div class="kanban-container">
-  <header class="board-header">
-    <h2>Tablero de Operaciones</h2>
-    <button class="btn-andamio" routerLink="/evaluations/new">+ Nueva Evaluación</button>
-  </header>
+<!-- Contenedor principal con el fondo de cuadrícula técnica sutil -->
+<div class="kanban-container technical-grid">
+  
+  <div class="board-header">
+    <h2>Tablero de Proyectos</h2>
+    <!-- Botón de acción rápida integrado en el header para escritorio -->
+    <button class="btn-andamio" routerLink="/projects/new">
+      <span>+</span> NUEVO PROYECTO
+    </button>
+  </div>
 
   <div class="kanban-board">
     
     <!-- COLUMNA 1: EVALUACIONES -->
     <div class="kanban-column">
       <div class="column-header">
-        📋 EVALUACIONES 
-        <span class="badge">{{ columns.evaluations?.length }}</span>
+        <span>📋 EVALUACIONES</span>
+        <span class="badge">{{ columns.evaluations?.length || 0 }}</span>
       </div>
+      
       <div class="kanban-cards">
         @for (item of columns.evaluations; track item.eval_id) {
           <div class="kanban-card eval-border">
             <div class="card-tag eval">Visita Pendiente</div>
             <h3>{{ item.customer_name }}</h3>
             <p class="address">📍 {{ item.customer_address }}</p>
+            
             <div class="card-footer">
-              <span class="date">📅 {{ item.eval_date | date:'dd/MM/yyyy' }}</span>
-              <button [routerLink]="['/evaluations', item.eval_id, 'details']" class="btn-action">
+              <!-- La fecha usa Space Mono para ese toque técnico -->
+              <span class="date data-number">📅 {{ item.eval_date | date:'dd/MM/yyyy' }}</span>
+              <button class="btn-andamio" [routerLink]="['/evaluations', item.eval_id, 'details']">
                 {{ item.requirements ? 'Ver Notas' : 'Crear Notas' }}
               </button>
             </div>
@@ -34,17 +42,20 @@
     <!-- COLUMNA 2: EN COTIZACIÓN -->
     <div class="kanban-column">
       <div class="column-header">
-        🚀 EN COTIZACIÓN 
-        <span class="badge">{{ columns.quoting?.length }}</span>
+        <span>🚀 EN COTIZACIÓN</span>
+        <span class="badge">{{ columns.quoting?.length || 0 }}</span>
       </div>
+      
       <div class="kanban-cards">
         @for (quote of columns.quoting; track quote.quote_id) {
           <div class="kanban-card quote-border">
             <div class="card-tag quote">V{{ quote.version_number }} - Borrador</div>
             <h3>{{ quote.customer_name }}</h3>
-            <p class="total-est">Presupuesto: <strong>{{ quote.total_amount | currency }}</strong></p>
+            <!-- Presupuesto con fuente técnica para precisión -->
+            <p class="total-est">Presupuesto: <strong class="data-number">{{ quote.total_amount | currency }}</strong></p>
+            
             <div class="card-footer">
-              <button [routerLink]="['/evaluations', quote.eval_id, 'create-quote']" class="btn-action primary">
+              <button class="btn-andamio" [routerLink]="['/evaluations', quote.eval_id, 'create']">
                 Editar Cotización
               </button>
             </div>
@@ -58,17 +69,19 @@
     <!-- COLUMNA 3: TRABAJOS AGENDADOS -->
     <div class="kanban-column">
       <div class="column-header">
-        ⚡ PROYECTOS ACTIVOS 
-        <span class="badge">{{ columns.active?.length }}</span>
+        <span>⚡ PROYECTOS ACTIVOS</span>
+        <span class="badge">{{ columns.active?.length || 0 }}</span>
       </div>
+      
       <div class="kanban-cards">
         @for (project of columns.active; track project.quote_id) {
           <div class="kanban-card active-border">
             <div class="card-tag project">En Ejecución</div>
             <h3>{{ project.customer_name }}</h3>
-            <p class="financials">Anticipo: <strong>{{ (project.total_amount / 2) | currency }}</strong></p>
+            <p class="financials">Anticipo: <strong class="data-number">{{ (project.total_amount * 0.5) | currency }}</strong></p>
+            
             <div class="card-footer">
-              <button [routerLink]="['/projects', project.quote_id, 'execution']" class="btn-action success">
+              <button class="btn-andamio" [routerLink]="['/projects', project.quote_id, 'execute']">
                 Control de Gastos
               </button>
             </div>
@@ -82,9 +95,10 @@
     <!-- COLUMNA 4: FINALIZADOS -->
     <div class="kanban-column">
       <div class="column-header">
-        ✅ FINALIZADOS 
-        <span class="badge">{{ columns.finished?.length }}</span>
+        <span>✅ FINALIZADOS</span>
+        <span class="badge">{{ columns.finished?.length || 0 }}</span>
       </div>
+      
       <div class="kanban-cards">
         @for (done of columns.finished; track done.quote_id) {
           <div class="kanban-card finished-border">
@@ -92,7 +106,7 @@
             <h3>{{ done.customer_name }}</h3>
             <p class="profit">Utilidad calculada...</p>
             <div class="card-footer">
-              <button class="btn-action">Ver Resumen</button>
+              <button class="btn-andamio">Ver Resumen</button>
             </div>
           </div>
         } @empty {

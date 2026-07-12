@@ -1,0 +1,149 @@
+.tenant-header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+  margin-top: var(--spacing-md);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--andamio-gris-oscuro);
+  color: var(--andamio-oro-activo);
+  font-size: 1.1rem;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+input {
+  background-color: var(--andamio-fondo);
+  border: 1px solid var(--andamio-gris-oscuro);
+  border-radius: var(--radius-interactive);
+  padding: 12px;
+  color: var(--andamio-tiza);
+  font-family: var(--font-main);
+  transition: var(--transition-friendly);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--andamio-oro-activo);
+  box-shadow: 0 0 8px rgba(255, 184, 0, 0.2);
+}
+
+.form-actions {
+  margin-top: var(--spacing-lg);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.logo-upload-section {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  /* Fondo ligeramente distinto para resaltar la zona de carga */
+  background-color: rgba(255, 255, 255, 0.02); 
+  border-radius: var(--radius-card);
+  border: 2px dashed var(--andamio-gris-oscuro);
+  transition: var(--transition-friendly);
+}
+
+.logo-upload-section:hover {
+  border-color: var(--andamio-oro-activo);
+}
+
+.logo-upload-section.has-logo {
+  border: 2px solid var(--andamio-oro-activo); /* Cambia de dashed a solid */
+  background-color: rgba(255, 184, 0, 0.05); /* Un brillo muy tenue de fondo */
+}
+
+.upload-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+/* Caja de vista previa del logo */
+.logo-preview-box {
+  width: 120px;
+  height: 120px;
+  background-color: #FFFFFF;
+  border-radius: var(--radius-interactive);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid var(--andamio-verde-obra); /* El marco verde confirma que "todo está bien" */
+  box-shadow: 0 0 15px rgba(52, 211, 153, 0.2); /* Un resplandor de éxito */
+}
+
+.logo-preview-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Mantiene la proporción del logo */
+}
+
+.upload-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+/* Mensaje de confirmación en Verde Obra [1] */
+.upload-confirmation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(52, 211, 153, 0.1); /* Fondo sutil Verde Obra */
+  padding: 8px 12px;
+  border-radius: var(--radius-interactive);
+  margin-top: 12px;
+  animation: var(--transition-friendly); /* Aparece con el pop orgánico [3] */
+}
+
+.success-text {
+  color: var(--andamio-verde-obra); /* #34D399 [2] */
+  font-family: var(--font-technical); /* Space Mono para dar un look verificado [3] */
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.success-text {
+  color: var(--andamio-verde-obra);
+  font-weight: 700;
+}
+
+/* Botón outline para no competir con el botón principal */
+.btn-andamio-outline {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border: 1px solid var(--andamio-oro-activo);
+  border-radius: var(--radius-interactive);
+  color: var(--andamio-oro-activo);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition-friendly);
+}
+
+.btn-andamio-outline:hover {
+  background-color: var(--andamio-oro-activo);
+  color: var(--andamio-fondo);
+  transform: scale(1.02);
+}
