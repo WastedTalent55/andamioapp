@@ -1,26 +1,31 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { TenantService } from '../../../core/services/tenant.service';
 
+
 @Component({
-  selector: 'app-tenant-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './tenant-form.component.html',
-  styleUrls: ['./tenant-form.component.css']
+selector: 'app-tenant-form',
+standalone: true,
+imports: [CommonModule, ReactiveFormsModule],
+templateUrl: './tenant-form.component.html',
+styleUrls: ['./tenant-form.component.css']
 })
 export class TenantFormComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private http = inject(HttpClient);
-  private tenantService = inject(TenantService); 
+  private tenantService = inject(TenantService);
 
-  
+
   tenantForm!: FormGroup;
-  logoPreview: string | null = null; 
+  logoPreview: string | null = null;
+
 
   ngOnInit() {
+    this.initForm();
+    this.loadTenantInfo();
+  }
+
+  private initForm() {
     this.tenantForm = this.fb.group({
       company_name: [''],
       owner_name: [''],
@@ -29,8 +34,26 @@ export class TenantFormComponent implements OnInit {
       address: [''],
       bank_name: [''], 
       bank_account: [''],
-      bank_clabe: ['', [Validators.pattern('^[1-8, 10]{18}$')]],
+      // Ajuste: 18 números exactos (0-9)
+      bank_clabe: ['', [Validators.pattern('^[1-8, 10]{18}$')]], 
       logo_base64: [''] ,
+    });
+  }
+
+  loadTenantInfo() {
+    this.tenantService.getTenantData(1).subscribe({
+      next: (res: any) => {
+        if (res.success && res.data && res.data) {
+          const data = res.data[0];
+          // Rellenamos el formulario con lo que ya existe en MySQL
+          this.tenantForm.patchValue(data);
+          // Si hay logo, encendemos la vista previa
+          if (data.logo) {
+            this.logoPreview = data.logo;
+          }
+        }
+      },
+      error: (err: any) => console.log("Primera vez: Iniciando infraestructura desde cero.")
     });
   }
 
@@ -46,30 +69,19 @@ export class TenantFormComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
-  
+
   saveTenant() {
   if (this.tenantForm.valid) {
-    console.log("Soldando infraestructura de empresa...");
-    
-    // Invocamos el nuevo método que creamos en el TenantService
     this.tenantService.saveTenantProfile(this.tenantForm.value).subscribe({
       next: (res: any) => {
         alert('✅ INFRAESTRUCTURA ACTUALIZADA');
+        
+        const newName = this.tenantForm.value.company_name;
+        this.tenantService.emitNewName(newName);
       },
-      error: (err: any) => {
-        console.error('Falla en la tubería:', err);
-        alert('❌ ERROR: El servidor no responde. Revisa tu app.js.');
-      }
-    });
-  } else {
-    // Si el formulario es inválido, mostramos feedback de "Alta Visibilidad"
-    alert('⚠️ DATOS INCOMPLETOS: Revisa que la CLABE tenga 18 números (0-9).');
-    
-    // Tip: Revisa la consola (F12) para ver qué campo está fallando
-    Object.keys(this.tenantForm.controls).forEach(key => {
-      const controlErrors = this.tenantForm.get(key)?.errors;
-      if (controlErrors) console.log('Tornillo suelto en:', key, controlErrors);
+      error: (err: any) => alert('❌ Error en el servidor')
     });
   }
 }
+
 }

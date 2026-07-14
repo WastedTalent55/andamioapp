@@ -487,6 +487,18 @@ app.post('/api/tenants/update', (req, res) => {
     });
 });
 
+app.get('/api/tenants/:id', (req, res) => {
+    const { id } = req.params;
+    const query = 'SELECT * FROM tenants WHERE id = ?';
+    db.query(query, [id], (err, results) => {
+        if (err) return res.status(500).json({ success: false, error: err });
+        // MySQL devuelve un array, enviamos el primer objeto
+        res.json({ success: true, data: results }); 
+    });
+});
+
+
+
 
 
 const PORT = 3000;

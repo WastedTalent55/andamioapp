@@ -43,8 +43,22 @@
   border-left: 4px solid var(--andamio-amarillo);
 }
 
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--andamio-gris-oscuro);
+  display: flex;
+  justify-content: center;
+}
+
 .tenant-tag {
-  font-family: var(--font-data);
+  font-family: var(--font-technical); /* Space Mono para ese toque industrial [9] */
   font-size: 0.75rem;
-  color: var(--andamio-gris-medio);
+  font-weight: 700;
+  color: var(--andamio-oro-activo);
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  background: rgba(255, 184, 0, 0.1);
+  border-radius: var(--radius-interactive);
+  text-align: center;
 }
