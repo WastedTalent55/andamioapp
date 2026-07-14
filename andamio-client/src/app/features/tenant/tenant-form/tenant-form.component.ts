@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { TenantService } from '../../../core/services/tenant.service';
 
 @Component({
   selector: 'app-tenant-form',
@@ -13,20 +14,22 @@ import { HttpClient } from '@angular/common/http';
 export class TenantFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
+  private tenantService = inject(TenantService); 
+
   
   tenantForm!: FormGroup;
-  logoPreview: string | null = null; // Para ver el logo antes de guardar
+  logoPreview: string | null = null; 
 
   ngOnInit() {
     this.tenantForm = this.fb.group({
-      company_name: ['', Validators.required],
-      owner_name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', Validators.required],
-      address: ['', Validators.required],
+      company_name: [''],
+      owner_name: [''],
+      email: ['', [Validators.email]],
+      phone: [''],
+      address: [''],
       bank_name: [''], 
       bank_account: [''],
-      bank_clabe: ['', [Validators.required, Validators.pattern('^[1-8, 12]{18}$')]], 
+      bank_clabe: ['', [Validators.pattern('^[1-8, 10]{18}$')]],
       logo_base64: [''] ,
     });
   }
@@ -43,32 +46,26 @@ export class TenantFormComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
-
+  
   saveTenant() {
-  // 1. Verificamos si el formulario es válido según las reglas técnicas
   if (this.tenantForm.valid) {
-    console.log("Iniciando envío de infraestructura...");
+    console.log("Soldando infraestructura de empresa...");
     
-    // 2. CONEXIÓN REAL: Quitamos los '//' y apuntamos a tu API de Node.js
-    const apiUrl = 'http://localhost:3000/api/tenants/update';
-    
-    this.http.post(apiUrl, this.tenantForm.value).subscribe({
-      next: (res) => {
-        // Si todo sale bien, lanzamos el mensaje de éxito
-        alert('✅ INFRAESTRUCTURA ACTUALIZADA: Tu empresa ya es profesional.');
+    // Invocamos el nuevo método que creamos en el TenantService
+    this.tenantService.saveTenantProfile(this.tenantForm.value).subscribe({
+      next: (res: any) => {
+        alert('✅ INFRAESTRUCTURA ACTUALIZADA');
       },
-      error: (err) => {
-        // Si falla la conexión con el servidor (app.js)
-        console.error("Falla en la tubería:", err);
-        alert('❌ ERROR DE CONEXIÓN: El servidor no responde.');
+      error: (err: any) => {
+        console.error('Falla en la tubería:', err);
+        alert('❌ ERROR: El servidor no responde. Revisa tu app.js.');
       }
     });
-
   } else {
-    // 3. Si el formulario es inválido, avisamos qué falta
-    alert('⚠️ DATOS INCOMPLETOS: Revisa que la CLABE tenga 18 números exactos.');
+    // Si el formulario es inválido, mostramos feedback de "Alta Visibilidad"
+    alert('⚠️ DATOS INCOMPLETOS: Revisa que la CLABE tenga 18 números (0-9).');
     
-    // Tip PRO: Esto te dice en la consola (F12) exactamente qué campo está mal
+    // Tip: Revisa la consola (F12) para ver qué campo está fallando
     Object.keys(this.tenantForm.controls).forEach(key => {
       const controlErrors = this.tenantForm.get(key)?.errors;
       if (controlErrors) console.log('Tornillo suelto en:', key, controlErrors);

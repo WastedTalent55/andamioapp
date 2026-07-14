@@ -394,56 +394,64 @@ app.get('/api/board/summary', (req, res) => {
 // Ruta para Registrar o Iniciar Sesión con Google
 // ==========================================
 app.post('/api/auth/google', async (req, res) => {
-  const { token } = req.body;
+    const { token } = req.body;
 
-  try {
-    // Verificamos el token con Google
-    const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: '990420064714-v1g3927kpik6bo5tqjuj4qjl86dgd9ff.apps.googleusercontent.com',
-    });
-    const payload = ticket.getPayload();
-    const { sub: google_id, email, name, picture } = payload;
+    try {
+        // Verificamos el token con Google
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: '990420064714-v1g3927kpik6bo5tqjuj4qjl86dgd9ff.apps.googleusercontent.com',
+        });
+        const payload = ticket.getPayload();
+        const { sub: google_id, email, name, picture } = payload;
 
-    // A. Buscamos si el usuario ya existe en nuestra tabla 'users'
-    const [existingUser] = await db.promise().query('SELECT * FROM users WHERE google_id = ?', [google_id]);
+        // A. Buscamos si el usuario ya existe en nuestra tabla 'users'
+        const [existingUser] = await db.promise().query('SELECT * FROM users WHERE google_id = ?', [google_id]);
 
-    if (existingUser.length > 0) {
-      // Si ya existe, solo le damos su pase de entrada (Token)
-      const tokenJWT = jwt.sign({ userId: existingUser.id, tenantId: existingUser.tenant_id }, 'SECRETO_SUPER_SEGURO');
-      return res.json({ success: true, token: tokenJWT, user: existingUser });
-    }
+        if (existingUser.length > 0) {
+          // Si ya existe, solo le damos su pase de entrada (Token)
+          const tokenJWT = jwt.sign({ userId: existingUser.id, tenantId: existingUser.tenant_id }, 'SECRETO_SUPER_SEGURO');
+          return res.json({ success: true, token: tokenJWT, user: existingUser });
+        }
 
-    // B. SI ES NUEVO: Creamos su 'Andamio' (Tenant) primero
-    const [newTenant] = await db.promise().query(
-      'INSERT INTO tenants (name, company_email) VALUES (?, ?)',
-      [`Estudio de ${name}`, email]
-    );
-    const tenant_id = newTenant.insertId;
+        // B. SI ES NUEVO: Creamos su 'Andamio' (Tenant) primero
+        const [newTenant] = await db.promise().query(
+          'INSERT INTO tenants (name, company_email) VALUES (?, ?)',
+          [`Estudio de ${name}`, email]
+        );
+        const tenant_id = newTenant.insertId;
 
-    // C. Creamos al Usuario vinculado a ese nuevo Tenant
-    const [newUser] = await db.promise().query(
-      'INSERT INTO users (tenant_id, google_id, name, email, picture_url, role) VALUES (?, ?, ?, ?, ?, ?)',
-      [tenant_id, google_id, name, email, picture, 'admin']
-    );
+        // C. Creamos al Usuario vinculado a ese nuevo Tenant
+        const [newUser] = await db.promise().query(
+          'INSERT INTO users (tenant_id, google_id, name, email, picture_url, role) VALUES (?, ?, ?, ?, ?, ?)',
+          [tenant_id, google_id, name, email, picture, 'admin']
+        );
 
-    // D. Le damos su pase de entrada
-    const tokenJWT = jwt.sign({ userId: newUser.insertId, tenantId: tenant_id }, 'SECRETO_SUPER_SEGURO');
+        // D. Le damos su pase de entrada
+        const tokenJWT = jwt.sign({ userId: newUser.insertId, tenantId: tenant_id }, 'SECRETO_SUPER_SEGURO');
     
-    res.json({
-      success: true,
-      message: '¡Bienvenido a tu nueva infraestructura!',
-      token: tokenJWT,
-      tenant_id: tenant_id
-    });
+        res.json({
+          success: true,
+          message: '¡Bienvenido a tu nueva infraestructura!',
+          token: tokenJWT,
+          tenant_id: tenant_id
+        });
+        } catch (error) {
+            console.error("Error en la infraestructura de autenticación:", error);
+            res.status(500).json({ 
+                success: false, 
+                message: 'Error crítico en el servidor de autenticación' 
+            });
+        }  
+});
 
-    // ==========================================
-    // Ruta para Registrar o Iniciar Sesión con Google
-    // ==========================================
-
-    app.put('/api/tenants/:id', (req, res) => {
+// ==========================================
+// Ruta para guardar informacion del tenant
+// ==========================================
+app.put('/api/tenants/:id', (req, res) => {
         const { id } = req.params;
         const { company_name, owner_name, email, phone, address, bank_name, bank_account, bank_clabe, logo_base64 } = req.body;
+
 
         const query = `
           UPDATE tenants SET 
@@ -452,13 +460,15 @@ app.post('/api/auth/google', async (req, res) => {
           WHERE id = ?
         `;
 
+
         db.query(query, [company_name, owner_name, email, phone, address, bank_name, bank_account, bank_clabe, logo_base64, id], (err) => {
           if (err) return res.status(500).json({ success: false, error: err });
           res.json({ success: true, message: 'Infraestructura de empresa actualizada' });
         });
-    });
+});
 
-    app.post('/api/tenants/update', (req, res) => {
+        
+app.post('/api/tenants/update', (req, res) => {
     const { company_name, owner_name, email, phone, address, bank_name, bank_account, bank_clabe, logo_base64 } = req.body;
     
     // Aquí usamos el tenant_id para asegurar que solo actualices TU empresa [4]
@@ -468,16 +478,13 @@ app.post('/api/auth/google', async (req, res) => {
         address = ?, bank_name = ?, bank_account = ?, bank_clabe = ?, logo = ?
         WHERE id = ?`; // El ID vendría de tu sesión de usuario
 
+
+
+
     db.query(query, [company_name, owner_name, email, phone, address, bank_name, bank_account, bank_clabe, logo_base64, 1], (err, result) => {
         if (err) return res.status(500).json({ success: false, error: err });
         res.json({ success: true, message: 'Datos actualizados' });
     });
-});
-
-    } catch (error) {
-        console.error('Error en la autenticación:', error);
-        res.status(401).json({ success: false, message: 'Fallo en la conexión con Google' });
-    }
 });
 
 

@@ -9,4 +9,8 @@ export class TenantService {
   updateTenant(id: number, data: any) {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
+
+  saveTenantProfile(data: any) {
+    return this.http.post(`${this.apiUrl}/update`, data);
+  }
 }
