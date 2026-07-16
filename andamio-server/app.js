@@ -3,7 +3,8 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
-const client = new OAuth2Client('990420064714-v1g3927kpik6bo5tqjuj4qjl86dgd9ff.apps.googleusercontent.com');
+const GOOGLE_CLIENT_ID = '990420064714-v1g3927kpik6bo5tqjuj4qjl86dgd9ff.apps.googleusercontent.com';
+const client = new OAuth2Client('GOOGLE_CLIENT_ID');
 
 const app = express();
 
@@ -395,9 +396,7 @@ app.get('/api/board/summary', (req, res) => {
 // ==========================================
 app.post('/api/auth/google', async (req, res) => {
     const { token } = req.body;
-
     try {
-        // Verificamos el token con Google
         const ticket = await client.verifyIdToken({
             idToken: token,
             audience: '990420064714-v1g3927kpik6bo5tqjuj4qjl86dgd9ff.apps.googleusercontent.com',
@@ -405,46 +404,43 @@ app.post('/api/auth/google', async (req, res) => {
         const payload = ticket.getPayload();
         const { sub: google_id, email, name, picture } = payload;
 
-        // A. Buscamos si el usuario ya existe en nuestra tabla 'users'
-        const [existingUser] = await db.promise().query('SELECT * FROM users WHERE google_id = ?', [google_id]);
+        // 2. DESESTRUCTURACIÓN: Usamos [rows] para obtener solo los datos
+        const [rows] = await db.promise().query('SELECT * FROM users WHERE google_id = ?', [google_id]);
 
-        if (existingUser.length > 0) {
-          // Si ya existe, solo le damos su pase de entrada (Token)
-          const tokenJWT = jwt.sign({ userId: existingUser.id, tenantId: existingUser.tenant_id }, 'SECRETO_SUPER_SEGURO');
-          return res.json({ success: true, token: tokenJWT, user: existingUser });
+        if (rows.length > 0) {
+            const user = rows[0];
+            const tokenJWT = jwt.sign({ userId: user.id, tenantId: user.tenant_id }, 'SECRETO_SUPER_SEGURO');
+            return res.json({ success: true, token: tokenJWT, user: user });
         }
 
-        // B. SI ES NUEVO: Creamos su 'Andamio' (Tenant) primero
-        const [newTenant] = await db.promise().query(
-          'INSERT INTO tenants (name, company_email) VALUES (?, ?)',
-          [`Estudio de ${name}`, email]
+        // 3. SI ES NUEVO: Creamos la empresa (Tenant)
+        // Usamos 'company_name' y 'email' para coincidir con tu tabla profesional
+        const [tenantResult] = await db.promise().query(
+            'INSERT INTO tenants (company_name, email) VALUES (?, ?)',
+            [`Estudio de ${name}`, email]
         );
-        const tenant_id = newTenant.insertId;
+        const tenant_id = tenantResult.insertId;
 
-        // C. Creamos al Usuario vinculado a ese nuevo Tenant
-        const [newUser] = await db.promise().query(
-          'INSERT INTO users (tenant_id, google_id, name, email, picture_url, role) VALUES (?, ?, ?, ?, ?, ?)',
-          [tenant_id, google_id, name, email, picture, 'admin']
+        // 4. Creamos al Usuario vinculado a ese Tenant
+        const [userResult] = await db.promise().query(
+            'INSERT INTO users (tenant_id, google_id, name, email, picture_url, role) VALUES (?, ?, ?, ?, ?, ?)',
+            [tenant_id, google_id, name, email, picture, 'admin']
         );
 
-        // D. Le damos su pase de entrada
-        const tokenJWT = jwt.sign({ userId: newUser.insertId, tenantId: tenant_id }, 'SECRETO_SUPER_SEGURO');
-    
+        const tokenJWT = jwt.sign({ userId: userResult.insertId, tenantId: tenant_id }, 'SECRETO_SUPER_SEGURO');
+
         res.json({
-          success: true,
-          message: '¡Bienvenido a tu nueva infraestructura!',
-          token: tokenJWT,
-          tenant_id: tenant_id
+            success: true,
+            message: '¡Bienvenido a tu nueva infraestructura!',
+            token: tokenJWT,
+            tenant_id: tenant_id
         });
-        } catch (error) {
-            console.error("Error en la infraestructura de autenticación:", error);
-            res.status(500).json({ 
-                success: false, 
-                message: 'Error crítico en el servidor de autenticación' 
-            });
-        }  
-});
 
+    } catch (error) {
+        console.error("Falla en la tubería de autenticación:", error);
+        res.status(500).json({ success: false, message: 'Error crítico en el servidor' });
+    }
+});
 // ==========================================
 // Ruta para guardar informacion del tenant
 // ==========================================

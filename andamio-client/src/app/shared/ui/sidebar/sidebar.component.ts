@@ -26,6 +26,7 @@ export class SidebarComponent implements OnInit {
     this.tenantService.getTenantData(1).subscribe({
       next: (res: any) => {
         if (res.success && res.data && res.data.length > 0) {
+          const tenant = res.data[0]
           const nameFromDb = res.data[0].company_name;
           this.tenantService.emitNewName(nameFromDb);
         }
