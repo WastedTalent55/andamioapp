@@ -3,8 +3,9 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
+const verifyToken = require('./middleware/auth');
 const GOOGLE_CLIENT_ID = '990420064714-v1g3927kpik6bo5tqjuj4qjl86dgd9ff.apps.googleusercontent.com';
-const client = new OAuth2Client('GOOGLE_CLIENT_ID');
+const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 const app = express();
 
@@ -29,7 +30,9 @@ db.connect((err) => {
 // ==========================================
 // RUTAS PARA CLIENTXS (CUSTOMERS)
 // ==========================================
-app.get('/api/customers', (req, res) => {
+app.get('/api/customers', verifyToken, (req, res) => {
+    const tenantId = req.user.tenantId; 
+    
     const query = `
         SELECT 
             c.id, 
@@ -39,10 +42,13 @@ app.get('/api/customers', (req, res) => {
             ca.id AS address_id,
             ca.full_address AS address 
         FROM customers c
-        LEFT JOIN customer_addresses ca ON c.id = ca.customer_id AND ca.is_primary = 1
+        LEFT JOIN customer_addresses ca 
+        ON c.id = ca.customer_id 
+        AND ca.is_primary = 1
+        WHERE c.tenant_id = ?
         ORDER BY c.first_name ASC`;
     
-    db.query(query, (err, results) => {
+    db.query(query, [tenantId], (err, results) => {
         if (err) {
             console.error('Error al obtener clientes con dirección:', err);
             return res.status(500).json({
@@ -58,12 +64,14 @@ app.get('/api/customers', (req, res) => {
     });
 });
 
-app.post('/api/customers', (req, res) => {
+app.post('/api/customers', verifyToken, (req, res) => {
     const { first_name, last_name, phone, address } = req.body;
+    const tenantId = req.user.tenantId;
+    console.log('Tenant autenticado:', tenantId);
 
-    const customerQuery = 'INSERT INTO customers (first_name, last_name, phone) VALUES (?, ?, ?)';
+    const customerQuery = 'INSERT INTO customers (tenant_id, first_name, last_name, phone) VALUES (?, ?, ?, ?)';
     
-    db.query(customerQuery, [first_name, last_name, phone], (err, result) => {
+    db.query(customerQuery, [tenantId, first_name, last_name, phone], (err, result) => {
         if (err) {
             console.error('Error al insertar cliente:', err);
             return res.status(500).json({ success: false, message: 'Error al guardar el cliente' });
@@ -176,6 +184,7 @@ app.get('/api/evaluations/:id', (req, res) => {
         FROM evaluations e
         JOIN customers c ON e.customer_id = c.id
         WHERE e.id = ?
+
     `;
     
     db.query(query, [id], (err, results) => {
@@ -465,8 +474,8 @@ app.put('/api/tenants/:id', (req, res) => {
 
         
 app.post('/api/tenants/update', (req, res) => {
-    const { company_name, owner_name, email, phone, address, bank_name, bank_account, bank_clabe, logo_base64 } = req.body;
-    
+    const { tenant_id, company_name, owner_name, email, phone, address, bank_name, bank_account, bank_clabe, logo_base64 } = req.body;
+
     // Aquí usamos el tenant_id para asegurar que solo actualices TU empresa [4]
     const query = `
         UPDATE tenants SET 
@@ -477,7 +486,7 @@ app.post('/api/tenants/update', (req, res) => {
 
 
 
-    db.query(query, [company_name, owner_name, email, phone, address, bank_name, bank_account, bank_clabe, logo_base64, 1], (err, result) => {
+    db.query(query, [company_name, owner_name, email, phone, address, bank_name, bank_account, bank_clabe, logo_base64, tenant_id], (err, result) => {
         if (err) return res.status(500).json({ success: false, error: err });
         res.json({ success: true, message: 'Datos actualizados' });
     });
@@ -494,7 +503,15 @@ app.get('/api/tenants/:id', (req, res) => {
 });
 
 
+app.get('/api/test-auth', verifyToken, (req, res) => {
 
+    res.json({
+        success: true,
+        message: 'Token válido',
+        user: req.user
+    });
+
+});
 
 
 const PORT = 3000;

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, NgZone, inject } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service'; 
 import { Router } from '@angular/router';
 
@@ -14,6 +14,7 @@ declare var google: any;
 export class WelcomeComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private ngZone = inject(NgZone);
 
   ngOnInit() {
     // 1. Preparamos la conexión con tu Client ID oficial [2]
@@ -34,7 +35,9 @@ export class WelcomeComponent {
     this.authService.loginWithGoogle(response.credential).subscribe({
       next: (res) => {
         console.log("¡Andamio activado!", res);
-        this.router.navigate(['/dashboard']); 
+        this.ngZone.run(() => {
+          this.router.navigate(['/dashboard']);
+        });
       },
       error: (err) => console.error("Fallo en la estructura", err)
     });
