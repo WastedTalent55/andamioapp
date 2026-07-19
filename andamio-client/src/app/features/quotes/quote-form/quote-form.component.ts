@@ -107,12 +107,14 @@ export class QuoteFormComponent implements OnInit {
 
         this.quoteForm.patchValue({
           delivery_time: parseInt(quote.delivery_time),
-          evaluation_discount: quote.evaluation_discount > 0 ? quote.evaluation_discount : this.evaluation_discount,
-          total_amount: quote.total_amount
+          evaluation_discount: quote.evaluation_discount > 0 
+            ?  Number(quote.evaluation_discount) 
+            : this.evaluation_discount,
         });
       } else {
         this.isEditMode = false;
         this.quoteId = undefined;
+        this.updateTotals();
       }
     });
   }

@@ -4,10 +4,6 @@ const getCustomers = async (req, res) => {
     try {
         const tenantId = req.user.tenantId;
         const customers = await Customer.getAllByTenant(tenantId);
-
-        console.log("CLIENTES DESDE MODELO:");
-        console.log(customers);
-
         
         res.json({
             success: true,

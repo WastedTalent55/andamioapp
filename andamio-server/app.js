@@ -44,7 +44,11 @@ app.use('/api/evaluations', evaluationRoutes);
 // ==========================================
 // RUTAS PARA COTIZACIONES (QUOTES)
 // ==========================================
-app.post('/api/quotes', (req, res) => {
+const quoteRoutes = require('./src/routes/quoteRoutes');
+
+app.use('/api/quotes', quoteRoutes);
+
+/*app.post('/api/quotes', (req, res) => {
     const { 
         evaluation_id, 
         customer_id, 
@@ -200,7 +204,7 @@ app.get('/api/quotes/evaluation/:evaluationId', (req, res) => {
             res.json({ success: true, data: { ...quoteData, items: items } });
         });
     });
-});
+});*/
 
 // ==========================================
 // RUTAS PARA TABLERO (BOARD)
