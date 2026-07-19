@@ -49,7 +49,7 @@ export class CustomerListComponent implements OnInit {
     this.filteredCustomers = this.customers.filter(customer => 
       customer.first_name.toLowerCase().includes(filterValue) ||
       customer.last_name.toLowerCase().includes(filterValue) ||
-      (customer.address && customer.address.toLowerCase().includes(filterValue))
+      (customer.full_address && customer.full_address.toLowerCase().includes(filterValue))
     );
   }
 }

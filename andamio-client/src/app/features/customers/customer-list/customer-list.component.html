@@ -25,7 +25,7 @@
           <div class="info-group">
             <h3 class="client-name">{{ customer.first_name }} {{ customer.last_name }}</h3>
             <p class="data-number phone">{{ customer.phone }}</p>
-            <p class="address">{{ customer.address || 'SIN DIRECCIÓN REGISTRADA' }}</p>
+            <p class="address">{{ customer.full_address || 'SIN DIRECCIÓN REGISTRADA' }}</p>
           </div>
 
           <div class="card-actions">

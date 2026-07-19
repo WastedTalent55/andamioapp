@@ -63,9 +63,14 @@ export class EvaluationFormComponent implements OnInit {
     
     if (selectedCustomer && selectedCustomer.address_id) {
       this.filteredAddresses = [
-        { id: selectedCustomer.address_id, full_address: selectedCustomer.address }
+        { 
+          id: selectedCustomer.address_id, 
+          full_address: selectedCustomer.full_address 
+        }
       ];
-      this.evaluationForm.patchValue({ address_id: selectedCustomer.address_id });
+      this.evaluationForm.patchValue({ 
+        address_id: selectedCustomer.address_id 
+      });
     } else {
       this.filteredAddresses = [];
       this.evaluationForm.patchValue({ address_id: '' });
