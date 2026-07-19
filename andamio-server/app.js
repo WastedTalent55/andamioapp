@@ -103,7 +103,7 @@ app.post('/api/customers', verifyToken, (req, res) => {
 // ==========================================
 // RUTAS PARA EVALUACIONES (EVALUATIONS)
 // ==========================================
-app.post('/api/evaluations', (req, res) => {
+app.post('/api/evaluations', verifyToken, (req, res) => {
     const { 
         customer_id, 
         address_id,      
@@ -113,15 +113,27 @@ app.post('/api/evaluations', (req, res) => {
         requirements 
     } = req.body;
 
+    const tenantId = req.user.tenantId;
+    
+    console.log('Tenant autenticado:', tenantId);
+    
     const query = `
         INSERT INTO evaluations 
-        (customer_id, address_id, scheduled_date, evaluation_cost, requested_work, requirements) 
-        VALUES (?, ?, ?, ?, ?, ?)
+        (tenant_id, customer_id, address_id, scheduled_date, evaluation_cost, requested_work, requirements) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
         query, 
-        [customer_id, address_id, scheduled_date, evaluation_cost || 0, requested_work, requirements], 
+        [
+            tenantId, 
+            customer_id, 
+            address_id, 
+            scheduled_date, 
+            evaluation_cost || 0, 
+            requested_work, 
+            requirements
+        ], 
         (err, result) => {
             if (err) {
                 console.error('Error al agendar evaluación:', err);
@@ -132,24 +144,25 @@ app.post('/api/evaluations', (req, res) => {
     );
 });
 
-app.get('/api/evaluations', (req, res) => {
+app.get('/api/evaluations', verifyToken, (req, res) => {
+    const tenantId = req.user.tenantId;
+
     const query = `
         SELECT 
-            e.id, 
-            e.scheduled_date,
-            e.requested_work, 
-            e.evaluation_cost, 
-            e.status,
+            e.*,
             c.first_name, 
             c.last_name, 
-            c.phone, 
             ca.full_address AS address
         FROM evaluations e
-        LEFT JOIN customers c ON e.customer_id = c.id
+        INNER JOIN customers c
+            ON e.customer_id = c.id
         LEFT JOIN customer_addresses ca ON e.address_id = ca.id 
-        ORDER BY e.id DESC`;
+        WHERE e.tenant_id = ?
+        ORDER BY e.scheduled_date DESC
+    `;
+    console.log("Tenant:", tenantId);
 
-    db.query(query, (err, results) => {
+    db.query(query, [tenantId], (err, results) => {
         if (err) {
             console.error('Error al consultar MySQL:', err);
             return res.status(500).json({ success: false, error: err });
@@ -362,7 +375,9 @@ app.get('/api/quotes/evaluation/:evaluationId', (req, res) => {
 // ==========================================
 // RUTAS PARA TABLERO (BOARD)
 // ==========================================
-app.get('/api/board/summary', (req, res) => {
+app.get('/api/board/summary', verifyToken, (req, res) => {
+    const tenantId = req.user.tenantId;
+
     const query = `
         SELECT 
             e.id as eval_id, 
@@ -379,9 +394,10 @@ app.get('/api/board/summary', (req, res) => {
         JOIN customers c ON e.customer_id = c.id
         LEFT JOIN customer_addresses ca ON e.address_id = ca.id
         LEFT JOIN quotes q ON e.id = q.evaluation_id
+        WHERE e.tenant_id = ?
         ORDER BY e.scheduled_date ASC`;
 
-    db.query(query, (err, results) => {
+    db.query(query, [tenantId], (err, results) => {
         if (err) {
             console.error("❌ Error SQL:", err);
             return res.status(500).json({ success: false, error: err.message });

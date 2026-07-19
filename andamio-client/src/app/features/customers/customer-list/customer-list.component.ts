@@ -2,17 +2,19 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CustomerService } from '../../../core/services/customer.service'; 
 import { Customer } from '../../../core/models/customer.model'; 
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
+import { PageHeaderComponent } from '../../../shared/page-header/page-header.component';
 
 @Component({
   selector: 'app-customer-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, PageHeaderComponent],
   templateUrl: './customer-list.component.html',
   styleUrl: './customer-list.component.css'
 })
 export class CustomerListComponent implements OnInit {
   private customerService = inject(CustomerService);
+  private router = inject(Router);
 
   customers: Customer[] = [];
 
@@ -20,6 +22,10 @@ export class CustomerListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCustomers();
+  }
+
+  navegarANuevoCliente() {
+    this.router.navigate(['/customer/new']);
   }
 
   loadCustomers(): void {

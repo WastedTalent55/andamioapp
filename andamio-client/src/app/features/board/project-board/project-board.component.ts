@@ -2,11 +2,12 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ProjectBoardService } from '../../../core/services/project-board.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { PageHeaderComponent } from '../../../shared/page-header/page-header.component';
 
 @Component({
   selector: 'app-project-board',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, PageHeaderComponent],
   templateUrl: './project-board.component.html',
   styleUrl: './project-board.component.css'
 })

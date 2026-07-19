@@ -1,22 +1,21 @@
-<div class="dashboard-header">
-  <h2>Proyectos en Curso</h2>
-     
-  <div class="desktop-menu-wrapper">
-    <button class="btn-dashboard-header">
-      <span>+</span> AGREGAR
-    </button>
-    
-    <div class="desktop-dropdown-menu">
-      <button class="dropdown-item" title="Agregar Fotografia">📷 Foto Obra</button>
-      <button class="dropdown-item" title="Agregar Gasto">💸 Registrar Gasto</button>
-      <button class="dropdown-item" title="Agregar Ingreso">💰 Registrar Ingreso</button>
-      <button class="dropdown-item" title="Agendar Trabajo">🏗️ Nueva Tarea</button>
-      <button class="dropdown-item" title="Nueva Cotización" routerLink="/quotes/new">📝 Cotización</button>
-      <button class="dropdown-item" title="Cita Evaluación" routerLink="/evaluations/new">📅 Cita</button>
-      <button class="dropdown-item" title="Agregar Cliente" routerLink="/customer/new">👤 Cliente</button>
-    </div>
+<app-page-header 
+  title="Proyectos en Curso" 
+  buttonLabel="AGREGAR"
+  (onButtonClick)="toggleMenu()">
+</app-page-header>
+
+<!-- 2. TU MENÚ DESPLEGABLE (Se mantiene para la complejidad que necesitas) -->
+@if (isMenuOpen) {
+  <div class="desktop-dropdown-menu custom-dashboard-pos">
+    <button class="dropdown-item" title="Agregar Fotografia">📷 Foto Obra</button>
+    <button class="dropdown-item" title="Agregar Gasto">💸 Registrar Gasto</button>
+    <button class="dropdown-item" title="Agregar Ingreso">💰 Registrar Ingreso</button>
+    <button class="dropdown-item" title="Agendar Trabajo">🏗️ Nueva Tarea</button>
+    <button class="dropdown-item" title="Nueva Cotización" routerLink="/quotes/new">📝 Cotización</button>
+    <button class="dropdown-item" title="Cita Evaluación" routerLink="/evaluations/new">📅 Cita</button>
+    <button class="dropdown-item" title="Agregar Cliente" routerLink="/customer/new">👤 Cliente</button>
   </div>
-</div>
+}
  
 <div class="dashboard-content">
   <header class="utility-header">

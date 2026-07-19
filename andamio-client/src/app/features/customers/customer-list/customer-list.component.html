@@ -1,5 +1,11 @@
+<app-page-header
+  title="Infraestructura de Clientes" 
+  buttonLabel="NUEVO CLIENTE" 
+  (onButtonClick)="navegarANuevoCliente()">
+</app-page-header>
+
 <div class="client-feature-container">
-  <header class="tools-header">
+  <div class="search-toolbar">
     <div class="search-box">
       <span class="icon">🔍</span>
       <input 
@@ -8,8 +14,7 @@
         (input)="onSearch($event)"
         class="search-input">
     </div>
-    <button class="btn-andamio" routerLink="/customer/new">+ NUEVO CLIENTE</button>
-  </header>
+  </div>
 
   <div class="client-grid">
     @for (customer of filteredCustomers; track customer.id) {

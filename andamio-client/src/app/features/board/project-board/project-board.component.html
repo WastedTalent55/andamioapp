@@ -1,13 +1,12 @@
 <!-- Contenedor principal con el fondo de cuadrícula técnica sutil -->
+<app-page-header
+  title="Tablero de proyectos" 
+  buttonLabel="REFRESCAR TABLERO" 
+  (onButtonClick)="refreshBoard()">
+</app-page-header>
+
 <div class="kanban-container technical-grid">
   
-  <div class="board-header">
-    <h2>Tablero de Proyectos</h2>
-    <!-- Botón de acción rápida integrado en el header para escritorio -->
-    <button class="btn-andamio" routerLink="/projects/new">
-      <span>+</span> NUEVO PROYECTO
-    </button>
-  </div>
 
   <div class="kanban-board">
     
