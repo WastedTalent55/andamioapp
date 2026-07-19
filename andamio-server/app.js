@@ -1,11 +1,9 @@
+require('dotenv').config();
+
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
-const { OAuth2Client } = require('google-auth-library');
-const jwt = require('jsonwebtoken');
 const verifyToken = require('./middleware/auth');
-const GOOGLE_CLIENT_ID = '990420064714-v1g3927kpik6bo5tqjuj4qjl86dgd9ff.apps.googleusercontent.com';
-const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 const app = express();
 
@@ -49,7 +47,7 @@ const quoteRoutes = require('./src/routes/quoteRoutes');
 app.use('/api/quotes', quoteRoutes);
 
 // ==========================================
-// RUTAS PARA TABLERO (BOARD)
+// TABLERO (BOARD)
 // ==========================================
 const boardRoutes = require('./src/routes/boardRoutes');
 
@@ -59,53 +57,10 @@ app.use('/api/board', boardRoutes)
 // ==========================================
 // Ruta para Registrar o Iniciar Sesión con Google
 // ==========================================
-app.post('/api/auth/google', async (req, res) => {
-    const { token } = req.body;
-    try {
-        const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: '990420064714-v1g3927kpik6bo5tqjuj4qjl86dgd9ff.apps.googleusercontent.com',
-        });
-        const payload = ticket.getPayload();
-        const { sub: google_id, email, name, picture } = payload;
+const authRoutes = require('./src/routes/authRoutes');
 
-        // 2. DESESTRUCTURACIÓN: Usamos [rows] para obtener solo los datos
-        const [rows] = await db.promise().query('SELECT * FROM users WHERE google_id = ?', [google_id]);
+app.use('/api/auth', authRoutes);
 
-        if (rows.length > 0) {
-            const user = rows[0];
-            const tokenJWT = jwt.sign({ userId: user.id, tenantId: user.tenant_id }, 'SECRETO_SUPER_SEGURO');
-            return res.json({ success: true, token: tokenJWT, user: user });
-        }
-
-        // 3. SI ES NUEVO: Creamos la empresa (Tenant)
-        // Usamos 'company_name' y 'email' para coincidir con tu tabla profesional
-        const [tenantResult] = await db.promise().query(
-            'INSERT INTO tenants (company_name, email) VALUES (?, ?)',
-            [`Estudio de ${name}`, email]
-        );
-        const tenant_id = tenantResult.insertId;
-
-        // 4. Creamos al Usuario vinculado a ese Tenant
-        const [userResult] = await db.promise().query(
-            'INSERT INTO users (tenant_id, google_id, name, email, picture_url, role) VALUES (?, ?, ?, ?, ?, ?)',
-            [tenant_id, google_id, name, email, picture, 'admin']
-        );
-
-        const tokenJWT = jwt.sign({ userId: userResult.insertId, tenantId: tenant_id }, 'SECRETO_SUPER_SEGURO');
-
-        res.json({
-            success: true,
-            message: '¡Bienvenido a tu nueva infraestructura!',
-            token: tokenJWT,
-            tenant_id: tenant_id
-        });
-
-    } catch (error) {
-        console.error("Falla en la tubería de autenticación:", error);
-        res.status(500).json({ success: false, message: 'Error crítico en el servidor' });
-    }
-});
 // ==========================================
 // Ruta para guardar informacion del tenant
 // ==========================================
