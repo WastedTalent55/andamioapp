@@ -35,219 +35,25 @@ const customerRoutes = require('./src/routes/customerRoutes');
 app.use('/api/customers', customerRoutes);
 
 // ==========================================
-// RUTAS PARA EVALUACIONES (EVALUATIONS)
+// EVALUACIONES (EVALUATIONS)
 // ==========================================
 const evaluationRoutes = require('./src/routes/evaluationRoutes');
 
 app.use('/api/evaluations', evaluationRoutes);
 
 // ==========================================
-// RUTAS PARA COTIZACIONES (QUOTES)
+// COTIZACIONES (QUOTES)
 // ==========================================
 const quoteRoutes = require('./src/routes/quoteRoutes');
 
 app.use('/api/quotes', quoteRoutes);
 
-/*app.post('/api/quotes', (req, res) => {
-    const { 
-        evaluation_id, 
-        customer_id, 
-        delivery_time, 
-        total_amount, 
-        version_number, 
-        items,
-        evaluation_discount
-    } = req.body;
-
-    const quoteQuery = `
-        INSERT INTO quotes (evaluation_id, customer_id, delivery_time, evaluation_discount, total_amount, version_number, status)
-        VALUES (?, ?, ?, ?, ?, ?, 'borrador')`;
-    db.query(quoteQuery, [evaluation_id, customer_id, delivery_time, evaluation_discount, total_amount, version_number || 1], (err, result) => {
-        if (err) return res.status(500).json({ success: false, error: err });
-        
-        const quoteId = result.insertId;
-        
-        if (items && items.length > 0) {
-            const itemQuery = `
-                INSERT INTO quote_items (quote_id, type, description, unit_price, quantity, unit, total_price)
-                VALUES ?`;
-                
-            const itemValues = items.map(item => [
-                quoteId, 
-                item.type, 
-                item.description, 
-                item.unit_price, 
-                item.quantity, 
-                item.unit, 
-                item.total_price
-            ]);
-
-                db.query(itemQuery, [itemValues], (err) => {
-                    if (err) return res.status(500).json({ success: false, error: err });
-                    res.json({ success: true, quoteId });
-                });
-            } else {
-                res.json({ success: true, quoteId });
-            }
-        });
-});
-
-
-app.get('/api/quotes', (req, res) => {
-    const query = `
-        SELECT q.*, CONCAT(c.first_name, ' ', c.last_name) as customer_name 
-        FROM quotes q
-        JOIN customers c ON q.customer_id = c.id
-        ORDER BY q.id DESC`;
-
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error('Error al obtener cotizaciones:', err);
-            return res.status(500).json({ success: false, error: err });
-        }
-        res.json({ success: true, data: results });
-    });
-});    
-
-app.post('/api/quotes/items', (req, res) => {
-    const { quote_id, type, description, unit_price, quantity, unit } = req.body;
-    const total_price = unit_price * quantity;
-
-    const query = `
-        INSERT INTO quote_items (quote_id, type, description, unit_price, quantity, unit, total_price)
-        VALUES (?, ?, ?, ?, ?, ?, ?)`;
-
-    db.query(query, [quote_id, type, description, unit_price, quantity, unit, total_price], (err, result) => {
-        if (err) return res.status(500).json({ success: false, error: err });
-        res.json({ success: true, itemId: result.insertId });
-    });
-});
-
-app.get('/api/quotes/:id', (req, res) => {
-    const { id } = req.params;
-    const quoteQuery = "SELECT * FROM quotes WHERE id = ?";
-    const itemsQuery = "SELECT * FROM quote_items WHERE quote_id = ?";
-
-    db.query(quoteQuery, [id], (err, results) => {
-        if (err || results.length === 0) return res.status(404).json({ success: false });
-        
-        db.query(itemsQuery, [id], (err, items) => {
-            if (err) return res.status(500).json({ success: false });
-            res.json({ success: true, data: { ...results, items: items } }); 
-        });
-    });
-});
-
-app.put('/api/quotes/:id', (req, res) => {
-    const { id } = req.params;
-    const { delivery_time, total_amount, items, evaluation_discount } = req.body;
-
-    const updateQuoteQuery = "UPDATE quotes SET delivery_time = ?, evaluation_discount = ?, total_amount = ? WHERE id = ?";
-    
-    db.query(updateQuoteQuery, [delivery_time, evaluation_discount, total_amount, id], (err) => {
-        if (err) {
-            console.error('❌ Error al actualizar tabla quotes:', err);
-            return res.status(500).json({ success: false, error: err });
-        }
-
-        const deleteItemsQuery = "DELETE FROM quote_items WHERE quote_id = ?";
-        db.query(deleteItemsQuery, [id], (err) => {
-            if (err) {
-                console.error('❌ Error al refrescar ítems:', err);
-                return res.status(500).json({ success: false, error: err });
-            }
-
-            if (items && items.length > 0) {
-                const itemQuery = `
-                    INSERT INTO quote_items (quote_id, type, description, unit_price, quantity, unit, total_price)
-                    VALUES ?`;
-                
-                const itemValues = items.map(item => [
-                    id,
-                    item.type,
-                    item.description,
-                    item.unit_price,
-                    item.quantity,
-                    item.unit,
-                    item.total_price
-                ]);
-
-                db.query(itemQuery, [itemValues], (err) => {
-                    if (err) {
-                        console.error('❌ Error al insertar nuevos ítems:', err);
-                        return res.status(500).json({ success: false, error: err });
-                    }
-                    res.json({ success: true, message: '✅ Cotización e ítems actualizados con éxito' });
-                });
-            } else {
-                res.json({ success: true, message: '✅ Cotización actualizada (sin ítems nuevos)' });
-            }
-        });
-    });
-});
-
-app.get('/api/quotes/evaluation/:evaluationId', (req, res) => {
-    const { evaluationId } = req.params;
-    const query = `
-        SELECT q.id as quote_id, e.requirements, q.status, q.total_amount, q.evaluation_discount
-        FROM evaluations e
-        LEFT JOIN quotes q ON q.evaluation_id = e.id
-        WHERE e.id = ?
-        ORDER BY q.id DESC LIMIT 1`; 
-
-    db.query(query, [evaluationId], (err, results) => {
-        if (err || results.length === 0) return res.json({ success: true, data: { items: [] } });
-        
-        const quoteData = results[0];
-        const itemsQuery = "SELECT * FROM quote_items WHERE quote_id = ?";
-        db.query(itemsQuery, [quoteData.quote_id], (err, items) => {
-            res.json({ success: true, data: { ...quoteData, items: items } });
-        });
-    });
-});*/
-
 // ==========================================
 // RUTAS PARA TABLERO (BOARD)
 // ==========================================
-app.get('/api/board/summary', verifyToken, (req, res) => {
-    const tenantId = req.user.tenantId;
+const boardRoutes = require('./src/routes/boardRoutes');
 
-    const query = `
-        SELECT 
-            e.id as eval_id, 
-            e.scheduled_date as eval_date, 
-            c.phone,
-            e.requirements,
-            CONCAT(c.first_name, ' ', IFNULL(c.last_name, '')) as customer_name, 
-            ca.full_address as customer_address,
-            q.id as quote_id,
-            q.total_amount,
-            q.status as quote_status,
-            q.version_number
-        FROM evaluations e
-        JOIN customers c ON e.customer_id = c.id
-        LEFT JOIN customer_addresses ca ON e.address_id = ca.id
-        LEFT JOIN quotes q ON e.id = q.evaluation_id
-        WHERE e.tenant_id = ?
-        ORDER BY e.scheduled_date ASC`;
-
-    db.query(query, [tenantId], (err, results) => {
-        if (err) {
-            console.error("❌ Error SQL:", err);
-            return res.status(500).json({ success: false, error: err.message });
-        }
-
-        const data = results || [];
-        const summary = {
-            evaluations: data.filter(r => !r.quote_id),
-            quoting: data.filter(r => r.quote_id && r.quote_status === 'borrador'),
-            active: data.filter(r => r.quote_status === 'aceptada'),
-            finished: data.filter(r => r.quote_status === 'finalizada')
-        };
-        
-        res.json({ success: true, data: summary });
-    });
-});
+app.use('/api/board', boardRoutes)
 
 
 // ==========================================
