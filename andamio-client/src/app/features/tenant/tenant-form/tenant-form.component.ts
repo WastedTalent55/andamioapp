@@ -34,20 +34,17 @@ export class TenantFormComponent implements OnInit {
       address: [''],
       bank_name: [''], 
       bank_account: [''],
-      // Ajuste: 18 números exactos (0-9)
-      bank_clabe: ['', [Validators.pattern('^[1-8, 10]{18}$')]], 
-      logo_base64: [''] ,
+      bank_clabe: ['', [Validators.pattern('^[0-9]{18}$')]], 
+      logo: [''] ,
     });
   }
 
   loadTenantInfo() {
-    this.tenantService.getTenantData(1).subscribe({
+    this.tenantService.getMyTenantConfig().subscribe({
       next: (res: any) => {
         if (res.success && res.data && res.data) {
           const data = res.data[0];
-          // Rellenamos el formulario con lo que ya existe en MySQL
           this.tenantForm.patchValue(data);
-          // Si hay logo, encendemos la vista previa
           if (data.logo) {
             this.logoPreview = data.logo;
           }
@@ -57,14 +54,13 @@ export class TenantFormComponent implements OnInit {
     });
   }
 
-  // Lógica para capturar y procesar el logo
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         this.logoPreview = reader.result as string;
-        this.tenantForm.patchValue({ logo_base64: this.logoPreview });
+        this.tenantForm.patchValue({ logo: this.logoPreview });
       };
       reader.readAsDataURL(file);
     }

@@ -1,0 +1,16 @@
+.page-header {
+  display: flex; /* 💡 Activamos el flujo horizontal */
+  justify-content: space-between; /* 🚀 Este es el truco: empuja el título a la izquierda y el botón a la derecha */
+  align-items: center; /* Centra ambos elementos verticalmente para que se vean parejos */
+  
+  padding: var(--spacing-md) 0; /* Usamos tus variables de espaciado [3] */
+  margin-bottom: var(--spacing-lg); /* Deja aire antes de que empiece el contenido [3] */
+  border-bottom: 1px solid var(--andamio-gris-oscuro); /* Una línea sutil para delimitar la infraestructura [4] */
+}
+
+.brand-heading {
+  margin: 0;
+  font-family: var(--font-display); /* Usamos 'Archivo' para el toque industrial [3, 5] */
+  color: var(--andamio-tiza); /* Contraste óptimo sobre el azul marino [4] */
+  font-size: 1.8rem;
+}

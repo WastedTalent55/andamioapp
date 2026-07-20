@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject,  Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TenantService {
@@ -14,15 +14,23 @@ export class TenantService {
     this.tenantNameSubject.next(name);
   }
 
-  updateTenant(id: number, data: any) {
-    return this.http.put(`${this.apiUrl}/${id}`, data);
+  getMyTenantConfig(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/config`).pipe(
+      tap((res: any) => {
+        if (res.success && res.data && res.data.company_name) {
+          this.emitNewName(res.data.company_name);
+        }
+      })
+    );
   }
 
-  getTenantData(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`);
-  }
-
-   saveTenantProfile(data: any) {
-   return this.http.post(`${this.apiUrl}/update`, data);
+  saveTenantProfile(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/update`, data).pipe(
+      tap((res: any) => {
+        if (res.success && data.company_name) {
+          this.emitNewName(data.company_name);
+        }
+      })
+    );
   }
 }
