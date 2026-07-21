@@ -6,7 +6,8 @@
 
   <form [formGroup]="tenantForm" (ngSubmit)="saveTenant()" class="card-andamio">
     
-    <div class="logo-upload-section" [class.has-logo]="logoPreview">
+    <div class="branding-header-grid">
+      <div class="logo-upload-section" [class.has-logo]="logoPreview">
       <h3 class="section-title">Logo de Empresa</h3>
       
       <div class="upload-container">
@@ -25,6 +26,22 @@
           </div>
           
           <p class="tenant-tag">Formatos: PNG, JPG (Se recomienda cuadrado)</p>
+        </div>
+      </div>
+      </div>
+      <div class="color-picker-section">
+        <h3 class="section-title">Color de Identidad</h3>
+        <div class="color-config-container">
+          <label for="brand_color" class="label-andamio">Color para Cotizaciones</label>
+          <div class="color-input-wrapper">
+            <input 
+              id="brand_color" 
+              type="color" 
+              formControlName="brand_color" 
+              class="input-color-andamio">
+            <span class="data-number">{{ tenantForm.get('brand_color')?.value }}</span>
+          </div>
+          <p class="tenant-tag">Se usará en encabezados de PDFs y vistas de cotización.</p>
         </div>
       </div>
     </div>

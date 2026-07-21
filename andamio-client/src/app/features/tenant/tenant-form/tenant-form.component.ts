@@ -35,6 +35,7 @@ export class TenantFormComponent implements OnInit {
       bank_name: [''], 
       bank_account: [''],
       bank_clabe: ['', [Validators.pattern('^[0-9]{18}$')]], 
+      brand_color: ['#FFB800'],
       logo: [''] ,
     });
   }

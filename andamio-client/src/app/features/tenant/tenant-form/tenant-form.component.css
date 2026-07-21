@@ -147,3 +147,53 @@ input:focus {
   color: var(--andamio-fondo);
   transform: scale(1.02);
 }
+
+.branding-header-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Divide el espacio en dos columnas iguales */
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--andamio-gris-oscuro); /* Separador sutil [5] */
+}
+
+.color-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background-color: var(--andamio-antracita);
+  padding: 10px;
+  border-radius: var(--radius-interactive);
+  border: 1px solid var(--andamio-gris-oscuro);
+}
+
+.color-config-container {
+  background-color: var(--andamio-antracita);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-interactive);
+  border: 1px solid var(--andamio-gris-oscuro);
+  height: 100%; /* Para que mida lo mismo que la sección de logo */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.color-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: var(--spacing-sm) 0;
+}
+
+.input-color-andamio {
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--andamio-tiza);
+  border-radius: 50%; /* Selector circular para suavidad orgánica [2] */
+  cursor: pointer;
+  background: none;
+  overflow: hidden;
+}
+
+.input-color-andamio::-webkit-color-swatch-wrapper { padding: 0; }
+.input-color-andamio::-webkit-color-swatch { border: none; }

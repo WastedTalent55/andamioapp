@@ -16,7 +16,8 @@ const Tenant = {
             bank_name,
             bank_account,
             bank_clabe,
-            logo
+            logo,
+            brand_color
         } = tenantData;
 
 
@@ -30,7 +31,8 @@ const Tenant = {
             bank_name = ?, 
             bank_account = ?, 
             bank_clabe = ?, 
-            logo = ?
+            logo = ?,
+            brand_color = ?
             WHERE id = ?
         `;
 
@@ -45,6 +47,7 @@ const Tenant = {
             bank_account,
             bank_clabe,
             logo,
+            brand_color,
             id
         ]);
 
