@@ -101,37 +101,37 @@ const Quote = {
         return rows;
     },
 
-
     getById: async (id) => {
-
     const [rows] = await db.query(
-            `
-            SELECT
-                q.id AS quote_id,  
-                q.evaluation_id,    
-                q.quote_folio,          
-                q.version_number,       
-                q.tenant_id,
-                q.delivery_time,
-                q.total_amount,
-                q.evaluation_discount,
-                q.status,
-                q.created_at, 
-                CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
-                c.phone,
-                ca.full_address
-            FROM quotes q
-            INNER JOIN customers c
-                ON q.customer_id = c.id
-            LEFT JOIN customer_addresses ca
-                ON c.id = ca.customer_id
-            WHERE q.id = ?;
-            `,
-            [id]
-        );
-
-        return rows[0];
-    },
+        `
+        SELECT
+            q.id AS quote_id,  
+            q.evaluation_id,    
+            q.quote_folio,          
+            q.version_number,       
+            q.tenant_id,
+            q.delivery_time,
+            q.total_amount,
+            q.evaluation_discount,
+            q.status,
+            q.created_at, 
+            CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+            c.phone,
+            ca.full_address
+        FROM quotes q
+        -- 🛠️ CAMBIO: Usamos LEFT JOIN para que no se oculte la cotización si falta el cliente
+        LEFT JOIN customers c
+            ON q.customer_id = c.id
+        -- Este ya estaba bien, pero asegúrate de que sea LEFT JOIN
+        LEFT JOIN customer_addresses ca
+            ON c.id = ca.customer_id
+        WHERE q.id = ?;
+        `,
+        [id]
+    );
+    // 🛠️ IMPORTANTE: rows es un array, devolvemos el primer elemento
+    return rows[0]; 
+},
 
     getAllByTenant: async (tenantId) => {
 

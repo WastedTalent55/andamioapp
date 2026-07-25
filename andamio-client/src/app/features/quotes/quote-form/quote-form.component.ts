@@ -195,7 +195,10 @@ export class QuoteFormComponent implements OnInit {
 
     if (this.isEditMode && this.quoteId) {
       this.quoteService.updateQuote(this.quoteId, finalData).subscribe({
-        next: () => alert('✅ CAMBIOS GUARDADOS CORRECTAMENTE'),
+        next: () => {
+          alert('✅ CAMBIOS GUARDADOS CORRECTAMENTE');
+          this.location.back(); 
+        },
         error: () => alert('❌ Error al actualizar en MySQL')
       });
     } else {

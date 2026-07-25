@@ -81,45 +81,41 @@ const getQuotes = async (req,res)=>{
 
 };
 
-const getQuoteById = async(req,res)=>{
-
+const getQuoteById = async(req, res) => {
     try {
-
         const { id } = req.params;
 
+        // 1. Guardamos el resultado de la base de datos en una variable temporal
+        const result = await Quote.getById(id);
 
-        const quote = await Quote.getById(id);
+        // ✅ CAMBIO CLAVE: Si result es un arreglo [ { ... } ], tomamos solo el primer objeto { ... }
+        // Si result ya es un objeto o es null, se queda igual.
+        const quote = Array.isArray(result) ? result : result;
 
-
-        if(!quote){
+        // 2. Ahora la validación funcionará aunque la DB devuelva un arreglo vacío []
+        if (!quote || (Array.isArray(result) && result.length === 0)) {
             return res.status(404).json({
-                success:false,
-                message:'Cotización no encontrada'
+                success: false,
+                message: 'Cotización no encontrada'
             });
         }
 
-
         const items = await Quote.getItemsByQuote(id);
 
-
         res.json({
-            success:true,
-            data:{
-                ...quote,
+            success: true,
+            data: {
+                ...quote, // Ahora podemos esparcir las propiedades del objeto con seguridad
                 items
             }
         });
 
-
-    } catch(error){
-
+    } catch (error) {
         res.status(500).json({
-            success:false,
-            error:error.message
+            success: false,
+            error: error.message
         });
-
     }
-
 };
 
 const updateQuote = async(req,res)=>{
@@ -176,12 +172,12 @@ const updateQuote = async(req,res)=>{
 };
 
 const getQuoteByEvaluationId = async (req, res) => {
-
     try {
-
         const { evaluationId } = req.params;
 
-        const quote = await Quote.getByEvaluationId(evaluationId);
+        const result = await Quote.getByEvaluationId(evaluationId);
+
+        const quote = Array.isArray(result) ? result[0] : result;
 
         if (!quote || !quote.quote_id) {
             return res.json({
@@ -192,9 +188,7 @@ const getQuoteByEvaluationId = async (req, res) => {
             });
         }
 
-        const items = await Quote.getItemsByQuote(
-            quote.quote_id
-        );
+        const items = await Quote.getItemsByQuote(quote.quote_id);
 
         res.json({
             success: true,
@@ -205,14 +199,12 @@ const getQuoteByEvaluationId = async (req, res) => {
         });
 
     } catch (error) {
-
+        console.error('Error en getQuoteByEvaluationId:', error);
         res.status(500).json({
             success: false,
             error: error.message
         });
-
     }
-
 };
 
 module.exports = {

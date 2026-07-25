@@ -54,7 +54,7 @@
             <p class="total-est">Presupuesto: <strong class="data-number">{{ quote.total_amount | currency }}</strong></p>
             
             <div class="card-footer">
-              <button class="btn-andamio" [routerLink]="['/quotes/preview', quote.eval_id]">
+              <button class="btn-andamio" [routerLink]="['/quotes/preview', quote.id || quote.quote_id]">
                 Ver Cotización
               </button>
             </div>
