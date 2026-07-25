@@ -1,0 +1,192 @@
+/* 📄 LIENZO DE PAPEL DIGITAL */
+.quote-canvas {
+  background-color: #FFFFFF !important; /* Blanco absoluto */
+  color: #0F172A !important; /* Slate oscuro para legibilidad profesional */
+  padding: 40px;
+  max-width: 850px;
+  margin: 0 auto;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* ⚠️ OVERRIDE DE TEXTOS (Evita letras blancas) */
+.quote-canvas h1, .quote-canvas h2, .quote-canvas h3, 
+.quote-canvas p, .quote-canvas span, .quote-canvas td, .quote-canvas th {
+  color: #0F172A !important;
+}
+
+/* CONTROL DEL LOGO */
+.logo-render {
+  max-height: 90px;
+  max-width: 250px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+/* GRID DE DATOS (Estilo Charly Pulenta) [1] */
+.client-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr;
+  border: 1.5px solid #0F172A;
+  margin-bottom: 20px;
+}
+
+.info-cell {
+  padding: 8px;
+  border: 0.5px solid #CBD5E1;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-grid-charly {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  border: 1.5px solid var(--andamio-fondo);
+}
+.info-cell {
+  padding: 8px;
+  border: 0.5px solid #cbd5e1;
+  display: flex;
+  flex-direction: column;
+}
+
+.quote-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.badge-text {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--andamio-fondo) !important; /* Texto oscuro sobre el Oro Activo */
+  margin: 0;
+}
+
+.quote-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 18px;
+}
+
+/* TABLA INDUSTRIAL [1] */
+.quote-table-industrial {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+
+.quote-table-industrial th {
+  font-size: 10px;
+  padding: 8px;
+  text-align: left;
+  color: #0F172A !important; /* Texto oscuro sobre el color de marca */
+}
+
+.quote-table-industrial td {
+  padding: 8px;
+  border: 1px solid #E2E8F0;
+  font-size: 12px;
+}
+
+.desc-col { width: 45%; }
+
+/* TOTALES [1, 3] */
+.quote-footer-industrial {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.totals-side {
+  width: 40%;
+}
+
+.total-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #E2E8F0;
+  font-size: 13px;
+}
+
+.highlight {
+  font-weight: 800;
+  background-color: #F1F5F9;
+}
+
+.quote-top-wrapper {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: stretch; /* 👈 Esto hace que ambos lados midan lo mismo */
+  margin-bottom: var(--spacing-lg);
+  border-top: 10px solid; /* El color viene del style binding */
+  padding-top: var(--spacing-sm);
+}
+
+.client-info-container {
+  flex: 2; /* Toma más espacio para los datos */
+}
+
+.company-logo-aside {
+  flex: 1;
+   min-width: 200px; /* Dale un ancho mínimo */
+  min-height: 120px;
+  display: flex;
+  background-color: #f1f5f9; /* Un tono gris muy tenue para resaltar el área del logo */
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.quote-logo-render {
+  max-width: 100%;
+  max-height: 110px;
+  max-height: 120px; /* Ajustado para que no rompa la cuadrícula */
+  object-fit: contain;
+}
+
+.action-toolbar {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  display: flex;
+  justify-content: center;
+  background-color: var(--andamio-antracita); /* Superficie suave [3] */
+}
+
+.toolbar-content {
+  width: 100%;
+  max-width: 850px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+/* Evita que los botones salgan en el PDF */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Variante para botón de "Volver" más sutil */
+.btn-outline {
+  background-color: transparent !important;
+  border: 1px solid var(--andamio-oro-activo) !important;
+  color: var(--andamio-oro-activo) !important;
+}
+
+.btn-outline:hover {
+  background-color: rgba(255, 184, 0, 0.1) !important;
+}

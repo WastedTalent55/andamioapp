@@ -1,0 +1,152 @@
+<div class="content-container technical-grid">
+  <!-- 🎨 BARRA DE AJUSTE ESTÉTICO (WYSIWYG) -->
+  <div class="card-andamio preview-toolbar">
+    <div class="control-item">
+      <label>COLOR DE IDENTIDAD:</label>
+      <input type="color" [(ngModel)]="selectedColor" class="color-dot">
+      <span class="data-number">{{ selectedColor }}</span>
+    </div>
+    <button class="btn-andamio" (click)="saveColorDefault()">FIJAR MARCA</button>
+  </div>
+
+  <div class="card-andamio action-toolbar no-print">
+  <div class="toolbar-content">
+    <!-- BOTÓN CERRAR: Regresa a la lista de cotizaciones -->
+    <button class="btn-andamio btn-outline" (click)="closePreview()">
+      <span>VOLVER</span>
+    </button>
+
+    <div class="main-actions">
+      <button class="btn-andamio" [routerLink]="['/quotes/edit', quoteData?.evaluation_id]">
+        EDITAR COTIZACIÓN
+      </button>
+
+      <!-- BOTÓN DESCARGAR: Dispara la lógica de exportación a PDF -->
+      <button class="btn-andamio" (click)="downloadPDF()">
+        DESCARGAR PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- 📄 LIENZO DE COTIZACIÓN PROFESIONAL -->
+  <div class="quote-canvas">
+    
+    <!-- ENCABEZADO: IDENTIDAD DIGITAL [1] -->
+    <header class="quote-top-wrapper" [style.border-top-color]="selectedColor">
+        <div class="client-info-container">
+          <div class="info-grid-charly">
+            <div class="info-cell" [style.border-left-color]="selectedColor">
+              <span class="label">CLIENTX:</span>
+              <span class="value">{{ quoteData?.customer_name }}</span>
+            </div>
+            <div class="info-cell">
+              <span class="label">FECHA:</span>
+              <span class="value">{{ quoteData?.created_at | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="info-cell quote-badge" [style.background-color]="selectedColor">
+              <h2 class="badge-text">COTIZACIÓN</h2>
+            </div>
+            <div class="info-cell full-width">
+              <span class="label">DIRECCIÓN:</span>
+              <span class="value">{{ quoteData?.full_address }}</span>
+            </div>
+            <div class="info-cell">
+              <span class="label">TELÉFONO:</span>
+              <span class="value data-number">{{ quoteData?.phone }}</span>
+            </div>
+            <div class="info-cell">
+  <span class="value data-number">{{ quoteData?.quote_folio || quoteData?.quote_id }} V{{ quoteData?.version_number || 1 }}</span>
+</div>
+          </div>
+        </div>
+
+        <!-- Bloque Derecho: Logo de la Empresa (Misma altura que el grid) -->
+        <div class="company-logo-aside">
+          <div class="logo-frame">
+            <img [src]="getSafeUrl(tenantConfig.logo)" class="quote-logo-render">
+            <h1 class="company-name-mini" [style.color]="selectedColor" *ngIf="!tenantConfig?.logo">
+              {{ tenantConfig?.company_name }}
+            </h1>
+          </div>
+        </div>
+    </header>
+
+
+    <!-- 🛠️ SECCIÓN: MANO DE OBRA (5 COLUMNAS) [1, 2] -->
+    <div class="table-wrapper">
+      <h3 class="table-category" [style.background-color]="selectedColor + '20'">MANO DE OBRA</h3>
+      <table class="quote-table-industrial">
+        <thead>
+          <tr [style.background-color]="selectedColor">
+            <th>DESCRIPCIÓN</th>
+            <th>PRECIO UNITARIO</th>
+            <th>CANTIDAD</th>
+            <th>UNIDAD</th>
+            <th>PRECIO TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of laborItems">
+            <td class="desc-col">{{ item.description }}</td>
+            <td class="data-number text-right">{{ item.unit_price | currency }}</td>
+            <td class="data-number text-center">{{ item.quantity }}</td>
+            <td class="text-center">{{ item.unit || 'SERVICIO' }}</td>
+            <td class="data-number text-right">{{ (item.unit_price * item.quantity) | currency }}</td>
+          </tr>
+          <tr class="subtotal-row">
+            <td colspan="4"></td>
+            <td class="data-number text-right">{{ laborSubtotal | currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 📦 SECCIÓN: MATERIALES (5 COLUMNAS) [1, 2] -->
+    <div class="table-wrapper">
+      <h3 class="table-category" [style.background-color]="selectedColor + '20'">MATERIALES</h3>
+      <table class="quote-table-industrial">
+        <tbody>
+          <tr *ngFor="let mat of materialItems">
+            <td class="desc-col">{{ mat.description }}</td>
+            <td class="data-number text-right">{{ mat.unit_price | currency }}</td>
+            <td class="data-number text-center">{{ mat.quantity }}</td>
+            <td class="text-center">{{ mat.unit }}</td>
+            <td class="data-number text-right">{{ (mat.unit_price * mat.quantity) | currency }}</td>
+          </tr>
+          <tr class="materials-total-row">
+            <td colspan="4" class="text-right"><strong>SUMA TOTAL DE MATERIALES</strong></td>
+            <td class="data-number text-right">{{ materialsSubtotal | currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 💰 BLOQUE DE TOTALES Y ANTICIPO [1, 3] -->
+    <footer class="quote-footer-industrial">
+      <div class="delivery-side">
+        <div class="delivery-box" [style.background-color]="selectedColor">
+          <span>TIEMPO DE ENTREGA:</span>
+          <span class="data-number">{{ quoteData?.delivery_time }} DIAS</span>
+        </div>
+      </div>
+      
+      <div class="totals-side">
+        <div class="total-line"><span>SUMA TOTAL</span> <span class="data-number">{{ (laborSubtotal + materialsSubtotal) | currency }}</span></div>
+        <div class="total-line"><span>- COTIZACIÓN {{ (evaluationDiscount) | currency }}</span> <span class="data-number">{{ (laborSubtotal + materialsSubtotal - evaluationDiscount) | currency }}</span></div>
+        <div class="total-line highlight"><span>ANTICIPO (50%)</span> <span class="data-number">{{ ((laborSubtotal + materialsSubtotal - evaluationDiscount) / 2) | currency }}</span></div>
+        <div class="total-line"><span>FINIQUITO VS ENTREGA.</span> <span class="data-number">{{ ((laborSubtotal + materialsSubtotal - evaluationDiscount) / 2) | currency }}</span></div>
+      </div>
+    </footer>
+
+    <!-- 🏦 DATOS BANCARIOS [3] -->
+    <section class="bank-section" [style.background-color]="selectedColor + '10'">
+      <p><strong>{{ tenantConfig?.bank_name || 'BBVA' }}</strong></p>
+      <p>CUENTA: <span class="data-number">{{ tenantConfig?.bank_account }}</span></p>
+      <p>CLABE: <span class="data-number">{{ tenantConfig?.bank_clabe }}</span></p>
+    </section>
+
+    <div class="final-thanks">!!GRACIAS POR LA CONFIANZA!!</div>
+  </div>
+</div>

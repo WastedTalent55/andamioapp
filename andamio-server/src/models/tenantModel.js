@@ -5,8 +5,6 @@ const Tenant = {
 
 
     update: async (id, tenantData) => {
-    console.log("Datos recibidos en el modelo:", { ...tenantData, logo: tenantData.logo ? 'Imagen detectada' : 'VACÍO' });
-
         const {
             company_name,
             owner_name,

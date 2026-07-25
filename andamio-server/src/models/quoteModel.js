@@ -7,6 +7,7 @@ const Quote = {
 
         const {
             tenant_id,
+            quote_folio,
             evaluation_id,
             customer_id,
             delivery_time,
@@ -21,6 +22,7 @@ const Quote = {
             INSERT INTO quotes
             (
                 tenant_id,
+                quote_folio,
                 evaluation_id,
                 customer_id,
                 delivery_time,
@@ -29,10 +31,11 @@ const Quote = {
                 version_number,
                 status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'borrador')
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'borrador')
             `,
             [
                 tenant_id,
+                quote_folio,
                 evaluation_id,
                 customer_id,
                 delivery_time,
@@ -103,9 +106,26 @@ const Quote = {
 
     const [rows] = await db.query(
             `
-            SELECT *
-            FROM quotes
-            WHERE id = ?
+            SELECT
+                q.id AS quote_id,  
+                q.evaluation_id,    
+                q.quote_folio,          
+                q.version_number,       
+                q.tenant_id,
+                q.delivery_time,
+                q.total_amount,
+                q.evaluation_discount,
+                q.status,
+                q.created_at, 
+                CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+                c.phone,
+                ca.full_address
+            FROM quotes q
+            INNER JOIN customers c
+                ON q.customer_id = c.id
+            LEFT JOIN customer_addresses ca
+                ON c.id = ca.customer_id
+            WHERE q.id = ?;
             `,
             [id]
         );
@@ -152,7 +172,8 @@ const Quote = {
             SET 
                 delivery_time = ?,
                 evaluation_discount = ?,
-                total_amount = ?
+                total_amount = ?,
+                version_number = version_number + 1
             WHERE id = ?
             `,
             [
@@ -184,6 +205,8 @@ const Quote = {
             `
             SELECT
                 q.id AS quote_id,
+                q.quote_folio,       
+                q.version_number, 
                 q.delivery_time,
                 q.status,
                 q.total_amount,
@@ -203,6 +226,8 @@ const Quote = {
     },
 
 };
+
+
 
 
 module.exports = Quote;

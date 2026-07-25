@@ -11,13 +11,14 @@ import { CustomerListComponent } from './features/customers/customer-list/custom
 import { WelcomeComponent } from './features/auth/welcome/welcome.component';
 import { MainLayoutComponent } from './shared/main-layout/main-layout.component'; 
 import { TenantFormComponent } from './features/tenant/tenant-form/tenant-form.component';
+import { QuotePreviewComponent } from './features/quotes/quote-preview/quote-preview.component';
 
 export const routes: Routes = [
-    // 0. Flujo de Bienvenida y Acceso
+    // Bienvenida y Acceso
     { path: '', component: WelcomeComponent },
     {
       path: '',
-        component: MainLayoutComponent, // Este componente TIENE el <app-sidebar> y el <router-outlet>
+        component: MainLayoutComponent, 
         children: [
             // Centro de Mando y Métricas
             { path: 'dashboard', component: DashboardComponent },
@@ -37,16 +38,18 @@ export const routes: Routes = [
             // Formulario de Evaluación
             { path: 'evaluations/:id/details', component: EvaluationDetailComponent },
     
-            // Fase de Cotización y Versionamiento
+            // Cotización y Versionamiento
             { path: 'evaluations/:evaluationId/create-quote', component: QuoteFormComponent },
             { path: 'quotes/new', component: QuoteFormComponent },
+            { path: 'quotes/edit/:evaluationId', component: QuoteFormComponent },
             { path: 'quotes', component: QuoteListComponent },
+            { path: 'quotes/preview/:id', component: QuotePreviewComponent },
 
+            // 6. Fase de Ejecución y Rentabilidad (El trabajo ya agendado)
+            { path: 'projects/:id/execution', component: ProjectExecutionComponent },
 
-                // 6. Fase de Ejecución y Rentabilidad (El trabajo ya agendado)
-{ path: 'projects/:id/execution', component: ProjectExecutionComponent },
-//7. Ajustes del tenant
-{ path: 'settings', component: TenantFormComponent },
+            //7. Ajustes del tenant
+            { path: 'settings', component: TenantFormComponent },
         ]
     },
 ];

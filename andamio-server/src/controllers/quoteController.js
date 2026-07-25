@@ -1,4 +1,5 @@
 const Quote = require('../models/quoteModel');
+const db = require('../config/db');
 
 
 const createQuote = async (req, res) => {
@@ -7,9 +8,16 @@ const createQuote = async (req, res) => {
 
         const tenantId = req.user.tenantId;
 
+        const [lastQuote] = await db.query(
+      'SELECT MAX(quote_folio) as lastFolio FROM quotes WHERE tenant_id = ?',
+      [tenantId]
+    );
+    const nextFolio = (lastQuote.lastFolio || 0) + 1;
+
         const quoteData = {
             ...req.body,
-            tenant_id: tenantId
+            tenant_id: tenantId,
+            quote_folio: nextFolio
         };
 
 

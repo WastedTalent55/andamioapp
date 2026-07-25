@@ -80,22 +80,30 @@ export class QuoteFormComponent implements OnInit {
   }
 
   private loadExistingQuoteData() {
-    this.quoteService.getQuoteByEvaluationId(this.evaluationId).subscribe((res: any) => {
-      const quote = res.data ? res.data : res;
+  this.quoteService.getQuoteByEvaluationId(this.evaluationId).subscribe((res: any) => {
+    // 1. "Desenvolvimiento" seguro: si es arreglo toma el , si es objeto úsalo directo
+    const quote = res.data ? (Array.isArray(res.data) ? res.data : res.data) : res;
     
-      if (quote && quote.quote_id) {
-        this.laborItems.clear();
-        this.materialItems.clear();
-        this.isEditMode = true; 
-        this.quoteId = quote.quote_id;
+    // 2. Validación de identidad de la cotización
+    if (quote && (quote.quote_id || quote.id)) {
+      console.log("Cotización encontrada, entrando en modo edición:", quote);
+      
+      this.isEditMode = true; 
+      this.quoteId = quote.quote_id || quote.id;
+      this.currentVersion = quote.version_number || 1; // Mapeo del versionado [3]
+      
+      this.laborItems.clear();
+      this.materialItems.clear();
 
+      // 3. Carga de Ítems con cálculo de precio total por fila
+      if (quote.items && Array.isArray(quote.items)) {
         quote.items.forEach((item: any) => {
           const group = this.fb.group({
             description: [item.description, Validators.required],
             unit_price: [item.unit_price, Validators.required],
             quantity: [item.quantity, Validators.required],
             unit: [item.unit, Validators.required],
-            total_price: [item.total_price]
+            total_price: [Number(item.unit_price) * Number(item.quantity)] // Calculado [3]
           });
 
           if (item.type === 'mano_de_obra') { 
@@ -104,20 +112,27 @@ export class QuoteFormComponent implements OnInit {
             this.materialItems.push(group);
           }
         });
-
-        this.quoteForm.patchValue({
-          delivery_time: parseInt(quote.delivery_time),
-          evaluation_discount: quote.evaluation_discount > 0 
-            ?  Number(quote.evaluation_discount) 
-            : this.evaluation_discount,
-        });
-      } else {
-        this.isEditMode = false;
-        this.quoteId = undefined;
-        this.updateTotals();
       }
-    });
-  }
+
+      // 4. Parcheo de valores principales
+      this.quoteForm.patchValue({
+        delivery_time: parseInt(quote.delivery_time),
+        evaluation_discount: quote.evaluation_discount > 0 
+          ? Number(quote.evaluation_discount) 
+          : this.evaluation_discount,
+      });
+
+      // 5. ¡IMPORTANTE! Actualizar cálculos globales tras cargar todo
+      this.updateTotals(); 
+
+    } else {
+      console.log("Modo creación: No se encontró cotización previa.");
+      this.isEditMode = false;
+      this.quoteId = undefined;
+      this.updateTotals(); // Asegura totales en 0 o base [2]
+    }
+  });
+}
 
   private loadEvaluationData() {
     this.evalService.getEvaluationById(this.evaluationId).subscribe(data => {
