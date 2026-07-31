@@ -1,16 +1,29 @@
 .kpi-card{
+
     display:flex;
     align-items:center;
     gap:20px;
 
-    background:var(--andamio-antracita);
+    background:linear-gradient(
+        180deg,
+        rgba(255,255,255,.02),
+        rgba(255,255,255,0)
+    );
 
-    border:1px solid var(--andamio-gris-oscuro);
-    border-radius:16px;
+    background-color:var(--andamio-antracita);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:20px;
 
     padding:24px;
 
     transition:var(--transition-friendly);
+
+    position:relative;
+
+    overflow:hidden;
+
 }
 
 .kpi-card:hover{
@@ -63,5 +76,43 @@
     font-size:2rem;
 
     color:var(--andamio-tiza);
+
+}
+
+.kpi-content{
+
+    flex:1;
+
+}
+
+.kpi-subtitle{
+
+    display:block;
+
+    margin-top:6px;
+
+    font-size:.78rem;
+
+    color:var(--andamio-concreto);
+
+}
+
+.kpi-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:0;
+
+    width:4px;
+
+    height:100%;
+
+    background:var(--andamio-oro-activo);
+
+    opacity:.8;
 
 }

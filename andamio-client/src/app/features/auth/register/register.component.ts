@@ -32,7 +32,7 @@ export class RegisterComponent implements OnInit {
     this.authService.loginWithGoogle(response.credential).subscribe({
       next: (res) => {
         console.log("¡Andamio nivelado! Usuario y Tenant creados [Artifact 5].", res);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/board']);
       },
       error: (err) => {
         console.error("Fallo en la estructura de conexión:", err);

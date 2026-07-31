@@ -7,55 +7,99 @@
      }">
 
   <!-- 1. Título Dinámico (Requested Work para Eval y Quote) -->
-  <div class="card-title-section">
-    @if (type === 'evaluations' || type === 'quoting') {
-      <div>
-        <h3 class="requested-work">
-          {{ data.requested_work || 'Trabajo sin especificar' }}
-        </h3>
-        
-        <!-- 📄 Icono de Documento (Solo en Cotización si existe ID) -->
-        @if (type === 'quoting' && data.quote_id) {
-          <button class="icon-btn-preview" (click)="viewPreview()" title="Ver Vista Previa">
-            📄
-          </button>
-        }
-      </div>
-      <p class="customer-subtitle">
-        👤 {{ data.customer_name }}
-      </p>
-    } @else {
-      <h3 class="customer-name">
-        {{ data.customer_name }}
-      </h3>
+   <div class="card-header">
+
+    @if(type === 'evaluations'){
+
+        <span class="status-pill pending">
+            Pendiente
+        </span>
+
     }
-  </div>
+
+    @if(type === 'quoting'){
+
+        <span class="status-pill quote">
+            {{data.quote_status | uppercase}}
+        </span>
+
+    }
+
+</div>
+
+
+<div class="card-date">
+
+    {{data.eval_date | date:'EEE d MMM'}}
+
+    ·
+
+    {{data.eval_date | date:'shortTime'}}
+
+</div>
+
+
+<h3 class="card-work">
+
+    {{data.requested_work}}
+
+</h3>
+
+
+<p class="card-client">
+
+ {{data.customer_name}}
+
+</p>
+
+
+<p class="card-address">
+
+ {{data.customer_address}}
+
+</p>
   
   <div class="card-body-info">
     <!-- Info básica presente en ambos estados -->
-    <p class="address">📍 {{ data.customer_address || data.address || 'Sin dirección registrada' }}</p>
-    <p class="phone-info">📞 {{ data.phone }}</p>
-    
-    <!-- INFO ESPECÍFICA: EVALUACIONES -->
-    @if (type === 'evaluations') {
-      <div class="appointment-details">
-        <p class="date">📅 <strong>Fecha Cita:</strong> {{ (data.eval_date || data.scheduled_date) | date:'dd/MM/yyyy' }}</p>
-        <p class="date">⏰ <strong>Hora:</strong> {{ (data.eval_date || data.scheduled_date) | date:'shortTime' }}</p>
-      </div>
-    }
+    <p class="address">
+      <lucide-icon 
+        [img]="MapPin"
+        size="16">
+      </lucide-icon>
+      {{ data.customer_address || data.address || 'Sin dirección registrada' }}</p>
+    <p class="phone-info">
+      <lucide-icon 
+        [img]="Phone"
+        size="16">
+      </lucide-icon>
+      {{ data.phone }}
+    </p>
 
     <!-- INFO ESPECÍFICA: COTIZACIONES -->
     @if (type === 'quoting') {
       <div class="quote-details">
         <!-- Monto Total (Si existe) -->
         <p class="total-amount">
-          💰 {{ (data.total_amount | currency) || 'Costo pendiente' }}
+          <lucide-icon 
+            [img]="Wallet"
+            size="16">
+          </lucide-icon> 
+          {{ (data.total_amount | currency) || 'Costo pendiente' }}
         </p>
         
         <!-- Estado y Fecha de Creación/Envío -->
         <div>
-           <span>🏷️ {{ data.status === 'sent' ? 'Enviada' : 'Borrador' }}</span>
-           <span>📅Creada el: {{ (data.sent_at || data.created_at) | date:'dd/MM/yy' }}</span>
+           <span> <lucide-icon 
+  [img]="FileText"
+  size="16">
+</lucide-icon> {{ data.status === 'sent' ? 'Enviada' : 'Borrador' }}</span>
+           <span>
+            <lucide-icon 
+              [img]="Calendar"
+              size="16">
+            </lucide-icon> 
+            Creada el: {{ (data.sent_at || data.created_at) | date:'dd/MM/yy' }}
+          </span>
         </div>
       </div>
     }
@@ -73,7 +117,8 @@
     <!-- Botón de Aceptación (Solo aparece en columna Cotización) -->
     @if (type === 'quoting') {
       <button class="btn-action primary" (click)="acceptQuote()">
-        ✅ Cotización Aceptada
+        <lucide-icon [img]="CircleCheck" size="18"></lucide-icon>
+        Cotización Aceptada 
       </button>
     }
   </div>

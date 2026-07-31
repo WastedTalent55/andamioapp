@@ -2,14 +2,30 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TenantService } from '../../core/services/tenant.service';
+import { 
+  LucideAngularModule,  
+  LayoutDashboard,
+  Kanban,
+  Users,
+  FileText,
+  HardHat,
+  Settings 
+} from 'lucide-angular';
+
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, LucideAngularModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
+  LayoutDashboard = LayoutDashboard;
+  Kanban = Kanban;
+  Users = Users;
+  FileText = FileText;
+  HardHat = HardHat;
+  Settings = Settings;
   
   tenantName: string = 'Andamio';
 

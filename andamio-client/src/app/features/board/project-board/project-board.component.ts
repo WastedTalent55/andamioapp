@@ -28,6 +28,7 @@ export class ProjectBoardComponent implements OnInit {
 
   loadBoard() {
   this.boardService.getBoardData().subscribe(res => {
+console.log(res.data.quoting[0]);
     if (res.success) {
       this.columns = res.data; 
     }

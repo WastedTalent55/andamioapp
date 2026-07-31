@@ -17,6 +17,10 @@ const getCount = async (req, res) => {
 };
 
 const getCustomers = async (req, res) => {
+console.log('--- DIAGNÓSTICO TENANT ---');
+    console.log('Objeto req.user completo:', req.user); // Esto te dirá qué hay dentro del token
+    console.log('Valor de tenantId extraído:', req.user.tenantId);
+
     try {
         const tenantId = req.user.tenantId;
         const customers = await Customer.getAllByTenant(tenantId);

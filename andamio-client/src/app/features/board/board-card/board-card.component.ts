@@ -1,15 +1,24 @@
 import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { LucideAngularModule, MapPin, Phone, Wallet, Calendar, FileText, CircleCheck, Clock } from 'lucide-angular';
 
 @Component({
   selector: 'app-board-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './board-card.component.html',
   styleUrl: './board-card.component.css'
 })
 export class BoardCardComponent {
+  MapPin = MapPin;
+  Phone = Phone;
+  Wallet = Wallet;
+  Calendar = Calendar;
+  FileText = FileText;
+  CircleCheck = CircleCheck;
+  Clock = Clock;
+
   @Input() data: any;
   @Input() type: string = 'evaluations';
   private router = inject(Router);

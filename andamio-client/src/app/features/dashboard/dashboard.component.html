@@ -7,48 +7,148 @@
   <!-- Bienvenida -->
   <section class="hero-section">
 
-    <h2>Buenos días, {{ userName }}</h2>
+    <div class="hero-info">
 
-    <p>
-      Aquí tienes un resumen del estado actual de tu operación.
-    </p>
+      <div>
+        <span class="hero-tag">
+          CONTROL OPERATIVO
+        </span>
+
+        <h2>Buenos días, {{ userName }} !</h2>
+
+        <p>
+          Bienvenidx a Andamio. Aquí puedes consultar el estado general de tu operación.
+        </p>
+
+      </div>
+
+      <button class="btn-andamio" routerLink="/board">
+        Ver tablero
+      </button>
+
+    </div>
 
   </section>
 
   <!-- Indicadores -->
   <section class="kpi-grid">
-    <div class="widgets-grid">
-
     <app-kpi-card
-        icon="👤"
+        [icon]="Users"
         title="Clientes"
-        [value]="totalClientes">
+        [value]="totalClientes"
+        subtitle="+3 este mes">
     </app-kpi-card>
 
     <app-kpi-card
-        icon="📋"
+        [icon]="ClipboardCheck"
         title="Evaluaciones"
-        [value]="6">
+        [value]="6"
+        subtitle="2 pendientes">
     </app-kpi-card>
 
     <app-kpi-card
-        icon="📝"
+        [icon]="FileText"
         title="Cotizaciones"
-        [value]="3">
+        [value]="3"
+        subtitle="2 enviadas">
     </app-kpi-card>
 
     <app-kpi-card
-        icon="🏗️"
+        [icon]="HardHat"
         title="Proyectos"
-        [value]="12">
+        [value]="12"
+        subtitle="2 activos">
     </app-kpi-card>
-
-</div>
-
   </section>
 
   <!-- Actividad -->
-  <section class="activity-grid">
+   <section class="activity-grid">
+
+    <div class="card-andamio">
+
+    <h3 class="section-title">
+      <lucide-icon 
+        [img]="Calendar"
+        size="20">
+      </lucide-icon>
+      Actividad reciente
+    </h3>
+
+    <div class="activity-list">
+
+      <div class="activity-item">
+
+        <span class="activity-dot blue"></span>
+
+        <div>
+
+          <strong>Evaluación creada</strong>
+
+          <p>Casa de Juan Pérez</p>
+
+        </div>
+
+      </div>
+
+      <div class="activity-item">
+
+        <span class="activity-dot yellow"></span>
+
+        <div>
+
+          <strong>Cotización enviada</strong>
+
+          <p>Remodelación Cocina</p>
+
+        </div>
+
+      </div>
+
+      <div class="activity-item">
+
+        <span class="activity-dot green"></span>
+
+        <div>
+
+          <strong>Proyecto iniciado</strong>
+
+          <p>Oficinas Centro</p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="card-andamio">
+
+    <h3 class="section-title">
+      <lucide-icon 
+        [img]="Zap"
+        size="20">
+      </lucide-icon>
+      Acciones rápidas
+    </h3>
+
+    <div class="quick-actions">
+
+      <button class="btn-andamio">
+        Nuevo Cliente
+      </button>
+
+      <button class="btn-andamio">
+        Nueva Evaluación
+      </button>
+
+      <button class="btn-andamio">
+        Nueva Cotización
+      </button>
+
+    </div>
+
+  </div>
 
   </section>
 
