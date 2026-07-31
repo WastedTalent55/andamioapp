@@ -53,6 +53,37 @@
   text-transform: uppercase;
 }
 
+.search-container {
+  position: relative;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--andamio-antracita);
+  border: 1px solid var(--andamio-gris-oscuro);
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.result-item {
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: var(--andamio-tiza);
+}
+
+.result-item:hover {
+  background: var(--andamio-azul-profundo);
+  color: var(--andamio-oro-activo);
+}
+
+
 .form-control {
   width: 100%;
   background-color: var(--andamio-obsidiana);

@@ -30,7 +30,22 @@ const Customer = {
             ]
         );
 
+    },
+
+    getCount: async (tenantId) => {
+
+        const [rows] = await db.query(
+            `
+            SELECT COUNT(*) AS total
+            FROM customers
+            WHERE tenant_id = ?
+            `,
+            [tenantId]
+        );
+
+        return rows[0].total;
     }
+
 };
  
 module.exports = Customer;

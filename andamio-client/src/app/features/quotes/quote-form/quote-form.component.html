@@ -7,7 +7,7 @@
   <main class="quote-main-container">
   <header class="quote-header">
     <div class="title-group">
-      <h2>{{ isEditMode ? '🛠️ EDITAR COTIZACIÓN' : '🚀 GENERAR COTIZACIÓN' }}</h2>
+      <h2>{{ isEditMode ? 'EDITAR COTIZACIÓN' : 'GENERAR COTIZACIÓN' }}</h2>
       <p class="subtitle">ESTABLECIENDO INFRAESTRUCTURA DE COSTOS</p>
     </div>
     <button type="button" class="btn-close-quote" (click)="closeForm()" title="Cerrar y volver">
@@ -19,7 +19,7 @@
     
     <section class="form-section">
       <div class="section-header">
-        <h4>🛠️ MANO DE OBRA / SERVICIOS</h4>
+        <h4>MANO DE OBRA / SERVICIOS</h4>
         <button type="button" class="btn-add-industrial" (click)="addRow('labor')">
           <span class="icon">+</span> AÑADIR TRABAJO
         </button>
@@ -56,7 +56,7 @@
 
     <section class="form-section">
       <div class="section-header">
-        <h4>📦 SUMINISTROS Y MATERIALES</h4>
+        <h4>SUMINISTROS Y MATERIALES</h4>
         <button type="button" class="btn-add-industrial" (click)="addRow('material')">
           <span class="icon">+</span> AÑADIR MATERIAL
         </button>
@@ -121,11 +121,6 @@
       </div>
       <button type="button" (click)="onSubmit()" class="btn-andamio full-width">
         {{ isEditMode ? 'GUARDAR CAMBIOS' : 'FINALIZAR COTIZACIÓN' }}
-      </button>
-      <button type="button" *ngIf="isEditMode" 
-              (click)="generatePDF()" 
-              class="btn-andamio">
-        DESCARGAR PDF
       </button>
     </footer>
   </form>

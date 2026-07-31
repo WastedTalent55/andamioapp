@@ -34,7 +34,7 @@ const googleLogin = async (req, res) => {
             const tokenJWT = jwt.sign(
                 {
                     userId: user.id,
-                    tenantId: user.tenant_id
+                    tenantId: user.tenantId
                 },
                 process.env.JWT_SECRET
             );
@@ -42,7 +42,7 @@ const googleLogin = async (req, res) => {
             return res.json({
                 success: true,
                 token: tokenJWT,
-                user
+                user_name: user.name
             });
 
         }
@@ -72,7 +72,8 @@ const googleLogin = async (req, res) => {
             success: true,
             message: '¡Bienvenido a tu nueva infraestructura!',
             token: tokenJWT,
-            tenant_id: tenantId
+            tenant_id: tenantId,
+            user_name: name
         });
 
     } catch (error) {

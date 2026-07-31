@@ -7,6 +7,8 @@ const Board = {
         const [rows] = await db.query(
             `
             SELECT
+                e.requested_work,
+                e.created_at,
                 e.id as eval_id,
                 e.scheduled_date as eval_date,
                 c.phone,

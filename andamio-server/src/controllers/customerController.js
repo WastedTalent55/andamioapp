@@ -1,5 +1,21 @@
 const Customer = require('../models/customerModel');
 
+const getCount = async (req, res) => {
+    try {
+        const count = await Customer.getCount(req.user.tenantId);
+
+        res.json({
+            total: count
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Error obteniendo cantidad de clientes'
+        });
+    }
+};
+
 const getCustomers = async (req, res) => {
     try {
         const tenantId = req.user.tenantId;
@@ -55,5 +71,6 @@ const createCustomer = async (req, res) => {
 
 module.exports = { 
     getCustomers,
-    createCustomer
+    createCustomer,
+    getCount
 };

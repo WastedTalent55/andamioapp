@@ -1,0 +1,63 @@
+.badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+    font-size:.75rem;
+
+    font-weight:700;
+
+    letter-spacing:.04em;
+
+    text-transform:uppercase;
+
+    font-family:var(--font-main);
+
+}
+
+.blue{
+
+    background:rgba(56,189,248,.15);
+
+    color:var(--andamio-azul-plano);
+
+}
+
+.green{
+
+    background:rgba(52,211,153,.15);
+
+    color:var(--andamio-verde-obra);
+
+}
+
+.yellow{
+
+    background:rgba(255,184,0,.15);
+
+    color:var(--andamio-oro-activo);
+
+}
+
+.red{
+
+    background:rgba(251,113,133,.15);
+
+    color:var(--andamio-rojo-alerta);
+
+}
+
+.gray{
+
+    background:rgba(148,163,184,.15);
+
+    color:var(--andamio-concreto);
+
+}

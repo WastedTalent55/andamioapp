@@ -1,51 +1,55 @@
-<app-page-header 
-  title="Proyectos en Curso" 
-  buttonLabel="AGREGAR"
-  (onButtonClick)="toggleMenu()">
+<app-page-header
+  title="Dashboard">
 </app-page-header>
 
-<!-- 2. TU MENÚ DESPLEGABLE (Se mantiene para la complejidad que necesitas) -->
-@if (isMenuOpen) {
-  <div class="desktop-dropdown-menu custom-dashboard-pos">
-    <button class="dropdown-item" title="Agregar Fotografia">📷 Foto Obra</button>
-    <button class="dropdown-item" title="Agregar Gasto">💸 Registrar Gasto</button>
-    <button class="dropdown-item" title="Agregar Ingreso">💰 Registrar Ingreso</button>
-    <button class="dropdown-item" title="Agendar Trabajo">🏗️ Nueva Tarea</button>
-    <button class="dropdown-item" title="Nueva Cotización" routerLink="/quotes/new">📝 Cotización</button>
-    <button class="dropdown-item" title="Cita Evaluación" routerLink="/evaluations/new">📅 Cita</button>
-    <button class="dropdown-item" title="Agregar Cliente" routerLink="/customer/new">👤 Cliente</button>
-  </div>
-}
- 
-<div class="dashboard-content">
-  <header class="utility-header">
-    <div class="kpi-box">
-      <span class="label">UTILIDAD REAL (NETA)</span>
-      <h1 class="data-number success-text">$45,280.00</h1>
-    </div>
-  </header>
-   
-  <div class="widgets-grid">
-    <div class="widget">
-      <h3>PROYECTOS ACTIVOS</h3>
-      <p class="data-number">12</p>
-    </div>
-  
-    <div class="widget">
-      </div>
-  </div>
+<div class="dashboard-layout">
+
+  <!-- Bienvenida -->
+  <section class="hero-section">
+
+    <h2>Buenos días, {{ userName }}</h2>
+
+    <p>
+      Aquí tienes un resumen del estado actual de tu operación.
+    </p>
+
+  </section>
+
+  <!-- Indicadores -->
+  <section class="kpi-grid">
+    <div class="widgets-grid">
+
+    <app-kpi-card
+        icon="👤"
+        title="Clientes"
+        [value]="totalClientes">
+    </app-kpi-card>
+
+    <app-kpi-card
+        icon="📋"
+        title="Evaluaciones"
+        [value]="6">
+    </app-kpi-card>
+
+    <app-kpi-card
+        icon="📝"
+        title="Cotizaciones"
+        [value]="3">
+    </app-kpi-card>
+
+    <app-kpi-card
+        icon="🏗️"
+        title="Proyectos"
+        [value]="12">
+    </app-kpi-card>
+
 </div>
 
-<div class="fab-container">
-  <button class="fab-main"><span>+</span></button>
-  
-  <div class="fab-menu">
-    <button class="fab-item" title="Foto Obra">📷</button>
-    <button class="fab-item" title="Registrar Gasto">💸</button>
-    <button class="fab-item" title="Registrar Ingreso">💰</button>
-    <button class="fab-item" title="Nueva Tarea">🏗️</button>
-    <button class="fab-item" title="Cotización" routerLink="/quotes/new">📝</button>
-    <button class="fab-item" title="Cita" routerLink="/evaluations/new">📅</button>
-    <button class="fab-item" title="Cliente" routerLink="/customer/new">👤</button>
-  </div>
+  </section>
+
+  <!-- Actividad -->
+  <section class="activity-grid">
+
+  </section>
+
 </div>

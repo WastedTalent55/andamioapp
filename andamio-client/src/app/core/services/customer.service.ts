@@ -20,6 +20,12 @@ export class CustomerService {
     return this.http.get<ApiResponse>(this.apiUrl);
   }
 
+  getCustomerCount() {
+    return this.http.get<{total:number}>(
+        'http://localhost:3000/api/customers/count'
+    );
+}
+
   createCustomer(customer: Customer): Observable<any> {
     return this.http.post<any>(this.apiUrl, customer);
   }

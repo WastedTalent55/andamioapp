@@ -5,5 +5,6 @@ const customerController = require('../controllers/customerController');
 
 router.get('/', verifyToken, customerController.getCustomers);
 router.post('/', verifyToken, customerController.createCustomer);
+router.get('/count', verifyToken, customerController.getCount);
 
 module.exports = router;

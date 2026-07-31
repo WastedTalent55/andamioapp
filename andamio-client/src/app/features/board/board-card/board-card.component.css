@@ -1,0 +1,152 @@
+/* ==========================================================================
+   ANDAMIO BOARD CARD - COMPONENTE INDIVIDUAL
+   ========================================================================== */
+
+.kanban-card {
+  /* Superficie: Fondo marino profundo para resaltar sobre la columna antracita */
+  background-color: var(--andamio-fondo); /* #0F172A */
+  border: 1px solid var(--andamio-gris-oscuro); /* #334155 */
+  border-radius: var(--radius-interactive); /* 12px para elementos internos [1] */
+  padding: var(--spacing-md); /* 24px [1] */
+  
+  /* Borde semántico lateral */
+  border-left-width: 6px;
+  border-left-style: solid;
+  border-left-color: var(--andamio-gris-oscuro);
+  
+  /* Sombra y transición premium */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: var(--transition-friendly); /* Pop elástico orgánico [1] */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto Hover: Elevación y Brillo */
+.kanban-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+  border-color: var(--andamio-oro-activo);
+}
+
+/* --- CLASES SEMÁNTICAS DE BORDE [2, 3] --- */
+.eval-border { border-left-color: var(--andamio-azul-plano); }    /* Blueprint Blue */
+.quote-border { border-left-color: var(--andamio-oro-activo); }   /* Active Gold */
+.active-border { border-left-color: var(--andamio-verde-obra); }  /* Work Green */
+.finished-border { border-left-color: var(--andamio-concreto); }  /* Gray */
+
+/* --- SECCIÓN DE TÍTULO --- */
+.card-title-section h3 {
+  font-family: var(--font-display); /* Archivo [1] */
+  letter-spacing: -0.02em;
+}
+
+.requested-work{
+
+    margin:0;
+
+    font-size:1.35rem;
+
+    line-height:1.2;
+
+    font-weight:800;
+
+    color:var(--andamio-tiza);
+
+}
+
+.customer-subtitle{
+
+    margin-top:8px;
+
+    color:var(--andamio-concreto);
+
+    font-size:.95rem;
+
+}
+
+.customer-name {
+  color: var(--andamio-tiza); /* Blanco Tiza suave [3] */
+  font-family: var(--font-main); /* Inter [1] */
+}
+
+/* Icono de vista previa */
+.icon-btn-preview {
+  transition: var(--transition-friendly);
+  opacity: 0.7;
+}
+
+.icon-btn-preview:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* --- CUERPO DE INFORMACIÓN --- */
+.card-body-info p {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+  color: var(--andamio-concreto); /* Gris para texto secundario [3] */
+}
+
+.appointment-details, .quote-details {
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px dashed var(--andamio-gris-oscuro);
+}
+
+/* Datos Técnicos: Uso obligatorio de Space Mono [4] */
+.total-amount, .date, .phone-info {
+  font-family: var(--font-technical); /* Space Mono [1] */
+  color: var(--andamio-tiza);
+}
+
+.total-amount{
+
+    margin-top:18px;
+
+    margin-bottom:18px;
+
+    font-size:1.6rem;
+
+    font-weight:700;
+
+    color:var(--andamio-oro-activo)!important;
+
+}
+
+/* --- FOOTER Y BOTONES --- */
+.card-footer {
+  margin-top: var(--spacing-md);
+}
+
+/* Botón base dentro de tarjeta */
+.btn-action {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--andamio-antracita);
+  border: 1px solid var(--andamio-gris-oscuro);
+  color: var(--andamio-tiza);
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition-friendly);
+}
+
+.btn-action:hover {
+  background-color: var(--andamio-gris-oscuro);
+  border-color: var(--andamio-tiza);
+}
+
+/* Variante Primaria/Aceptada: Usa el Verde Esmeralda de la marca [3] */
+.btn-action.primary {
+  background-color: var(--andamio-verde-obra); /* #34D399 */
+  color: var(--andamio-fondo); /* Máximo contraste [5] */
+  border: none;
+}
+
+.btn-action.primary:hover {
+  background-color: #2abf88;
+  transform: scale(1.02);
+}

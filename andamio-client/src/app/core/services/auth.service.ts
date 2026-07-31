@@ -16,6 +16,7 @@ export class AuthService {
         if (response.success) {
           localStorage.setItem('andamio_token', response.token);
           localStorage.setItem('tenant_id', response.tenant_id);
+          localStorage.setItem('andamio_user_name', response.user_name);
         }
       })
     );
@@ -29,5 +30,6 @@ export class AuthService {
   logout() {
     localStorage.removeItem('andamio_token');
     localStorage.removeItem('tenant_id');
+    localStorage.removeItem('andamio_user_name');
   }
 }

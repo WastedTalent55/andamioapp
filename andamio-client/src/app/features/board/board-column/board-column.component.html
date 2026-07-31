@@ -1,0 +1,14 @@
+<div class="kanban-column"> <!-- Estructura vertical con fondo antracita [2] -->
+  <div class="column-header">
+    <span>{{ title }}</span>
+    <span class="badge">{{ items.length }}</span> <!-- Badge tipo píldora [3] -->
+  </div>
+
+  <div class="kanban-cards"> <!-- Contenedor flex vertical para las tarjetas [3] -->
+    @for (item of items; track (item.eval_id || item.quote_id)) {
+      <app-board-card [data]="item" [type]="type"></app-board-card>
+    } @empty {
+      <p class="empty-msg">No hay registros</p> <!-- Mensaje estilizado [5] -->
+    }
+  </div>
+</div>

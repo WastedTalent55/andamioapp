@@ -7,14 +7,28 @@
   <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()" class="andamio-form">
     
     <div class="form-row">
-      <div class="form-group">
+      <div class="form-group search-container">
         <label>CLIENTX</label>
-        <select formControlName="customer_id" (change)="onCustomerChange($event)" class="form-control">
-          <option value="" disabled>-- Elige un cliente --</option>
-          <option *ngFor="let c of customers" [value]="c.id">
-            {{ c.first_name }} {{ c.last_name }}
-          </option>
-        </select>
+        <input 
+    type="text" 
+    class="form-control" 
+    placeholder="Escribe el nombre del cliente..."
+    [value]="searchTerm"
+    (input)="onSearch($event)"
+    (focus)="showResults = true">
+
+  <!-- Lista de resultados (Autocomplete) -->
+  <div class="search-results" *ngIf="showResults && filteredCustomers.length > 0">
+    <div 
+      class="result-item" 
+      *ngFor="let customer of filteredCustomers"
+      (click)="selectCustomer(customer)">
+      {{ customer.first_name }} {{ customer.last_name }}
+    </div>
+  </div>
+  
+  <!-- Campo oculto para mantener la validación del customer_id -->
+  <input type="hidden" formControlName="customer_id">
       </div>
 
       <div class="form-group">

@@ -31,25 +31,25 @@ export class CustomerFormComponent {
   }
 
   onSubmit() {
-  if (this.customerForm.valid) {
-    this.customerService.createCustomer(this.customerForm.value).subscribe({
-      next: (response) => {
-        const confirmEval = confirm("✅ Cliente guardado con éxito.\n\n¿Deseas agendar la cita de evaluación ahora mismo?");
-
-        if (confirmEval) {
-          this.router.navigate(['/evaluations/new'], { 
-            queryParams: { clientId: response.id } 
-          });
-        } else {
-          this.location.back();
+    if (this.customerForm.valid) {
+      this.customerService.createCustomer(this.customerForm.value).subscribe({
+        next: (response) => {
+          const confirmEval = confirm("✅ Cliente guardado con éxito.\n\n¿Deseas agendar la cita de evaluación ahora mismo?");
+        
+          if (confirmEval) {
+            this.router.navigate(['/evaluations/new'], { 
+              queryParams: { clientId: response.id } 
+            });
+          } else {
+            this.location.back();
+          }
+        },
+        error: (err) => {
+          console.error("Error en la infraestructura de datos:", err);
+          alert("Hubo un error al guardar. Revisa la consola.");
         }
-      },
-      error: (err) => {
-        console.error("Error en la infraestructura de datos:", err);
-        alert("Hubo un error al guardar. Revisa la consola.");
-      }
-    });
+      });
+    }
   }
-}
 
 }

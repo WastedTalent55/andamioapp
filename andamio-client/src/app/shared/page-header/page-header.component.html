@@ -1,1 +1,30 @@
-<p>page-header works!</p>
+<header class="page-header">
+
+  <div class="page-title">
+
+    <h1 class="brand-heading">
+      {{ title }}
+    </h1>
+
+    @if(subtitle){
+      <p class="page-subtitle">
+        {{ subtitle }}
+      </p>
+    }
+
+  </div>
+
+  @if(buttonLabel){
+
+    <button class="btn-andamio"
+            (click)="onButtonClick.emit()">
+
+      <span class="plus-icon">+</span>
+
+      {{ buttonLabel }}
+
+    </button>
+
+  }
+
+</header>

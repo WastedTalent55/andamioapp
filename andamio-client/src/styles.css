@@ -40,6 +40,8 @@
   
   /* Curva de animación con rebote/pop orgánico */
   --transition-friendly: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --card-spacing:24px;
 }
 
 /* ==========================================================================
@@ -81,20 +83,30 @@ h1, h2, h3, h4, .brand-heading {
   background-size: 24px 24px;
 }
 
-/* Tarjeta Modular Amigable sobre Fondo Azulado */
-.card-andamio {
-  background-color: var(--andamio-antracita);
-  border: 1px solid var(--andamio-gris-oscuro);
-  border-radius: var(--radius-card);
-  padding: var(--spacing-md);
-  transition: var(--transition-friendly);
+.card-andamio{
+
+    background: var(--andamio-antracita);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    padding:24px;
+
+    transition:.25s;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.18);
+
 }
 
-/* Brillo interactivo en el hover con el color oro de tu logo */
-.card-andamio:hover {
-  border-color: rgba(255, 184, 0, 0.4);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);
+.card-andamio:hover{
+
+    transform:translateY(-4px);
+
+    border-color:rgba(255,184,0,.35);
+
+    box-shadow:0 18px 40px rgba(0,0,0,.28);
+
 }
 
 /* ==========================================================================
@@ -134,15 +146,14 @@ h1, h2, h3, h4, .brand-heading {
    ========================================================================== */
 .main-layout {
   display: flex;
-  height: 100vh;
-  width: 100vw;
+  min-height: 100vh;
   background-color: var(--andamio-fondo);
-  overflow: hidden;
 }
 
 /* Sidebar flotante perfectamente integrada en el ecosistema azul marino */
 .sidebar-andamio {
-  width: 260px;
+  flex-shrink: 0;
+  width: 240px;
   height: calc(100% - 32px);
   margin: 16px 0 16px 16px;
   background-color: var(--andamio-antracita);
@@ -155,8 +166,15 @@ h1, h2, h3, h4, .brand-heading {
 
 .content-container {
   flex: 1;
-  height: 100%;
-  overflow-y: auto;
+  margin-left:260px;
   padding: var(--spacing-lg);
-  background-color: var(--andamio-fondo);
+  min-height: 100%;
+  overflow-y: auto;
+
+}
+
+.content-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }

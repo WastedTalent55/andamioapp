@@ -1,0 +1,25 @@
+.app-card{
+
+    background: var(--andamio-antracita);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    padding:24px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.18);
+
+    transition:.25s;
+
+}
+
+.app-card:hover{
+
+    transform:translateY(-3px);
+
+    border-color:rgba(255,184,0,.35);
+
+    box-shadow:0 16px 36px rgba(0,0,0,.28);
+
+}
