@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { KpiCardComponent } from '../../shared/cards/kpi-card/kpi-card.component';
 import { CustomerService } from '../../core/services/customer.service';
 import { EvaluationService } from '../../core/services/evaluation.service';
+import { Router } from '@angular/router';
 import {
   Users,
   ClipboardCheck,
@@ -11,7 +12,7 @@ import {
   HardHat,
   Calendar,
   Zap,
-  LucideAngularModule,
+  LucideAngularModule
 } from 'lucide-angular';
 
 @Component({
@@ -36,6 +37,7 @@ export class DashboardComponent implements OnInit {
   
   private customerService = inject(CustomerService);
   private evaluationService = inject(EvaluationService);
+  private router = inject(Router);
   
   userName: string = '';
   isMenuOpen = false;
@@ -69,5 +71,21 @@ export class DashboardComponent implements OnInit {
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  createCustomer() {
+    this.router.navigate(['/customer/new']);
+  }
+
+  createEvaluation() {
+    this.router.navigate(['/evaluations/new']);
+  }
+
+  createQuote() {
+    this.router.navigate(['/quotes/new']);
+  }
+
+  goToBoard() {
+    this.router.navigate(['/board']);
   }
 }

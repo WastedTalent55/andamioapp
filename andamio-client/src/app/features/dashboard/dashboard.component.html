@@ -14,15 +14,18 @@
           CONTROL OPERATIVO
         </span>
 
-        <h2>Buenos días, {{ userName }} !</h2>
+        <h2>
+          Buenos días, {{ userName }} !
+        </h2>
 
         <p>
-          Bienvenidx a Andamio. Aquí puedes consultar el estado general de tu operación.
+          Aquí tienes una vista general de tu operación.
+          Revisa lo que está pendiente y continúa donde lo dejaste.
         </p>
 
       </div>
 
-      <button class="btn-andamio" routerLink="/board">
+      <button class="btn-andamio" (click)="goToBoard()">
         Ver tablero
       </button>
 
@@ -134,15 +137,15 @@
 
     <div class="quick-actions">
 
-      <button class="btn-andamio">
+      <button class="btn-andamio" (click)="createCustomer()">
         Nuevo Cliente
       </button>
 
-      <button class="btn-andamio">
+      <button class="btn-andamio" (click)="createEvaluation()">
         Nueva Evaluación
       </button>
 
-      <button class="btn-andamio">
+      <button class="btn-andamio" (click)="createQuote()">
         Nueva Cotización
       </button>
 

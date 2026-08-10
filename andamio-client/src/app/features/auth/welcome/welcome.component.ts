@@ -51,7 +51,7 @@ export class WelcomeComponent {
       next: (res) => {
         console.log("¡Andamio activado!", res);
         this.ngZone.run(() => {
-          this.router.navigate(['/board']);
+          this.router.navigate(['/dashboard']);
         });
       },
       error: (err) => console.error("Fallo en la estructura", err)
