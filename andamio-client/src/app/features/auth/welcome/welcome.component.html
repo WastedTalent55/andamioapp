@@ -1,10 +1,17 @@
 <div class="welcome-container">
-  <!-- PANEL IZQUIERDO: Marca (Inicia ocupando todo el ancho) -->
-  <div class="brand-panel">
-    <div class="logo-wrapper">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" class="logo-svg">
-        <!-- Grupo de Compensación: Centra el conjunto total -->
-        <g class="full-logo-group">
+
+  <!-- =======================
+       PANEL DE MARCA
+  ======================== -->
+
+  <section class="brand-panel">
+    <div class="brand-logo">
+      <div class="logo-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 320 80"
+            class="logo-svg">
+
+            <g class="full-logo-group">
           <!-- Símbolo 'A': Inicia al centro visual -->
           <g class="symbol-group">
             <line class="line-draw" x1="25" y1="5" x2="5" y2="45" stroke="#FFB800" stroke-width="5" stroke-linecap="square"/>
@@ -14,25 +21,93 @@
             <circle class="remache" cx="36" cy="27" r="2.5" fill="#0A0A0A"/>
           </g>
           <text class="text-fade" x="80" y="52" fill="#FAFAFA">NDAMIO</text>
-        </g>
-      </svg>
+          </g>
+        </svg>
+      </div>
     </div>
-  </div>
 
-  <!-- PANEL DERECHO: Acciones (Inicia sin ancho) -->
-   <div class="action-panel">
-    <div class="auth-content">
-      <h1>BIENVENIDX</h1>
-      <p>La infraestructura para tus proyectos independientes.</p>
+    <div class="brand-copy">
 
-      <!-- AQUÍ ES DONDE APARECERÁ EL BOTÓN REAL DE GOOGLE -->
-      <div id="google-btn" class="google-wrapper"></div>
+      <span class="eyebrow">
+        LA ESTRUCTURA DETRÁS DE CADA PROYECTO
+      </span>
 
-      <div class="separator">o también</div>
+      <h1>
+        El sistema que sostiene tu trabajo independiente.
+      </h1>
 
-      <button class="btn-andamio-outline" (click)="loginWithEmail()">
-        REGISTRARME CON MI CORREO
+      <p class="brand-description">
+        Desde el primer contacto con un cliente hasta la entrega final, <b>Andamio</b> conecta cada etapa de tu proyecto para que trabajes con mayor claridad.
+      </p>
+
+      <div class="feature-list">
+
+        <div class="feature-item">
+          <lucide-icon [img]="Users"></lucide-icon>
+          <span>Clientes</span>
+        </div>
+
+        <div class="feature-item">
+          <lucide-icon [img]="ClipboardList"></lucide-icon>
+          <span>Evaluaciones</span>
+        </div>
+
+        <div class="feature-item">
+          <lucide-icon [img]="FileText"></lucide-icon>
+          <span>Cotizaciones</span>
+        </div>
+
+        <div class="feature-item">
+          <lucide-icon [img]="Hammer"></lucide-icon>
+          <span>Proyectos</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================
+       LOGIN
+  ======================== -->
+
+  <section class="action-panel">
+
+    <div class="auth-card">
+
+      <span class="welcome-label">
+        BIENVENIDX
+      </span>
+
+      <h2>
+        Comienza a construir.
+      </h2>
+
+      <p>
+        Inicia sesión para acceder a tu espacio de trabajo.
+      </p>
+
+      <div
+        id="google-btn"
+        class="google-wrapper">
+      </div>
+
+      <div class="separator">
+        <span>o</span>
+      </div>
+
+      <button
+        class="btn-andamio-outline"
+        (click)="loginWithEmail()">
+
+        Crear cuenta con correo
+
       </button>
+
     </div>
-  </div>
+
+  </section>
+
 </div>

@@ -14,15 +14,17 @@ router.post(
     controller.create
 );
 
-
+router.get(
+    '/count', 
+    verifyToken, 
+    controller.getCount
+);
 
 router.get(
     '/',
     verifyToken,
     controller.getAll
 );
-
-
 
 router.get(
     '/:id',
@@ -35,7 +37,6 @@ router.put(
     '/:id',
     controller.update
 );
-
 
 
 module.exports = router;

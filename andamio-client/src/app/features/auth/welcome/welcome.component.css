@@ -1,156 +1,509 @@
+/* ==========================================================
+   PANTALLA DE BIENVENIDA
+   ----------------------------------------------------------
+   Layout principal de la vista de acceso.
+
+   La experiencia se divide en dos etapas:
+
+   1. El panel izquierdo ocupa toda la pantalla mientras se
+      reproduce la animación del logo.
+
+   2. Después de unos segundos, el layout se divide en dos
+      columnas para mostrar las acciones de autenticación.
+
+   En dispositivos móviles el comportamiento cambia a una
+   distribución vertical.
+========================================================== */
+
+
+/* ==========================================================
+   LAYOUT PRINCIPAL
+========================================================== */
+
 .welcome-container {
-  height: 100vh;
-  width: 100%; 
-  display: flex;
-  background-color: var(--andamio-obsidiana);
-  overflow: hidden;
-  position: relative;
+    position: relative;
+
+    display: flex;
+
+    width: 100%;
+    height: 100vh;
+
+    overflow: hidden;
+
+    background: var(--andamio-fondo);
 }
 
-/* PANEL IZQUIERDO */
-.brand-panel {
-  flex: 1 0 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: flex-basis 1.2s cubic-bezier(0.85, 0, 0.15, 1);
-  animation: shrinkToSplit 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
-  animation-delay: 6s;
+
+/* ==========================================================
+   PANEL IZQUIERDO
+   ----------------------------------------------------------
+   Contiene el logo y el mensaje principal de la aplicación.
+
+   Inicialmente ocupa toda la pantalla para dar protagonismo
+   a la animación de entrada. Después reduce su tamaño para
+   compartir espacio con el panel de autenticación.
+========================================================== */
+.brand-panel{
+
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content:center;
+    flex: 1;
+    padding:40px;
 }
 
-@keyframes shrinkToSplit {
-  to { flex-basis: 50%; } 
+.brand-logo{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    min-height:180px;
+
 }
 
-/* PANEL DERECHO */
+
+/* ==========================================================
+   PANEL DERECHO
+   ----------------------------------------------------------
+   Aloja las acciones de autenticación.
+
+   Inicia completamente oculto y aparece cuando termina la
+   presentación del logo.
+========================================================== */
+
 .action-panel {
-  flex: 0 0 0%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.01);
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
-  overflow: hidden;
-  animation: growActionPanel 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
-  animation-delay: 6s;
+    display: flex;
+    flex: 0 0 0%;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background: transparent;
+
+    animation: growActionPanel 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+    animation-delay: 2s;
 }
 
-@keyframes growActionPanel {
-  to { flex-basis: 50%; } /* El derecho toma el 45% */
-}
 
-/* EL LOGO: Siempre ocupa el 80% de su panel disponible */
+/* ==========================================================
+   LOGO
+========================================================== */
+
+
+/* ----------------------------------------------------------
+   Wrapper del logo
+
+   Limita el ancho máximo del SVG y mantiene el conjunto
+   siempre centrado dentro del panel izquierdo.
+---------------------------------------------------------- */
+
 .logo-wrapper {
-  width: 80%; 
-  max-width: 1000px;
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+    max-width: 620px;
 }
+
+
+/* ----------------------------------------------------------
+   SVG principal
+---------------------------------------------------------- */
 
 .logo-svg {
-  width: 100%;
-  height: auto;
-  overflow: visible;
+    width: 100%;
+    height: auto;
+
+    overflow: visible;
+
+    
 }
 
-/* FASE 1: Centrar la 'A' sola (x=135 es el centro de un SVG de 320) */
+
+/* ----------------------------------------------------------
+   Primera fase del logo
+
+   Al inicio únicamente se muestra el isotipo centrado.
+   Después se desplaza hacia la izquierda para dejar espacio
+   al nombre de la marca.
+---------------------------------------------------------- */
+
 .symbol-group {
-  transform: translateX(135px); 
-  animation: moveSymbolLeft 0.8s cubic-bezier(0.85, 0, 0.15, 1) forwards;
-  animation-delay: 3s; 
+    transform: translateX(135px);
+
+    animation: moveSymbolLeft .8s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+    animation-delay: 2s;
 }
 
-@keyframes moveSymbolLeft {
-  to { transform: translateX(30px); } 
-}
 
-/* FASE 2: Compensar el logo completo (A + NDAMIO) para que esté centrado */
+/* ----------------------------------------------------------
+   Segunda fase del logo
+
+   Una vez que aparece el texto, todo el conjunto se desplaza
+   ligeramente para que el logo completo quede visualmente
+   centrado dentro del panel.
+---------------------------------------------------------- */
+
 .full-logo-group {
-  /* Al inicio compensamos para que la A parezca el centro del mundo */
-  transform: translateX(0px); 
-  animation: balanceFullLogo 0.8s cubic-bezier(0.10, 0, 0.15, 1) forwards;
-  animation-delay: 3s;
+    transform: translateX(0);
+
+    animation: balanceFullLogo .8s cubic-bezier(0.10, 0, 0.15, 1) forwards;
+    animation-delay: 2s;
 }
 
-@keyframes balanceFullLogo {
-  /* Ajuste para que la palabra completa quede centrada en el eje de la pantalla */
-  to { transform: translateX(60px); } 
-}
 
-/* ANIMACIONES TÉCNICAS (Líneas y Texto) */
+/* ----------------------------------------------------------
+   Líneas del isotipo
+
+   Se dibujan utilizando stroke-dashoffset para generar el
+   efecto de trazado.
+---------------------------------------------------------- */
+
 .line-draw {
-  stroke-dasharray: 150;
-  stroke-dashoffset: 150;
-  animation: drawLine 1.5s ease-out forwards;
+    stroke-dasharray: 150;
+    stroke-dashoffset: 150;
+
+    animation: drawLine 1.5s ease-out forwards;
 }
-@keyframes drawLine { to { stroke-dashoffset: 0; } }
+
+
+/* ----------------------------------------------------------
+   Texto del logo
+---------------------------------------------------------- */
 
 .text-fade {
-  opacity: 0;
-  font-family: 'Archivo', sans-serif;
-  font-weight: 900;
-  animation: fadeIn 0.8s forwards;
-  animation-delay: 3.3s;
-}
-@keyframes fadeIn { to { opacity: 1; } }
+    opacity: 0;
 
-/* CONTENIDO DE ACCIÓN */
-.auth-content {
-  padding: 40px;
-  opacity: 0;
-  animation: fadeInContent 0.8s ease-out forwards;
-  animation-delay: 6.5s;
-}
-@keyframes fadeInContent { to { opacity: 1; } }
+    font-family: "Archivo", sans-serif;
+    font-weight: 900;
 
-/* AJUSTE PARA TABLETS Y MÓVILES (Layout Vertical) */
+    animation: fadeIn .8s forwards;
+    animation-delay: 2.3s;
+}
+
+
+/* ==========================================================
+   CONTENIDO DE MARCA
+========================================================== */
+
+.brand-copy {
+    width: 100%;
+    max-width: 560px;
+
+
+    opacity: 0;
+
+    animation: fadeInContent .8s forwards;
+    animation-delay: 2.6s;
+}
+
+.brand-copy h1 {
+    margin-bottom: 32px;
+
+    color: var(--andamio-tiza);
+
+    font-size: 2.2rem;
+    line-height: 1.3;
+}
+
+.brand-copy ul {
+    margin: 0 0 32px;
+    padding: 0;
+
+    list-style: none;
+}
+
+.brand-copy li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 18px;
+
+    color: var(--andamio-concreto);
+
+    font-size: 1.05rem;
+}
+
+.brand-copy p {
+    color: var(--andamio-concreto);
+
+    font-style: italic;
+}
+
+
+/* ==========================================================
+   TARJETA DE AUTENTICACIÓN
+   ----------------------------------------------------------
+   Contenedor de los botones de acceso.
+
+   Se muestra una vez finalizada la animación principal del
+   logo mediante un efecto de aparición suave.
+========================================================== */
+
+.auth-card {
+    width: 100%;
+    max-width: 480px;
+
+    padding: 56px;
+
+    background: rgba(30, 41, 59, .82);
+
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 24px;
+
+    backdrop-filter: blur(18px);
+
+    box-shadow: 0 25px 60px rgba(0, 0, 0, .45);
+
+    opacity: 0;
+
+    animation: fadeInContent .8s ease-out forwards;
+    animation-delay: 2.4s;
+}
+
+.feature-list {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap; /* Permite que los iconos se acomoden si no hay ancho suficiente */
+}
+
+
+/* ==========================================================
+   ANIMACIONES          
+========================================================== */
+
+
+/* Reduce el panel izquierdo hasta dividir la pantalla
+   en dos columnas. */
+@keyframes shrinkToSplit {
+    to {
+        flex-basis: 50%;
+    }
+}
+
+
+/* Hace crecer el panel de acciones. */
+@keyframes growActionPanel {
+    to {
+        flex-basis: 50%;
+    }
+}
+
+
+/* Desplaza el isotipo hacia la izquierda. */
+@keyframes moveSymbolLeft {
+    to {
+        transform: translateX(30px);
+    }
+}
+
+
+/* Reequilibra visualmente el logo completo. */
+@keyframes balanceFullLogo {
+    to {
+        transform: translateX(60px);
+    }
+}
+
+
+/* Dibuja las líneas del isotipo. */
+@keyframes drawLine {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+
+/* Aparición simple mediante opacidad. */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+
+/* Aparición para bloques completos de contenido. */
+@keyframes fadeInContent {
+    to {
+        opacity: 1;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+   ----------------------------------------------------------
+   A partir de 1024px hacia abajo el layout cambia de dos
+   columnas a una distribución vertical.
+
+   El panel del logo se convierte en la cabecera y el panel
+   de autenticación ocupa el espacio restante.
+========================================================== */
+
 @media (max-width: 1024px) {
-  .welcome-container {
-    flex-direction: column; /* Apila los bloques: Logo arriba, Botones abajo */
-    overflow: hidden;
-  }
 
-  /* PANEL SUPERIOR: De pantalla completa a Cabecera */
-  .brand-panel {
-    width: 100%;
-    flex: 1 0 100%; /* Inicia ocupando toda la altura */
-    transition: flex-basis 1.2s cubic-bezier(0.85, 0, 0.15, 1);
-    animation: shrinkToHeader 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
-    animation-delay: 6s; /* Se mueve después de mostrar el logo completo */
-  }
+    .welcome-container {
+        display: flex;
+        flex-direction: column;
 
-  @keyframes shrinkToHeader {
-    to { flex-basis: 30%; } /* Se convierte en una cabecera del 30% de la altura */
-  }
+        overflow: hidden;
+    }
 
-  /* EL LOGO EN MÓVIL: Se mantiene legible y centrado en la cabecera */
-  .logo-wrapper {
-    width: 85%; /* Un poco más ancho que en desktop para legibilidad */
-    max-width: 500px;
-  }
 
-  /* PANEL INFERIOR: Los botones entran desde abajo */
-  .action-panel {
-    width: 100%;
-    flex: 0 0 0%; /* Inicia invisible */
-    border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.05); /* División técnica horizontal */
-    background-color: rgba(255, 255, 255, 0.01);
-    animation: growActionsMobile 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
-    animation-delay: 6s;
-  }
+    /* El panel del logo deja de ocupar toda la pantalla y
+       se convierte en la cabecera. */
+    .brand-panel {
+        width: 100%;
+        flex: 1 0 100%;
 
-  @keyframes growActionsMobile {
-    to { flex-basis: 70%; opacity: 1; } /* Toma el 70% inferior para los botones */
-  }
+        transition: flex-basis 1.2s cubic-bezier(0.85, 0, 0.15, 1);
 
-  .auth-content {
-    padding: 30px;
-    text-align: center; /* Centramos el mensaje para mejor balance en móvil */
-  }
+        animation: shrinkToHeader 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+        animation-delay: 2s;
+    }
 
-  .auth-content h1 {
-    font-size: 1.8rem; /* Tamaño optimizado para pantallas pequeñas */
-    margin-bottom: 10px;
-  }
+
+    @keyframes shrinkToHeader {
+        to {
+            flex-basis: 30%;
+        }
+    }
+
+
+    /* Se amplía ligeramente el logo para mantener una buena
+       legibilidad en pantallas pequeñas. */
+    .logo-wrapper {
+        width: 85%;
+        max-width: 500px;
+    }
+
+
+    /* El panel de autenticación aparece desde la parte
+       inferior ocupando el espacio restante. */
+    .action-panel {
+        width: 100%;
+        flex: 0 0 0%;
+
+        border-top: 1px solid rgba(255, 255, 255, .05);
+        border-left: none;
+
+        background-color: rgba(255, 255, 255, .01);
+
+        animation: growActionsMobile 1.2s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+        animation-delay: 2s;
+    }
+
+
+    @keyframes growActionsMobile {
+        to {
+            flex-basis: 70%;
+            opacity: 1;
+        }
+    }
+
+
+    .auth-card {
+        padding: 30px;
+
+        text-align: center;
+    }
+
+
+    .auth-card h1 {
+        margin-bottom: 10px;
+
+        font-size: 1.8rem;
+    }
+}
+
+/* ==========================================================
+ESTILOS DE AUTENTICACIÓN (BOTONES)
+========================================================== */
+
+/* Etiqueta superior "BIENVENIDO" */
+.welcome-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--andamio-oro);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+/* Ajustes de texto en la tarjeta */
+.auth-card h2 {
+  color: var(--andamio-tiza);
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+.auth-card p {
+  color: var(--andamio-concreto);
+  font-size: 0.95rem;
+  margin-bottom: 32px;
+}
+
+/* Contenedor del botón de Google */
+.google-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  min-height: 40px; /* Evita saltos mientras carga el botón de Google */
+}
+
+/* Separador "o" */
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 24px 0;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.separator span {
+  padding: 0 15px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Botón de correo con estilo Andamio */
+.btn-andamio-outline {
+  width: 100%;
+  padding: 14px 24px;
+  background: transparent;
+  color: var(--andamio-oro);
+  border: 2px solid var(--andamio-oro);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-andamio-outline:hover {
+  background: var(--andamio-oro);
+  color: var(--andamio-fondo);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 184, 0, 0.2);
+}
+
+.btn-andamio-outline:active {
+  transform: translateY(0);
 }

@@ -1,152 +1,338 @@
-<div class="content-container technical-grid">
-  <!-- 🎨 BARRA DE AJUSTE ESTÉTICO (WYSIWYG) -->
-  <div class="card-andamio preview-toolbar">
-    <div class="control-item">
-      <label>COLOR DE IDENTIDAD:</label>
-      <input type="color" [(ngModel)]="selectedColor" class="color-dot">
-      <span class="data-number">{{ selectedColor }}</span>
-    </div>
-    <button class="btn-andamio" (click)="saveColorDefault()">FIJAR MARCA</button>
-  </div>
+<div class="preview-layout">
+  <aside class="preview-sidebar">
+    <div class="sidebar-header">
 
-  <div class="card-andamio action-toolbar no-print">
-  <div class="toolbar-content">
-    <!-- BOTÓN CERRAR: Regresa a la lista de cotizaciones -->
-    <button class="btn-andamio btn-outline" (click)="closePreview()">
-      <span>VOLVER</span>
+    <span class="sidebar-label">
+        VISTA PREVIA
+    </span>
+
+    <h2>
+        Cotización
+    </h2>
+
+    <p>
+        Personaliza la apariencia antes de exportar el PDF.
+    </p>
+
+    </div>
+    <div class="sidebar-content">
+
+    <h3 class="sidebar-section-title">
+      APARIENCIA
+    </h3>
+    <div class="card-andamio preview-toolbar">
+      <div class="color-control">
+        <div class="color-info">
+          <label class="control-title">
+            Color de identidad
+          </label>
+          <span class="control-description">
+            Este color aparecerá en la cotización y en el PDF.
+          </span>
+        </div>
+        <div class="color-picker-row">
+          <input
+            type="color"
+            [(ngModel)]="selectedColor"
+            class="color-picker">
+          <span class="color-code">
+            {{ selectedColor }}
+          </span>
+        </div>
+      </div>
+      <button class="btn-andamio" (click)="saveColorDefault()">FIJAR MARCA</button>
+    </div>
+    <h3 class="sidebar-section-title">
+
+      ACCIONES
+
+    </h3>
+    <div class="card-andamio action-toolbar no-print">
+      <div class="toolbar-actions">
+
+        <button class="sidebar-btn">
+
+        ✏️
+
+        <span>
+
+            Editar cotización
+
+        </span>
+
     </button>
 
-    <div class="main-actions">
-      <button class="btn-andamio" [routerLink]="['/quotes/edit', quoteData?.evaluation_id]">
-        EDITAR COTIZACIÓN
-      </button>
+    <button class="sidebar-btn">
 
-      <!-- BOTÓN DESCARGAR: Dispara la lógica de exportación a PDF -->
-      <button class="btn-andamio" (click)="downloadPDF()">
-        DESCARGAR PDF
-      </button>
+        📄
+
+        <span>
+
+            Descargar PDF
+
+        </span>
+
+    </button>
+
+    <button class="sidebar-btn sidebar-btn-secondary">
+
+        ←
+
+        <span>
+
+            Volver
+
+        </span>
+
+    </button>
+
+</div>
     </div>
-  </div>
+    </div>
+
+  </aside>
+
+  <main class="preview-content">
+    <div class="quote-canvas">
+      <!-- ENCABEZADO: IDENTIDAD DIGITAL -->
+      <header class="quote-top-wrapper" [style.border-top-color]="selectedColor">
+        <div class="quote-header-left">
+
+    <span class="quote-label">
+        CLIENTE
+    </span>
+
+    <h1 class="quote-client">
+
+        {{ quoteData?.customer_name }}
+
+    </h1>
+
+    <p class="quote-address">
+
+        {{ quoteData?.full_address }}
+
+    </p>
+
+    <p class="quote-phone">
+
+        {{ quoteData?.phone }}
+
+    </p>
+
+</div>
+
+<div class="quote-header-right">
+
+    <img
+        *ngIf="tenantConfig?.logo"
+        [src]="getSafeUrl(tenantConfig.logo)"
+        class="quote-logo-render">
+
+    <div class="quote-meta">
+
+        <span>
+
+            Cotización
+
+        </span>
+
+        <strong>
+
+            {{ quoteData?.quote_folio || quoteData?.quote_id }}
+
+        </strong>
+
+        <small>
+
+            {{ quoteData?.created_at | date:'dd/MM/yyyy' }}
+
+        </small>
+
+    </div>
+
+</div>
+      </header>
+      <!-- 🛠️ SECCIÓN: MANO DE OBRA (5 COLUMNAS) -->
+      <div class="table-wrapper">
+        <div class="section-title">
+
+    <span
+        class="section-bar"
+        [style.background]="selectedColor">
+
+    </span>
+
+    <h3 class="table-category">
+
+        MANO DE OBRA
+
+    </h3>
+
+</div>
+  <table class="quote-table-industrial">
+    <thead>
+      <tr>
+        <th>DESCRIPCIÓN</th>
+        <th>PRECIO UNITARIO</th>
+        <th>CANTIDAD</th>
+        <th>UNIDAD</th>
+        <th>PRECIO TOTAL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of laborItems">
+        <td class="description-column">{{ item.description }}</td>
+        <td class="data-number text-right">{{ item.unit_price | currency }}</td>
+        <td class="data-number text-center">{{ item.quantity }}</td>
+        <td class="text-center">{{ item.unit || 'SERVICIO' }}</td>
+        <td class="data-number text-right">{{ (item.unit_price * item.quantity) | currency }}</td>
+      </tr>
+      <tr class="subtotal-row">
+        <td colspan="4"></td>
+        <td class="data-number text-right">{{ laborSubtotal | currency }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<!-- 📦 SECCIÓN: MATERIALES (5 COLUMNAS) [1, 2] -->
+<div class="table-wrapper">
+  <div class="section-title">
+
+    <span
+        class="section-bar"
+        [style.background]="selectedColor">
+
+    </span>
+
+    <h3 class="table-category" [style.color]="selectedColor">
+
+        MATERIALES
+
+    </h3>
+
+</div>
+  <table class="quote-table-industrial">
+    <tbody>
+      <tr *ngFor="let mat of materialItems">
+        <td class="description-column">{{ mat.description }}</td>
+        <td class="data-number text-right">{{ mat.unit_price | currency }}</td>
+        <td class="data-number text-center">{{ mat.quantity }}</td>
+        <td class="text-center">{{ mat.unit }}</td>
+        <td class="data-number text-right">{{ (mat.unit_price * mat.quantity) | currency }}</td>
+      </tr>
+      <tr class="materials-total-row">
+        <td colspan="4" class="text-right"><strong>SUMA TOTAL DE MATERIALES</strong></td>
+        <td class="data-number text-right">{{ materialsSubtotal | currency }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<!-- 💰 BLOQUE DE TOTALES Y ANTICIPO [1, 3] -->
+ <footer class="quote-footer-industrial">
+
+<div class="delivery-side">
+
+    <div
+        class="delivery-box"
+        [style.background]="selectedColor">
+
+        <span>
+
+            Tiempo de entrega
+
+        </span>
+
+        <strong>
+
+            {{ quoteData?.delivery_time }} días
+
+        </strong>
+
+    </div>
+
+</div>
+
+<div class="totals-side">
+
+    <h3>
+
+        RESUMEN
+
+    </h3>
+
+    <div class="total-line">
+
+        <span>Subtotal</span>
+
+        <span>
+
+            {{ (laborSubtotal + materialsSubtotal) | currency }}
+
+        </span>
+
+    </div>
+
+    <div class="total-line">
+
+        <span>Evaluación</span>
+
+        <span>
+
+            - {{ evaluationDiscount | currency }}
+
+        </span>
+
+    </div>
+
+    <div class="total-line grand-total">
+
+        <span>Total</span>
+
+        <span>
+
+            {{ (laborSubtotal + materialsSubtotal - evaluationDiscount) | currency }}
+
+        </span>
+
+    </div>
+
+    <div class="total-line">
+
+        <span>Anticipo</span>
+
+        <span>
+
+            {{ ((laborSubtotal + materialsSubtotal - evaluationDiscount)/2) | currency }}
+
+        </span>
+
+    </div>
+
+    <div class="total-line">
+
+        <span>Contra entrega</span>
+
+        <span>
+
+            {{ ((laborSubtotal + materialsSubtotal - evaluationDiscount)/2) | currency }}
+
+        </span>
+
+    </div>
+
+</div>
+
+</footer>
+<!-- 🏦 DATOS BANCARIOS [3] -->
+<section class="bank-section" [style.background-color]="selectedColor + '10'">
+  <p><strong>{{ tenantConfig?.bank_name || 'BBVA' }}</strong></p>
+  <p>CUENTA: <span class="data-number">{{ tenantConfig?.bank_account }}</span></p>
+  <p>CLABE: <span class="data-number">{{ tenantConfig?.bank_clabe }}</span></p>
+</section>
+<div class="final-thanks">!!GRACIAS POR LA CONFIANZA!!</div>
+    </div>
+  </main>
 </div>
 
 
-  <!-- 📄 LIENZO DE COTIZACIÓN PROFESIONAL -->
-  <div class="quote-canvas">
-    
-    <!-- ENCABEZADO: IDENTIDAD DIGITAL [1] -->
-    <header class="quote-top-wrapper" [style.border-top-color]="selectedColor">
-        <div class="client-info-container">
-          <div class="info-grid-charly">
-            <div class="info-cell" [style.border-left-color]="selectedColor">
-              <span class="label">CLIENTX:</span>
-              <span class="value">{{ quoteData?.customer_name }}</span>
-            </div>
-            <div class="info-cell">
-              <span class="label">FECHA:</span>
-              <span class="value">{{ quoteData?.created_at | date:'dd/MM/yyyy' }}</span>
-            </div>
-            <div class="info-cell quote-badge" [style.background-color]="selectedColor">
-              <h2 class="badge-text">COTIZACIÓN</h2>
-            </div>
-            <div class="info-cell full-width">
-              <span class="label">DIRECCIÓN:</span>
-              <span class="value">{{ quoteData?.full_address }}</span>
-            </div>
-            <div class="info-cell">
-              <span class="label">TELÉFONO:</span>
-              <span class="value data-number">{{ quoteData?.phone }}</span>
-            </div>
-            <div class="info-cell">
-  <span class="value data-number">{{ quoteData?.quote_folio || quoteData?.quote_id }} V{{ quoteData?.version_number || 1 }}</span>
-</div>
-          </div>
-        </div>
-
-        <!-- Bloque Derecho: Logo de la Empresa (Misma altura que el grid) -->
-        <div class="company-logo-aside">
-          <div class="logo-frame">
-            <img [src]="getSafeUrl(tenantConfig.logo)" class="quote-logo-render">
-            <h1 class="company-name-mini" [style.color]="selectedColor" *ngIf="!tenantConfig?.logo">
-              {{ tenantConfig?.company_name }}
-            </h1>
-          </div>
-        </div>
-    </header>
-
-
-    <!-- 🛠️ SECCIÓN: MANO DE OBRA (5 COLUMNAS) [1, 2] -->
-    <div class="table-wrapper">
-      <h3 class="table-category" [style.background-color]="selectedColor + '20'">MANO DE OBRA</h3>
-      <table class="quote-table-industrial">
-        <thead>
-          <tr [style.background-color]="selectedColor">
-            <th>DESCRIPCIÓN</th>
-            <th>PRECIO UNITARIO</th>
-            <th>CANTIDAD</th>
-            <th>UNIDAD</th>
-            <th>PRECIO TOTAL</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of laborItems">
-            <td class="desc-col">{{ item.description }}</td>
-            <td class="data-number text-right">{{ item.unit_price | currency }}</td>
-            <td class="data-number text-center">{{ item.quantity }}</td>
-            <td class="text-center">{{ item.unit || 'SERVICIO' }}</td>
-            <td class="data-number text-right">{{ (item.unit_price * item.quantity) | currency }}</td>
-          </tr>
-          <tr class="subtotal-row">
-            <td colspan="4"></td>
-            <td class="data-number text-right">{{ laborSubtotal | currency }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 📦 SECCIÓN: MATERIALES (5 COLUMNAS) [1, 2] -->
-    <div class="table-wrapper">
-      <h3 class="table-category" [style.background-color]="selectedColor + '20'">MATERIALES</h3>
-      <table class="quote-table-industrial">
-        <tbody>
-          <tr *ngFor="let mat of materialItems">
-            <td class="desc-col">{{ mat.description }}</td>
-            <td class="data-number text-right">{{ mat.unit_price | currency }}</td>
-            <td class="data-number text-center">{{ mat.quantity }}</td>
-            <td class="text-center">{{ mat.unit }}</td>
-            <td class="data-number text-right">{{ (mat.unit_price * mat.quantity) | currency }}</td>
-          </tr>
-          <tr class="materials-total-row">
-            <td colspan="4" class="text-right"><strong>SUMA TOTAL DE MATERIALES</strong></td>
-            <td class="data-number text-right">{{ materialsSubtotal | currency }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 💰 BLOQUE DE TOTALES Y ANTICIPO [1, 3] -->
-    <footer class="quote-footer-industrial">
-      <div class="delivery-side">
-        <div class="delivery-box" [style.background-color]="selectedColor">
-          <span>TIEMPO DE ENTREGA:</span>
-          <span class="data-number">{{ quoteData?.delivery_time }} DIAS</span>
-        </div>
-      </div>
-      
-      <div class="totals-side">
-        <div class="total-line"><span>SUMA TOTAL</span> <span class="data-number">{{ (laborSubtotal + materialsSubtotal) | currency }}</span></div>
-        <div class="total-line"><span>- COTIZACIÓN {{ (evaluationDiscount) | currency }}</span> <span class="data-number">{{ (laborSubtotal + materialsSubtotal - evaluationDiscount) | currency }}</span></div>
-        <div class="total-line highlight"><span>ANTICIPO (50%)</span> <span class="data-number">{{ ((laborSubtotal + materialsSubtotal - evaluationDiscount) / 2) | currency }}</span></div>
-        <div class="total-line"><span>FINIQUITO VS ENTREGA.</span> <span class="data-number">{{ ((laborSubtotal + materialsSubtotal - evaluationDiscount) / 2) | currency }}</span></div>
-      </div>
-    </footer>
-
-    <!-- 🏦 DATOS BANCARIOS [3] -->
-    <section class="bank-section" [style.background-color]="selectedColor + '10'">
-      <p><strong>{{ tenantConfig?.bank_name || 'BBVA' }}</strong></p>
-      <p>CUENTA: <span class="data-number">{{ tenantConfig?.bank_account }}</span></p>
-      <p>CLABE: <span class="data-number">{{ tenantConfig?.bank_clabe }}</span></p>
-    </section>
-
-    <div class="final-thanks">!!GRACIAS POR LA CONFIANZA!!</div>
-  </div>
-</div>

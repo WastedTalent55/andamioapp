@@ -1,7 +1,8 @@
 import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { LucideAngularModule, MapPin, Phone, Wallet, Calendar, FileText, CircleCheck, Clock } from 'lucide-angular';
+import { Customer } from '../../../core/models/customer.model';
+import { LucideAngularModule, MapPin, Phone, Wallet, Calendar, FileText, CircleCheck, Clock, Eye } from 'lucide-angular';
 
 @Component({
   selector: 'app-board-card',
@@ -18,8 +19,15 @@ export class BoardCardComponent {
   FileText = FileText;
   CircleCheck = CircleCheck;
   Clock = Clock;
+  Eye = Eye
 
   @Input() data: any;
+  @Input() customer!: Customer;
+  
+  // evaluations
+  // quoting
+  // customers
+
   @Input() type: string = 'evaluations';
   private router = inject(Router);
 

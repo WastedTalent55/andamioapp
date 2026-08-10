@@ -4,6 +4,76 @@
   background-color: var(--andamio-obsidiana);
 }
 
+.client-kpis{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+    margin-bottom:32px;
+
+}
+
+.client-kpis{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+    margin-bottom:32px;
+
+}
+
+.kpi-card:hover{
+
+    transform:translateY(-4px);
+
+    border-color:var(--andamio-oro-activo);
+
+}
+
+.kpi-value{
+
+    display:block;
+
+    font-size:2.3rem;
+
+    font-weight:800;
+
+    color:white;
+
+}
+
+.kpi-label{
+
+    display:block;
+
+    margin-top:10px;
+
+    font-size:.8rem;
+
+    letter-spacing:.18em;
+
+    color:#94A3B8;
+
+}
+
+.search-toolbar{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:32px;
+
+}
+
 .tools-header {
   display: flex;
   justify-content: space-between;
@@ -12,35 +82,88 @@
   gap: 20px;
 }
 
-.search-box {
-  flex-grow: 1;
-  max-width: 600px;
-  position: relative;
-  display: flex;
-  align-items: center;
+.search-box{
+
+    flex:1;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:0 18px;
+
+    height:56px;
+
+    background:var(--andamio-gris-oscuro);
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:16px;
+
 }
 
-.search-input {
-  width: 100%;
-  background-color: var(--andamio-gris-oscuro);
-  border: 2px solid var(--andamio-gris-medio);
-  padding: 12px 15px 12px 45px;
-  color: white;
-  border-radius: 4px;
-  font-family: var(--font-main);
-  transition: all 0.3s ease;
+.search-input{
+
+    flex:1;
+
+    background:transparent;
+
+    border:none;
+
+    color:white;
+
+    font-size:1rem;
+
+    font-family:var(--font-main);
+
 }
 
-.search-input:focus {
-  border-color: var(--andamio-cian); 
-  outline: none;
-  box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+.search-input:focus{
+
+    outline:none;
+
+}
+
+.search-icon{
+
+    font-size:1.1rem;
+
+    opacity:.7;
+
+}
+
+.toolbar-filter{
+
+    height:56px;
+
+    padding:0 22px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:var(--andamio-gris-oscuro);
+
+    color:white;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.toolbar-filter:hover{ 
+
+    background:#263449;
+
 }
 
 .client-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
 }
 
 .client-card {
@@ -50,6 +173,86 @@
   overflow: hidden;
   border: 1px solid var(--andamio-gris-medio);
   transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.client-stats{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+
+    margin:22px 0;
+
+}
+
+.client-stats{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+
+    margin:22px 0;
+
+}
+
+.stat-number{
+
+    display:block;
+
+    font-size:1.4rem;
+
+    font-weight:700;
+
+    color:white;
+
+}
+
+.stat-label{
+
+    display:block;
+
+    margin-top:6px;
+
+    font-size:.72rem;
+
+    color:#94A3B8;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+}
+
+.profile-button{
+
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    background:var(--andamio-oro-activo);
+
+    color:#111827;
+
+    font-weight:700;
+
+    transition:.25s;
+
+}
+
+.profile-button:hover{
+
+    transform:translateY(-2px);
+
 }
 
 .client-card:hover {
@@ -70,6 +273,68 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
+.client-avatar{
+
+    width:64px;
+
+    height:64px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin-bottom:18px;
+
+    background:linear-gradient(
+        135deg,
+        var(--andamio-oro-activo),
+        #FACC15
+    );
+
+    color:#111827;
+
+    font-size:1.4rem;
+
+    font-weight:800;
+
+}
+
+.client-info{
+
+    margin-bottom:20px;
+
+}
+
+.client-since{
+
+    color:#94A3B8;
+
+    font-size:.85rem;
+
+}
+
+.client-contact{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    padding:18px 0;
+
+    border-top:1px solid rgba(255,255,255,.05);
+
+    border-bottom:1px solid rgba(255,255,255,.05);
+
+}
+
+
 
 .client-name {
   font-weight: 800; 

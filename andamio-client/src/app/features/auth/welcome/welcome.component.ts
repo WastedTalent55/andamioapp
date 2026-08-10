@@ -1,17 +1,32 @@
 import { Component, NgZone, inject } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service'; 
 import { Router } from '@angular/router';
+import { 
+  LucideAngularModule,
+  Users,
+  ClipboardList,
+  FileText,
+  Hammer 
+} from 'lucide-angular';
 
 declare var google: any;
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [],
+  imports: [
+    LucideAngularModule
+  ],
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.css'
 })
 export class WelcomeComponent {
+  Users = Users;
+  ClipboardList = ClipboardList;
+  FileText = FileText;
+  Hammer = Hammer;
+
+
   private authService = inject(AuthService);
   private router = inject(Router);
   private ngZone = inject(NgZone);
@@ -36,7 +51,7 @@ export class WelcomeComponent {
       next: (res) => {
         console.log("¡Andamio activado!", res);
         this.ngZone.run(() => {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/board']);
         });
       },
       error: (err) => console.error("Fallo en la estructura", err)

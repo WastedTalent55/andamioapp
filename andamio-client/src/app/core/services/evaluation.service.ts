@@ -27,4 +27,10 @@ export class EvaluationService {
   getEvaluationById(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/${id}`);
   }
+
+  getEvaluationCount() {
+    return this.http.get<{total:number, pendiente:number}>(
+      'http://localhost:3000/api/evaluations/count'
+    );
+  }
 }

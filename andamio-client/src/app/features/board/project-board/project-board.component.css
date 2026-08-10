@@ -27,6 +27,51 @@ app-board-column{
 
 }
 
+.board-actions {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0 25px;
+  flex-wrap: wrap;
+}
+
+
+.board-actions button {
+  height: 42px;
+  padding: 0 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+
+/* Acción principal */
+.action-primary {
+  background: #FFB800;
+  color: #0A0A0A;
+  border: 1px solid #FFB800;
+}
+
+
+.action-primary:hover {
+  transform: translateY(-2px);
+}
+
+
+/* Acciones secundarias */
+.action-secondary {
+  background: transparent;
+  color: #FAFAFA;
+  border: 1px solid rgba(255,255,255,.25);
+}
+
+
+.action-secondary:hover {
+  border-color: #FFB800;
+  color: #FFB800;
+}
+
 /* Responsivo para pantallas pequeñas */
 @media (max-width: 1100px) {
   .kanban-board {

@@ -3,12 +3,18 @@ import { CommonModule } from '@angular/common';
 import { CustomerService } from '../../../core/services/customer.service'; 
 import { Customer } from '../../../core/models/customer.model'; 
 import { RouterLink, Router } from '@angular/router';
-import { PageHeaderComponent } from '../../../shared/page-header/page-header.component';
+import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
+import { CustomerCardComponent } from '../../../shared/cards/customer-card/customer-card.component'; 
 
 @Component({
   selector: 'app-customer-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, PageHeaderComponent],
+  imports: [
+    CommonModule, 
+    RouterLink, 
+    PageHeaderComponent,
+    CustomerCardComponent
+  ],
   templateUrl: './customer-list.component.html',
   styleUrl: './customer-list.component.css'
 })

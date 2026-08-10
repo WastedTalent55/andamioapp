@@ -6,7 +6,7 @@ export interface Evaluation {
   scheduled_date: string;
   evaluation_cost: number; 
   requirements?: string;
-  status: 'pending' | 'completed' | 'cancelled';
+  status: 'pendiente' | 'realizada' | 'cancelada';
   first_name: string;
   last_name: string;
   phone: string;

@@ -1,0 +1,112 @@
+<div class="customer-card"
+    class="customer-card"
+    (click)="openCustomer()">
+    <div class="customer-status"></div>
+
+    <div class="card-header">
+
+    <div class="avatar">
+
+      {{ customer.first_name.charAt(0).toUpperCase() }}{{ customer.last_name.charAt(0).toUpperCase() }}
+
+    </div>
+
+    <div class="header-info">
+
+      <h3 class="customer-name">
+
+        {{ customer.first_name.charAt(0).toUpperCase() + customer.first_name.slice(1).toLowerCase() }} {{ customer.last_name.charAt(0).toUpperCase() + customer.last_name.slice(1).toLowerCase()}}
+
+      </h3>
+
+      <span class="customer-since">
+
+        Cliente desde {{ customer.created_at  | date:'MMMM yyyy' }}
+
+      </span>
+
+    </div>
+
+  </div>
+
+  <div class="card-body">
+
+    <div class="info-row">
+
+      <span class="info-icon">📞</span>
+
+        <a [href]="'https://wa.me/52' + customer.phone" 
+            target="_blank" 
+            class="whatsapp-link">
+            <span class="info-value data-number">
+                {{ customer.phone }}
+            </span>
+        </a>
+    </div>
+
+    <div class="info-row">
+
+      <span class="info-icon">📍</span>
+
+      <span class="info-value">
+
+        {{ customer.full_address || 'Sin dirección registrada' }}
+
+      </span>
+
+    </div>
+
+  </div>
+
+  <div class="stats">
+
+    <div class="stat">
+
+      <span class="stat-number">
+
+        0
+
+      </span>
+
+      <span class="stat-label">
+
+        Evaluaciones
+
+      </span>
+
+    </div>
+
+    <div class="stat">
+
+      <span class="stat-number">
+
+        0
+
+      </span>
+
+      <span class="stat-label">
+
+        Cotizaciones
+
+      </span>
+
+    </div>
+
+    <div class="stat">
+
+      <span class="stat-number">
+
+        0
+
+      </span>
+
+      <span class="stat-label">
+
+        Proyectos
+
+      </span>
+
+    </div>
+
+  </div>
+</div>

@@ -17,15 +17,37 @@ const Customer = {
         return result.insertId;
     },
 
-    createAddress: async (customerId, address) => {
+    createAddress: async (customerId, addressData) => {
         await db.query(
-            `INSERT INTO customer_addresses
-            (customer_id, address_label, full_address, is_primary)
-            VALUES (?, ?, ?, ?)`,
+            `
+            INSERT INTO customer_addresses
+            (
+            customer_id,
+            address_label,
+            full_address,
+            place_id,
+            latitude,
+            longitude,
+            city,
+            state,
+            postal_code,
+            country,
+            is_primary,
+            created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `,
             [
                 customerId,
-                'Principal',
-                address,
+            'Principal',
+            addressData.full_address,
+            addressData.place_id,
+            addressData.latitude,
+            addressData.longitude,
+            addressData.city,
+            addressData.state,
+            addressData.postal_code,
+            addressData.country,
                 1
             ]
         );

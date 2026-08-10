@@ -47,10 +47,6 @@ const createEvaluation = async (data) => {
 
 };
 
-
-
-
-
 const getEvaluations = async (tenant_id)=>{
 
 
@@ -81,10 +77,6 @@ const getEvaluations = async (tenant_id)=>{
 
 };
 
-
-
-
-
 const getEvaluationById = async(id)=>{
 
 
@@ -109,10 +101,6 @@ const getEvaluationById = async(id)=>{
 
 };
 
-
-
-
-
 const updateRequirements = async(id, requirements)=>{
 
 
@@ -136,13 +124,36 @@ const updateRequirements = async(id, requirements)=>{
 
 };
 
+const updateStatus = async (id, status) => {
+    const query = `
+        UPDATE evaluations 
+        SET status = ? 
+        WHERE id = ?
+    `;
+    const [result] = await db.query(query, [status, id]);
+    return result;
+};
 
+const syncCancelledStatus = async (tenant_id) => {
+    const query = `
+        UPDATE evaluations 
+        SET status = 'cancelada' 
+        WHERE tenant_id = ? 
+        AND status = 'pendiente' 
+        AND scheduled_date < NOW() 
+        AND (requirements IS NULL OR requirements = '')
+    `;
+    const [result] = await db.query(query, [tenant_id]);
+    return result;
+};
 
 module.exports = {
 
     createEvaluation,
     getEvaluations,
     getEvaluationById,
-    updateRequirements
+    updateRequirements,
+    updateStatus, 
+    syncCancelledStatus 
 
 };

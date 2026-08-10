@@ -1,12 +1,38 @@
 <app-page-header title="Tablero de Proyectos"></app-page-header>
 
+
+<!-- ACCIONES PRINCIPALES -->
+<section class="board-actions">
+
+  <button class="action-primary" (click)="createCustomer()">
+    + Cliente
+  </button>
+
+  <button class="action-secondary" (click)="createEvaluation()">
+    + Evaluación
+  </button>
+
+  <button class="action-secondary">
+    + Cotización
+  </button>
+
+  <button class="action-secondary">
+    + Proyecto
+  </button>
+
+</section>
+
+
 <div class="kanban-container"> 
+
   <div class="kanban-board"> 
+
     <app-board-column 
       title="EVALUACIONES" 
       type="evaluations"
       [items]="columns.evaluations">
     </app-board-column>
+
 
     <app-board-column 
       title="EN COTIZACIÓN" 
@@ -14,16 +40,20 @@
       [items]="columns.quoting">
     </app-board-column>
 
+
     <app-board-column 
       title="PROYECTOS ACTIVOS" 
       type="active"
       [items]="columns.active">
     </app-board-column>
 
+
     <app-board-column 
       title="FINALIZADOS" 
       type="finished"
       [items]="columns.finished">
     </app-board-column>
+
   </div>
+
 </div>

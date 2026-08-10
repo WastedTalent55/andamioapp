@@ -23,7 +23,9 @@
 
     <div class="form-group">
       <label>DIRECCIÓN PRINCIPAL (OBRA/CASA)</label>
-      <textarea formControlName="address" class="form-control" rows="4" placeholder="Calle, número, colonia"></textarea>
+      <app-address-autocomplete 
+    (addressSelected)="onAddressSelected($event)">
+  </app-address-autocomplete>
     </div>
 
     <button type="submit" class="btn-andamio full-width" [disabled]="customerForm.invalid">

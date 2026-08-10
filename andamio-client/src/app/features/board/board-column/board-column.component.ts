@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BoardCardComponent } from '../board-card/board-card.component';
+import { BoardCardComponent } from '../../../shared/cards/board-card/board-card.component';
 
 @Component({
   selector: 'app-board-column',

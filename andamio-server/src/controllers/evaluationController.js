@@ -1,7 +1,5 @@
 const Evaluation = require('../models/evaluationModel');
 
-
-
 exports.create = async(req,res)=>{
 
     try {
@@ -57,10 +55,6 @@ exports.create = async(req,res)=>{
 
 };
 
-
-
-
-
 exports.getAll = async(req,res)=>{
 
     try {
@@ -91,10 +85,6 @@ exports.getAll = async(req,res)=>{
     }
 
 };
-
-
-
-
 
 exports.getOne = async(req,res)=>{
 
@@ -130,38 +120,52 @@ exports.getOne = async(req,res)=>{
 
 };
 
-
-
-
-
 exports.update = async(req,res)=>{
-
-
     try {
+        const { requirements } = req.body;
+        const evaluationId = req.params.id;
 
+        // 1. Actualizamos las notas/requerimientos
+        await Evaluation.updateRequirements(evaluationId, requirements);
 
-        await Evaluation.updateRequirements(
-            req.params.id,
-            req.body.requirements
-        );
+        // 2. Lógica Automática: Si hay notas, el estatus pasa a 'realizada'
+        if (requirements && requirements.trim() !== '') {
+            await Evaluation.updateStatus(evaluationId, 'realizada');
+        }
 
-
-        res.json({
-
-            success:true
-
-        });
-
-
-    }catch(error){
-
-
-        res.status(500).json({
-            error:error.message
-        });
-
-
+        res.json({ success: true, message: 'Evaluación actualizada y marcada como realizada' });
+    } catch(error) {
+        res.status(500).json({ error: error.message });
     }
+};
 
+exports.getCount = async (req, res) => {
+    try {
+        const tenantId = req.user.tenantId;
 
+        // 1. PASO DE SINCRONIZACIÓN: 
+        // Antes de contar, pedimos al modelo que marque como 'cancelada' 
+        // en la DB todo lo que ya pasó de fecha y no tiene notas.
+        // (Debes crear este método en tu EvaluationModel)
+        // await Evaluation.syncCancelledStatus(tenantId);
+
+        // 2. LECTURA SIMPLE:
+        // Ahora que la DB está al día, solo traemos los datos
+        const evaluations = await Evaluation.getEvaluations(tenantId);
+
+        // 3. CONTEO DIRECTO:
+        // Ya no comparamos fechas aquí, solo leemos el campo 'status'
+        const stats = {
+            total: evaluations.length,
+            pendiente: evaluations.filter(e => e.status === 'pendiente').length,
+            realizada: evaluations.filter(e => e.status === 'realizada').length,
+            cancelada: evaluations.filter(e => e.status === 'cancelada').length
+        };
+
+        res.json(stats);
+
+    } catch (error) {
+        console.error("Error en la infraestructura de datos:", error);
+        res.status(500).json({ success: false });
+    }
 };

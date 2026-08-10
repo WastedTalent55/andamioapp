@@ -1,43 +1,88 @@
 <app-page-header
-  title="Infraestructura de Clientes" 
-  buttonLabel="NUEVO CLIENTE" 
+  title="Clientes"
+  subtitle="Administra tus relaciones de trabajo y da seguimiento a cada proyecto."
+  buttonLabel="Nuevo cliente"
   (onButtonClick)="navegarANuevoCliente()">
 </app-page-header>
 
-<div class="client-feature-container">
-  <div class="search-toolbar">
-    <div class="search-box">
-      <span class="icon">🔍</span>
-      <input 
-        type="text" 
-        placeholder="FILTRAR POR NOMBRE O DIRECCIÓN..." 
-        (input)="onSearch($event)"
-        class="search-input">
-    </div>
+<div class="client-kpis">
+
+  <div class="kpi-card">
+    <span class="kpi-value">
+      {{ customers.length }}
+    </span>
+
+    <span class="kpi-label">
+      CLIENTES
+    </span>
   </div>
 
-  <div class="client-grid">
-    @for (customer of filteredCustomers; track customer.id) {
-      <div class="client-card">
-        <div class="card-status-bar"></div>
-        
-        <div class="card-body">
-          <div class="info-group">
-            <h3 class="client-name">{{ customer.first_name }} {{ customer.last_name }}</h3>
-            <p class="data-number phone">{{ customer.phone }}</p>
-            <p class="address">{{ customer.full_address || 'SIN DIRECCIÓN REGISTRADA' }}</p>
-          </div>
+  <div class="kpi-card">
+    <span class="kpi-value">
+      0
+    </span>
 
-          <div class="card-actions">
-            <button class="btn-action" routerLink="/evaluations/new" title="Agendar Evaluación">📅 Agendar Evaluación</button>
-            <button class="btn-action" title="Crear Cotización">📄 Cotizar</button>
-          </div>
-        </div>
-      </div>
-    } @empty {
-      <div class="empty-state">
-        <p>⚠️ NO SE ENCONTRÓ INFRAESTRUCTURA DE CLIENTES CON ESE FILTRO.</p>
-      </div>
-    }
+    <span class="kpi-label">
+      ACTIVOS
+    </span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-value">
+      0
+    </span>
+
+    <span class="kpi-label">
+      CON EVALUACIÓN
+    </span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-value">
+      0
+    </span>
+
+    <span class="kpi-label">
+      NUEVOS
+    </span>
+  </div>
+
+</div>
+
+<div class="client-feature-container">
+  <div class="search-toolbar">
+
+    <div class="search-box">
+
+        <span class="search-icon">
+
+            🔍
+
+        </span>
+
+        <input
+            type="text"
+            class="search-input"
+            placeholder="Buscar cliente..."
+            (input)="onSearch($event)">
+
+    </div>
+
+    <button class="toolbar-filter">
+
+        Más recientes
+
+        ▼
+
+    </button>
+
+  </div>
+  
+  <div class="client-grid">
+  @for (customer of filteredCustomers; track customer.id) {
+    <app-customer-card
+      [customer]="customer">
+    </app-customer-card>
+  }
   </div>
 </div>

@@ -1,12 +1,121 @@
+.preview-layout{
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+
+    background:#0f172a;
+}
+
+.sidebar-content{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+}
+
+.preview-sidebar{
+
+    width:320px;
+    height:100vh;
+
+    flex-shrink:0;
+
+    display:flex;
+    flex-direction:column;
+
+    padding:20px;
+
+    gap:12px;
+
+    background:#0F172A;
+
+    border-right:1px solid rgba(255,255,255,.05);
+
+    box-sizing:border-box;
+}
+
 /* 📄 LIENZO DE PAPEL DIGITAL */
 .quote-canvas {
-  background-color: #FFFFFF !important; /* Blanco absoluto */
+  width:100%;
+  max-width:900px;
+  min-height:1200px;
+  background:#fff;
+  margin:0;
+  border-radius:10px;
+
+
   color: #0F172A !important; /* Slate oscuro para legibilidad profesional */
-  padding: 40px;
-  max-width: 850px;
-  margin: 0 auto;
-  border: 1px solid #E2E8F0;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  padding: 50px;
+  box-shadow: 
+    0 30px 70px rgba(0,0,0,0.18),
+    0 10px 25px rgba(0,0,0,0.10);
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-header{
+
+    margin-bottom:8px;
+
+}
+
+.sidebar-label{
+
+    display:inline-block;
+
+    margin-bottom:12px;
+
+    font-size:.75rem;
+
+    font-weight:700;
+
+    letter-spacing:.18em;
+
+    text-transform:uppercase;
+
+    color:var(--andamio-oro-activo);
+}
+
+.sidebar-header h2{
+
+    margin:0;
+
+    color:white;
+
+    font-size:2rem;
+
+    font-weight:700;
+}
+
+.sidebar-header p{
+
+    margin-top:12px;
+
+    color:#94A3B8;
+
+    line-height:1.5;
+}
+
+.preview-toolbar{
+
+    padding:16px;
+
+    border-radius:18px;
+
+    background:#172033;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
 }
 
 /* ⚠️ OVERRIDE DE TEXTOS (Evita letras blancas) */
@@ -21,6 +130,45 @@
   max-width: 250px;
   object-fit: contain;
   margin-bottom: 10px;
+}
+
+.delivery-box{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    width:220px;
+
+    height:120px;
+
+    border-radius:18px;
+
+    color:white;
+
+    padding:24px;
+}
+
+.delivery-box span{
+
+    opacity:.8;
+
+    font-size:.85rem;
+
+    text-transform:uppercase;
+
+    letter-spacing:.15em;
+}
+
+.delivery-box strong{
+
+    margin-top:10px;
+
+    font-size:2rem;
+
+    font-weight:700;
 }
 
 /* GRID DE DATOS (Estilo Charly Pulenta) [1] */
@@ -50,7 +198,17 @@
   display: flex;
   flex-direction: column;
 }
-
+.info-cell span:first-child {
+  font-family: var(--font-display);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #64748B !important; /* Gris Slate para etiquetas sutiles */
+  margin-bottom: 4px;
+}
+.info-cell span:last-child {
+  font-weight: 600;
+  font-size: 14px;
+}
 .quote-badge {
   display: flex;
   align-items: center;
@@ -72,25 +230,126 @@
   font-weight: 900;
   font-size: 18px;
 }
-
-/* TABLA INDUSTRIAL [1] */
-.quote-table-industrial {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 10px;
+.quote-badge span {
+  font-family: var(--font-technical);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-size: 1.1rem;
 }
 
-.quote-table-industrial th {
-  font-size: 10px;
-  padding: 8px;
-  text-align: left;
-  color: #0F172A !important; /* Texto oscuro sobre el color de marca */
+/* TABLA INDUSTRIAL */
+.quote-table-industrial{
+
+    width:100%;
+
+    border-collapse:separate;
+
+    border-spacing:0;
+
+    margin-top:28px;
 }
 
-.quote-table-industrial td {
-  padding: 8px;
-  border: 1px solid #E2E8F0;
-  font-size: 12px;
+.table-wrapper{
+
+    margin-top:42px;
+}
+
+.quote-table-industrial th{
+
+    padding:18px 14px;
+
+    text-align:left;
+
+    font-size:.78rem;
+
+    letter-spacing:.18em;
+
+    text-transform:uppercase;
+
+    color:#64748B;
+
+    font-weight:700;
+
+    border-bottom:2px solid #E2E8F0;
+
+    background:transparent;
+}
+
+.quote-table-industrial td{
+
+    padding:20px 14px;
+
+    border-bottom:1px solid #EEF2F7;
+
+    vertical-align:top;
+
+    font-size:.96rem;
+}
+
+.quote-table-industrial tbody tr:hover{
+
+    background:#FAFAFA;
+}
+
+.quote-table-industrial td{
+
+    padding:20px 14px;
+
+    border-bottom:1px solid #EEF2F7;
+
+    vertical-align:top;
+
+    font-size:.96rem;
+}
+
+.description-column{
+
+    width:45%;
+
+    font-weight:600;
+
+    color:#0F172A;
+}
+.quote-table-industrial tr:last-child td {
+  border-bottom: none;
+  font-weight: 800;
+  background-color: #F1F5F9;
+}
+
+.table-category{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    margin-top:55px;
+
+    margin-bottom:8px;
+
+    background:none !important;
+
+    color:#0F172A;
+
+    font-size:1.6rem;
+
+    font-weight:700;
+
+    letter-spacing:.06em;
+}
+
+.table-category::before{
+
+    content:"";
+
+    width:5px;
+
+    height:38px;
+
+    border-radius:20px;
+
+    background:currentColor;
 }
 
 .desc-col { width: 45%; }
@@ -102,16 +361,66 @@
   margin-top: 30px;
 }
 
-.totals-side {
-  width: 40%;
+.totals-side{
+
+    width:360px;
+
+    margin-left:auto;
+
+    padding:28px;
+
+    border-radius:18px;
+
+    background:#F8FAFC;
+
+    border:1px solid #E2E8F0;
 }
 
-.total-line {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
-  border-bottom: 1px solid #E2E8F0;
-  font-size: 13px;
+.total-line{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:14px 0;
+
+    border-bottom:1px solid #E2E8F0;
+
+    font-size:.95rem;
+}
+
+.total-line.grand-total{
+
+    margin:18px 0;
+
+    padding:18px 0;
+
+    border-top:2px solid #0F172A;
+
+    border-bottom:2px solid #0F172A;
+
+    font-size:1.35rem;
+
+    font-weight:800;
+}
+
+.totals-side h3{
+
+    margin:0 0 24px;
+
+    font-size:.9rem;
+
+    letter-spacing:.18em;
+
+    text-transform:uppercase;
+
+    color:#64748B;
+}
+
+.total-line span:last-child {
+  font-family: var(--font-technical); /* Dinero en fuente mono [6] */
 }
 
 .highlight {
@@ -120,29 +429,95 @@
 }
 
 .quote-top-wrapper {
+  border-top: 12px solid; 
+  padding-top: var(--spacing-md);
   display: flex;
-  gap: var(--spacing-sm);
-  align-items: stretch; /* 👈 Esto hace que ambos lados midan lo mismo */
-  margin-bottom: var(--spacing-lg);
-  border-top: 10px solid; /* El color viene del style binding */
-  padding-top: var(--spacing-sm);
+  justify-content: space-between;
+  align-items: stretch;
+  margin-bottom: 40px;
+}
+
+.quote-header-left{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+}
+
+.quote-header-right{
+
+    width:220px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:flex-end;
+
+    justify-content:space-between;
+}
+
+.quote-label{
+
+    font-size:.75rem;
+
+    letter-spacing:.20em;
+
+    text-transform:uppercase;
+
+    color:#64748B;
+}
+
+.quote-client{
+
+    margin:0;
+
+    font-size:2rem;
+
+    font-weight:700;
+}
+
+.quote-address{
+
+    margin:0;
+
+    color:#475569;
+}
+
+.quote-phone{
+
+    margin:0;
+
+    color:#475569;
+}
+
+.quote-meta{
+
+    text-align:right;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:4px;
+}
+
+.quote-meta strong{
+
+    font-size:1.6rem;
+}
+
+.quote-meta small{
+
+    color:#64748B;
 }
 
 .client-info-container {
   flex: 2; /* Toma más espacio para los datos */
-}
-
-.company-logo-aside {
-  flex: 1;
-   min-width: 200px; /* Dale un ancho mínimo */
-  min-height: 120px;
-  display: flex;
-  background-color: #f1f5f9; /* Un tono gris muy tenue para resaltar el área del logo */
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
 }
 
 .quote-logo-render {
@@ -152,12 +527,148 @@
   object-fit: contain;
 }
 
-.action-toolbar {
-  margin-bottom: var(--spacing-md);
-  padding: var(--spacing-sm);
-  display: flex;
-  justify-content: center;
-  background-color: var(--andamio-antracita); /* Superficie suave [3] */
+.action-toolbar{
+
+    padding:16px;
+
+    border-radius:18px;
+
+    background:#172033;
+
+    border:1px solid rgba(255,255,255,.05);
+}
+
+.control-title{
+
+    display:block;
+
+    margin-bottom:6px;
+
+    color:white;
+
+    font-weight:600;
+}
+
+.control-description{
+
+    display:block;
+
+    margin-bottom:18px;
+
+    color:#94A3B8;
+
+    font-size:.85rem;
+
+    line-height:1.5;
+}
+
+.sidebar-section-title{
+
+    margin:4px 0 4px;
+
+    font-size:.72rem;
+
+    font-weight:700;
+
+    letter-spacing:.18em;
+
+    text-transform:uppercase;
+
+    color:#64748B;
+}
+
+.toolbar-actions{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+}
+
+.sidebar-btn{
+
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:12px 14px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    background:#1E293B;
+
+    color:white;
+
+    font-size:.95rem;
+
+    transition:.25s;
+}
+
+.sidebar-btn:hover{
+
+    transform:translateY(-2px);
+
+    background:#263449;
+}
+
+.sidebar-btn-secondary{
+
+    background:transparent;
+
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.color-control{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+}
+
+.color-picker-row{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+}
+
+.color-picker{
+
+    width:44px;
+
+    height:44px;
+
+    border:none;
+
+    border-radius:14px;
+
+    overflow:hidden;
+
+    cursor:pointer;
+
+    background:none;
+}
+
+.color-code{
+
+    font-family:monospace;
+
+    font-size:.9rem;
+
+    color:#CBD5E1;
 }
 
 .toolbar-content {
@@ -183,10 +694,92 @@
 /* Variante para botón de "Volver" más sutil */
 .btn-outline {
   background-color: transparent !important;
-  border: 1px solid var(--andamio-oro-activo) !important;
+  border: 1.5px solid var(--andamio-oro-activo) !important;
   color: var(--andamio-oro-activo) !important;
+  font-family: var(--font-display);
+  transition: var(--transition-friendly);
 }
 
 .btn-outline:hover {
   background-color: rgba(255, 184, 0, 0.1) !important;
+  transform: translateY(-2px);
+}
+.section-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    margin:48px 0 24px;
+}
+
+.section-bar{
+
+    width:6px;
+
+    height:34px;
+
+    border-radius:8px;
+
+    display:block;
+}
+
+.section-title h3{
+
+    margin:0;
+
+    font-size:1.25rem;
+
+    font-weight:700;
+
+    letter-spacing:.08em;
+
+    text-transform:uppercase;
+
+    color:#0F172A;
+}
+.company-header{
+
+    width:220px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:flex-end;
+
+    justify-content:flex-start;
+
+    gap:16px;
+
+    text-align:right;
+}
+
+.company-header h2{
+
+    margin:0;
+
+    font-size:1.5rem;
+
+    font-weight:700;
+}
+
+.company-header span{
+
+    color:#64748B;
+
+    font-size:.9rem;
+
+    font-weight:600;
+}
+
+.quote-logo-render{
+
+    max-width:180px;
+
+    max-height:90px;
+
+    object-fit:contain;
 }

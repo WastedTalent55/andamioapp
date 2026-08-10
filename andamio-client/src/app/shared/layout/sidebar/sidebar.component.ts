@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TenantService } from '../../core/services/tenant.service';
+import { TenantService } from '../../../core/services/tenant.service';
 import { 
   LucideAngularModule,  
   LayoutDashboard,

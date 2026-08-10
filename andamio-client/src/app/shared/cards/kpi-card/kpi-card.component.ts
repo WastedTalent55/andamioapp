@@ -49,5 +49,5 @@ export class KpiCardComponent {
 
   @Input() value: string | number = 0;
 
-  @Input() subtitle = '';
+  @Input() subtitle: string = '';
 }

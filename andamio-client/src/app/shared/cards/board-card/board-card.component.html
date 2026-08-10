@@ -1,0 +1,191 @@
+<div class="kanban-card" 
+     [ngClass]="{
+       'eval-border': type === 'evaluations',
+       'quote-border': type === 'quoting',
+       'active-border': type === 'active',
+       'finished-border': type === 'finished'
+     }">
+
+  <!-- 1. Título Dinámico (Requested Work para Eval y Quote) -->
+   <div class="card-header">
+
+    @if(type === 'evaluations'){
+      <span 
+      class="status-pill"
+      [ngClass]="data.evaluation_status">
+
+        {{ data.evaluation_status | uppercase }}
+
+    </span>
+
+    }
+
+    @if(type === 'quoting'){
+
+        <span class="status-pill quote">
+            {{data.quote_status | uppercase}}
+        </span>
+
+    }
+
+</div>
+
+@if (type === 'evaluations') {
+
+  <div class="card-date">
+    {{ data.eval_date | date:'EEE d MMM' }}
+    ·
+    {{ data.eval_date | date:'shortTime' }}
+  </div>
+
+}
+
+@if (type === 'quoting') {
+
+  <div class="card-date">
+    <lucide-icon [img]="Calendar" size="15"></lucide-icon>
+    {{ data.created_at | date:'dd MMM yyyy' }}
+  </div>
+
+}
+
+<h3 class="card-work">
+
+  @if(type === 'customers'){
+
+    {{ data.first_name }} {{ data.last_name }}
+
+  } @else {
+
+    {{ data.requested_work }}
+
+  }
+
+</h3>
+
+@if(type === 'customers'){
+  <div class="customer-since">
+
+    <span class="label">
+
+        Cliente desde
+
+    </span>
+
+    <span class="date">
+
+        {{ customer.created_at | date:'MMMM yyyy' }}
+
+    </span>
+
+  </div>
+
+} @else {
+
+<p class="card-client">
+
+    {{ data.customer_name }}
+
+</p>
+
+}
+  
+  <div class="card-body-info">
+    <!-- Info básica presente en ambos estados -->
+     <p class="address">
+
+    <lucide-icon
+        [img]="MapPin"
+        size="16">
+    </lucide-icon>
+
+    @if(type === 'customers'){
+
+        {{ data.full_address || 'Sin dirección registrada' }}
+
+    } @else {
+
+        {{ data.customer_address || data.address || 'Sin dirección registrada' }}
+
+    }
+
+</p>
+      <p class="phone-info">
+        <lucide-icon 
+        [img]="Phone"
+        size="16">
+        </lucide-icon>
+        <a [href]="'https://wa.me/52'"
+  target="_blank" 
+  class="whatsapp-link">
+        <span class="data-number">
+          {{ data.phone }}
+        </span>
+      </a>
+      </p>
+
+    <!-- INFO ESPECÍFICA: COTIZACIONES -->
+    @if (type === 'quoting') {
+      <div class="quote-details">
+        <p class="total-amount">
+          <lucide-icon 
+            [img]="Wallet"
+            size="16">
+          </lucide-icon> 
+          {{ (data.total_amount | currency) || 'Costo pendiente' }}
+        </p>
+      </div>
+    }
+  </div>
+
+  <!-- FOOTER -->
+  <div class="card-footer">
+
+    @if(type === 'customers'){
+
+    <button class="btn-action">
+      Ver perfil
+    </button>
+
+    }
+
+    @if(type === 'evaluations'){
+
+    <button
+      class="btn-action"
+      (click)="openNotes()">
+
+      {{ data.requirements ? '📝 Ver Notas' : '📝 Crear Notas' }}
+
+    </button>
+
+    }
+
+    @if(type === 'quoting'){
+      <div class="quote-actions">
+        <button
+          class="btn-icon"
+          title="Ver cotización"
+          (click)="viewPreview()">
+          <lucide-icon
+            [img]="Eye"
+            size="18">
+          </lucide-icon>
+        </button>
+        <button
+          class="btn-action primary"
+          (click)="acceptQuote()">
+          <lucide-icon
+            [img]="CircleCheck"
+            size="18">
+          </lucide-icon>
+          Cotización aceptada
+        </button>
+      </div>
+    }
+  </div>
+</div>
+
+<pre>{{ customer | json }}</pre>
+
+

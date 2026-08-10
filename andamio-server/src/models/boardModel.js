@@ -13,6 +13,26 @@ const Board = {
                 e.scheduled_date as eval_date,
                 c.phone,
                 e.requirements,
+
+                CASE
+
+                    WHEN e.scheduled_date > NOW()
+                    THEN 'pendiente'
+
+
+                    WHEN e.scheduled_date <= NOW()
+                         AND e.requirements IS NOT NULL
+                         AND e.requirements <> ''
+                    THEN 'realizada'
+
+
+                    WHEN e.scheduled_date <= NOW()
+                         AND (e.requirements IS NULL OR e.requirements = '')
+                    THEN 'cancelada'
+
+
+                END AS evaluation_status,
+                
                 CONCAT(c.first_name,' ',IFNULL(c.last_name,'')) as customer_name,
                 ca.full_address as customer_address,
                 q.id as quote_id,

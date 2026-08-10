@@ -1,0 +1,259 @@
+.customer-card{
+
+    background:var(--andamio-fondo);
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:18px;
+
+    padding:18px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    transition:.28s;
+
+    position:relative;
+
+    overflow:hidden;
+
+    cursor:pointer;
+}
+
+.customer-card::before{
+
+    content:'';
+
+    position:absolute;
+
+    left:0;
+
+    top:0;
+
+    width:5px;
+
+    height:100%;
+
+    background:var(--andamio-cian);
+
+}
+
+.customer-card:hover{
+
+    transform:translateY(-6px);
+
+    border-color:var(--andamio-cian);
+
+    box-shadow:
+
+        0 18px 40px rgba(0,0,0,.35);
+
+}
+.customer-card:hover::before{
+
+    width:8px;
+
+}
+
+.whatsapp-link {
+  color: var(--andamio-verde-obra); /* Verde esmeralda suave de Andamio */
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: var(--radius-interactive);
+  transition: var(--transition-friendly); /* Animación con pop orgánico */
+}
+
+.whatsapp-link:hover {
+  background-color: rgba(52, 211, 153, 0.1); /* Destello verde muy tenue */
+  transform: scale(1.05); /* Efecto de crecimiento amigable */
+}
+
+.card-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.avatar{
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:linear-gradient(
+        135deg,
+        var(--andamio-cian),
+        var(--andamio-azul-plano)
+    );
+
+    color:white;
+
+    font-size:1.5rem;
+
+    font-weight:800;
+
+    flex-shrink:0;
+
+}
+
+.header-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+.customer-name{
+
+    margin:0;
+
+    color:white;
+
+    font-size:1.3rem;
+
+    font-weight:700;
+
+}
+
+.customer-since{
+
+    color:#94A3B8;
+
+    font-size:.82rem;
+
+    text-transform:uppercase;
+
+    letter-spacing:.12em;
+
+}
+
+.card-body{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.info-row{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.info-icon{
+
+    font-size:1rem;
+
+}
+
+.info-value{
+
+    color:#CBD5E1;
+
+    line-height:1.4;
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+
+}
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:14px;
+
+    padding:12px 0;
+
+    border-top:1px solid rgba(255,255,255,.06);
+
+    border-bottom:1px solid rgba(255,255,255,.06);
+
+}
+
+.stat{
+
+    text-align:center;
+
+}
+
+.stat-number{
+
+    display:block;
+
+    color:white;
+
+    font-size:2rem;
+
+    font-weight:800;
+
+}
+
+.stat-label{
+
+    display:block;
+
+    margin-top:6px;
+
+    color:#94A3B8;
+
+    font-size:.60rem;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+}
+
+.customer-status{
+
+    width:12px;
+
+    height:12px;
+
+    border-radius:50%;
+
+    background:var(--andamio-verde-obra);
+
+    position:absolute;
+
+    top:18px;
+
+    right:18px;
+
+    box-shadow:0 0 12px rgba(52,211,153,.5);
+
+}
