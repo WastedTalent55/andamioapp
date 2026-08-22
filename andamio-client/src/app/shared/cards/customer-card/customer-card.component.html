@@ -73,7 +73,7 @@
 
       <span class="stat-number">
 
-        0
+        {{ customer.evaluations_count || 0 }}
 
       </span>
 
@@ -89,7 +89,7 @@
 
       <span class="stat-number">
 
-        0
+        {{ customer.quotes_count || 0 }}
 
       </span>
 
@@ -99,13 +99,13 @@
 
       </span>
 
-    </div>
+    </div> 
 
     <div class="stat">
 
       <span class="stat-number">
 
-        0
+        {{ customer.projects_count || 0 }}
 
       </span>
 

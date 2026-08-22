@@ -2,7 +2,21 @@ const db = require('../config/db');
 
 const Customer = {
     getAllByTenant: async (tenantId) => {
-        const [rows] = await db.query('SELECT c.*, ca.id AS address_id, ca.full_address FROM customers c LEFT JOIN customer_addresses ca ON c.id = ca.customer_id WHERE c.tenant_id = ?', [tenantId]);
+        const [rows] = await db.query(
+            `
+            SELECT
+                c.*,
+                ca.id AS address_id,
+                ca.full_address,
+                (SELECT COUNT(*) FROM evaluations e WHERE e.customer_id = c.id AND e.tenant_id = c.tenant_id) AS evaluations_count,
+                (SELECT COUNT(*) FROM quotes q WHERE q.customer_id = c.id AND q.tenant_id = c.tenant_id AND q.is_current = 1) AS quotes_count,
+                (SELECT COUNT(*) FROM projects p WHERE p.customer_id = c.id AND p.tenant_id = c.tenant_id) AS projects_count
+            FROM customers c
+            LEFT JOIN customer_addresses ca ON c.id = ca.customer_id
+            WHERE c.tenant_id = ?
+            `,
+            [tenantId]
+        );
         return rows;
     },
 
