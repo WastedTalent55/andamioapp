@@ -39,4 +39,12 @@ export class EvaluationService {
   getEvaluationCount(): Observable<ApiResponse<EvaluationStats>> {
     return this.http.get<ApiResponse<EvaluationStats>>(`${this.apiUrl}/count`);
   }
+
+  updateEvaluationDetails(id: number, data: Partial<Evaluation>): Observable<ApiResponse<unknown>> {
+    return this.http.put<ApiResponse<unknown>>(`${this.apiUrl}/${id}/details`, data);
+  }
+
+  deleteEvaluation(id: number): Observable<ApiResponse<unknown>> {
+    return this.http.delete<ApiResponse<unknown>>(`${this.apiUrl}/${id}`);
+  }
 }

@@ -151,13 +151,30 @@
 
     @if(type === 'evaluations'){
 
-    <button
-      class="btn-action"
-      (click)="openNotes()">
+    <div class="evaluation-actions">
+      <button
+        class="btn-action"
+        (click)="openNotes()">
 
-      {{ data.requirements ? '📝 Ver Notas' : '📝 Crear Notas' }}
+        {{ data.requirements ? '📝 Ver Notas' : '📝 Crear Notas' }}
 
-    </button>
+      </button>
+
+      <button
+        class="btn-icon"
+        title="Editar evaluación"
+        (click)="editEvaluation($event)">
+        <lucide-icon [img]="Pencil" size="16"></lucide-icon>
+      </button>
+
+      <button
+        class="btn-icon delete"
+        title="Eliminar evaluación"
+        [disabled]="deleting"
+        (click)="deleteEvaluation($event)">
+        <lucide-icon [img]="Trash2" size="16"></lucide-icon>
+      </button>
+    </div>
 
     }
 
@@ -184,6 +201,6 @@
       </div>
     }
   </div>
-</div> 
+</div>
 
 <pre>{{ customer | json }}</pre>

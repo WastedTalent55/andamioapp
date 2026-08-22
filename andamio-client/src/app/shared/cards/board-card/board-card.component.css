@@ -3,11 +3,10 @@
    ========================================================================== */
 
 .kanban-card {
-  /* Superficie: Fondo marino profundo para resaltar sobre la columna antracita */
-  background-color: var(--andamio-fondo); /* #0F172A */
-  border: 1px solid var(--andamio-gris-oscuro); /* #334155 */
-  border-radius: var(--radius-interactive); /* 12px para elementos internos [1] */
-  padding: var(--spacing-md); /* 24px [1] */
+  background-color: var(--andamio-fondo);
+  border: 1px solid var(--andamio-gris-oscuro); 
+  border-radius: var(--radius-interactive); 
+  padding: var(--spacing-md); 
   
   /* Borde semántico lateral */
   border-left-width: 6px;
@@ -16,7 +15,7 @@
   
   /* Sombra y transición premium */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: var(--transition-friendly); /* Pop elástico orgánico [1] */
+  transition: var(--transition-friendly);
   position: relative;
   overflow: hidden;
 }
@@ -54,19 +53,19 @@
 }
 
 .whatsapp-link {
-  color: var(--andamio-verde-obra); /* Verde esmeralda suave de Andamio */
+  color: var(--andamio-verde-obra); 
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 4px 8px;
   border-radius: var(--radius-interactive);
-  transition: var(--transition-friendly); /* Animación con pop orgánico */
+  transition: var(--transition-friendly);
 }
 
 .whatsapp-link:hover {
-  background-color: rgba(52, 211, 153, 0.1); /* Destello verde muy tenue */
-  transform: scale(1.05); /* Efecto de crecimiento amigable */
+  background-color: rgba(52, 211, 153, 0.1); 
+  transform: scale(1.05); 
 }
 
 /* Efecto Hover: Elevación y Brillo */
@@ -77,14 +76,14 @@
 }
 
 /* --- CLASES SEMÁNTICAS DE BORDE [2, 3] --- */
-.eval-border { border-left-color: var(--andamio-azul-plano); }    /* Blueprint Blue */
-.quote-border { border-left-color: var(--andamio-oro-activo); }   /* Active Gold */
-.active-border { border-left-color: var(--andamio-verde-obra); }  /* Work Green */
-.finished-border { border-left-color: var(--andamio-concreto); }  /* Gray */
+.eval-border { border-left-color: var(--andamio-azul-plano); }    
+.quote-border { border-left-color: var(--andamio-oro-activo); }   
+.active-border { border-left-color: var(--andamio-verde-obra); }  
+.finished-border { border-left-color: var(--andamio-concreto); }  
 
 /* --- SECCIÓN DE TÍTULO --- */
 .card-title-section h3 {
-  font-family: var(--font-display); /* Archivo [1] */
+  font-family: var(--font-display); 
   letter-spacing: -0.02em;
 }
 
@@ -113,8 +112,8 @@
 }
 
 .customer-name {
-  color: var(--andamio-tiza); /* Blanco Tiza suave [3] */
-  font-family: var(--font-main); /* Inter [1] */
+  color: var(--andamio-tiza); 
+  font-family: var(--font-main); 
 }
 
 /* Icono de vista previa */
@@ -132,7 +131,7 @@
 .card-body-info p {
   font-size: 0.85rem;
   margin-bottom: 4px;
-  color: var(--andamio-concreto); /* Gris para texto secundario [3] */
+  color: var(--andamio-concreto); 
 }
 
 .appointment-details, .quote-details {
@@ -141,9 +140,9 @@
   border-top: 1px dashed var(--andamio-gris-oscuro);
 }
 
-/* Datos Técnicos: Uso obligatorio de Space Mono [4] */
+/* Datos Técnicos: Uso obligatorio de Space Mono */
 .total-amount, .date, .phone-info {
-  font-family: var(--font-technical); /* Space Mono [1] */
+  font-family: var(--font-technical);
   color: var(--andamio-tiza);
 }
 
@@ -189,8 +188,8 @@
 
 /* Variante Primaria/Aceptada: Usa el Verde Esmeralda de la marca [3] */
 .btn-action.primary {
-  background-color: var(--andamio-verde-obra); /* #34D399 */
-  color: var(--andamio-fondo); /* Máximo contraste [5] */
+  background-color: var(--andamio-verde-obra); 
+  color: var(--andamio-fondo); 
   border: none;
 }
 
@@ -354,4 +353,23 @@ margin-bottom:18px;
 
   background:#f5f5f5;
 
+}
+.evaluation-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.evaluation-actions .btn-action {
+  flex: 1;
+}
+
+.btn-icon.delete:hover {
+  background: var(--andamio-rojo-alerta);
+  border-color: var(--andamio-rojo-alerta);
+}
+
+.btn-icon:disabled {
+  opacity: .5;
+  cursor: not-allowed;
 }

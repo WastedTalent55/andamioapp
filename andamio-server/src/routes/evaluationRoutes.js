@@ -40,5 +40,17 @@ router.put(
     controller.update
 );
 
+router.put(
+    '/:id/details',
+    verifyToken,
+    controller.updateDetails
+);
+
+router.delete(
+    '/:id',
+    verifyToken,
+    controller.remove
+);
+
 
 module.exports = router;

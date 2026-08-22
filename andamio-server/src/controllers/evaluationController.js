@@ -151,3 +151,82 @@ exports.getCount = async (req, res) => {
     }
 
 };
+
+
+// Edición completa (agenda/costo/trabajo solicitado) — distinta de update()
+// de arriba, que solo guarda las notas de la visita
+exports.updateDetails = async (req, res) => {
+
+    try {
+
+        const evaluationId = req.params.id;
+        const tenantId = req.user.tenantId;
+
+        const updated = await EvaluationService.updateEvaluationDetails(evaluationId, tenantId, req.body);
+
+        if (!updated) {
+            return res.status(404).json({
+                success: false,
+                message: 'Evaluación no encontrada'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Evaluación actualizada correctamente'
+        });
+
+    } catch (error) {
+
+        console.error('❌ Error en evaluationController.updateDetails:', error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+
+};
+
+
+exports.remove = async (req, res) => {
+
+    try {
+
+        const evaluationId = req.params.id;
+        const tenantId = req.user.tenantId;
+
+        const deleted = await EvaluationService.deleteEvaluation(evaluationId, tenantId);
+
+        if (!deleted) {
+            return res.status(404).json({
+                success: false,
+                message: 'Evaluación no encontrada'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Evaluación eliminada correctamente'
+        });
+
+    } catch (error) {
+
+        if (error.code === 'EVALUATION_HAS_QUOTE') {
+            return res.status(409).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+        console.error('❌ Error en evaluationController.remove:', error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+
+};

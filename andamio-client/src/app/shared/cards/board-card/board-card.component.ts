@@ -1,8 +1,9 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Customer } from '../../../core/models/customer.model';
-import { LucideAngularModule, MapPin, Phone, Wallet, Calendar, FileText, CircleCheck, Clock, Eye } from 'lucide-angular';
+import { EvaluationService } from '../../../core/services/evaluation.service';
+import { LucideAngularModule, MapPin, Phone, Wallet, Calendar, FileText, CircleCheck, Clock, Eye, Pencil, Trash2 } from 'lucide-angular';
 
 @Component({
   selector: 'app-board-card',
@@ -20,6 +21,8 @@ export class BoardCardComponent {
   CircleCheck = CircleCheck;
   Clock = Clock;
   Eye = Eye
+  Pencil = Pencil;
+  Trash2 = Trash2;
 
   @Input() data: any;
   @Input() customer!: Customer;
@@ -29,7 +32,14 @@ export class BoardCardComponent {
   // customers
 
   @Input() type: string = 'evaluations';
+
+  // 🆕 Avisa al padre (project-board) que algo se borró, para refrescar el tablero
+  @Output() cardDeleted = new EventEmitter<void>();
+
   private router = inject(Router);
+  private evaluationService = inject(EvaluationService);
+
+  deleting = false;
 
   openNotes() {
     const evalId = this.data.eval_id;
@@ -40,6 +50,45 @@ export class BoardCardComponent {
       console.error('No se encontró el ID de la evaluación para abrir las notas');
     }
 
+  }
+
+  editEvaluation(event: Event) {
+    event.stopPropagation();
+    if (this.data.eval_id) {
+      this.router.navigate(['/evaluations', this.data.eval_id, 'edit']);
+    }
+  }
+
+  deleteEvaluation(event: Event) {
+    event.stopPropagation();
+
+    if (!this.data.eval_id || this.deleting) return;
+
+    const confirmDelete = confirm(
+      `¿Eliminar la evaluación de ${this.data.customer_name}? Esta acción no se puede deshacer.`
+    );
+
+    if (!confirmDelete) return;
+
+    this.deleting = true;
+
+    this.evaluationService.deleteEvaluation(this.data.eval_id).subscribe({
+      next: () => {
+        this.deleting = false;
+        this.cardDeleted.emit();
+      },
+      error: (err) => {
+        this.deleting = false;
+
+        if (err.status === 409) {
+          alert(`⚠️ ${err.error?.message || 'Esta evaluación tiene una cotización asociada y no se puede eliminar.'}`);
+          return;
+        }
+
+        console.error('Error eliminando evaluación:', err);
+        alert('❌ No se pudo eliminar la evaluación.');
+      }
+    });
   }
 
   viewDetail() {

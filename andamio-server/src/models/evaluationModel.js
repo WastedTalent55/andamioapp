@@ -181,14 +181,64 @@ const getStats = async (tenant_id) => {
     };
 };
 
+const updateDetails = async (id, tenant_id, data) => {
+
+    const query = `
+        UPDATE evaluations
+        SET customer_id = ?,
+            address_id = ?,
+            scheduled_date = ?,
+            evaluation_cost = ?,
+            requested_work = ?
+        WHERE id = ?
+        AND tenant_id = ?
+    `;
+
+    const [result] = await db.query(
+        query,
+        [
+            data.customer_id,
+            data.address_id,
+            data.scheduled_date,
+            data.evaluation_cost || 0,
+            data.requested_work,
+            id,
+            tenant_id
+        ]
+    );
+
+    return result;
+};
+
+// Antes de borrar checamos si ya tiene una cotización asociada — evitamos
+// dejarla huérfana (sin evaluación de origen) o romper trazabilidad.
+const hasQuote = async (id, tenant_id) => {
+    const [rows] = await db.query(
+        'SELECT COUNT(*) AS count FROM quotes WHERE evaluation_id = ? AND tenant_id = ?',
+        [id, tenant_id]
+    );
+    return rows[0].count > 0;
+};
+
+const deleteEvaluation = async (id, tenant_id) => {
+    const [result] = await db.query(
+        'DELETE FROM evaluations WHERE id = ? AND tenant_id = ?',
+        [id, tenant_id]
+    );
+    return result.affectedRows > 0;
+};
+
 module.exports = {
 
     createEvaluation,
     getEvaluations,
     getEvaluationById,
     updateRequirements,
+    updateDetails,
     updateStatus, 
     syncCancelledStatus,
+    hasQuote,
+    deleteEvaluation,
     getStats
 
 };

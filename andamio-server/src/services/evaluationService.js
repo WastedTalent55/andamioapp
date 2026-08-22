@@ -49,6 +49,29 @@ const EvaluationService = {
     },
 
 
+    // Edición completa (agenda/costo/trabajo solicitado) — distinto de
+    // updateEvaluation() de arriba, que solo toca las notas de la visita
+    updateEvaluationDetails: async (id, tenantId, data) => {
+        const result = await Evaluation.updateDetails(id, tenantId, data);
+        return result.affectedRows > 0;
+    },
+
+    // Regla de negocio: no se borra una evaluación que ya tiene una cotización
+    // asociada — se editaría/rechazaría la cotización primero.
+    deleteEvaluation: async (id, tenantId) => {
+
+        const hasQuote = await Evaluation.hasQuote(id, tenantId);
+
+        if (hasQuote) {
+            const error = new Error('Esta evaluación ya tiene una cotización asociada y no se puede eliminar.');
+            error.code = 'EVALUATION_HAS_QUOTE';
+            throw error;
+        }
+
+        return Evaluation.deleteEvaluation(id, tenantId);
+    },
+
+
     // Sincroniza vencidas -> canceladas antes de contar, para que el dashboard
     // nunca muestre "pendientes" que ya vencieron sin notas.
     getStats: async (tenantId) => {

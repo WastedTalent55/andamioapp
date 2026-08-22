@@ -32,6 +32,9 @@ export class EvaluationFormComponent implements OnInit {
   showResults: boolean = false;
   filteredCustomers: Customer[] = [];
 
+  isEditMode = false;
+  evaluationId?: number;
+
   constructor() {
     this.evaluationForm = this.fb.group({
       customer_id: ['', [Validators.required]], 
@@ -44,10 +47,19 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+
     this.customerService.getCustomers().subscribe({
       next: (res) => { 
         this.customers = res.data || [];
         this.filteredCustomers = res.data || [];
+
+        if (idParam) {
+          this.isEditMode = true;
+          this.evaluationId = Number(idParam);
+          this.loadEvaluation(this.evaluationId);
+          return;
+        }
 
         this.route.queryParams.subscribe(params => {
           const clientId = params['clientId'];
@@ -62,17 +74,68 @@ export class EvaluationFormComponent implements OnInit {
       error: (err) => console.error('Error cargando infraestructura de clientes', err)
     });
   }
+
+  private loadEvaluation(id: number) {
+    this.evaluationService.getEvaluationById(id).subscribe({
+      next: (res) => {
+        const evaluation: any = res.data;
+        if (!evaluation) return;
+
+        const customer = this.customers.find(c => c.id == evaluation.customer_id);
+        if (customer) {
+          this.searchTerm = `${customer.first_name} ${customer.last_name}`;
+        }
+
+        if (evaluation.address_id) {
+          this.filteredAddresses = [{ id: evaluation.address_id, full_address: evaluation.address }];
+        }
+
+        // datetime-local espera "YYYY-MM-DDTHH:mm" — recortamos el ISO que regresa el backend
+        const scheduledDate = evaluation.scheduled_date
+          ? String(evaluation.scheduled_date).slice(0, 16)
+          : '';
+
+        this.evaluationForm.patchValue({
+          customer_id: evaluation.customer_id,
+          address_id: evaluation.address_id,
+          scheduled_date: scheduledDate,
+          evaluation_cost: evaluation.evaluation_cost,
+          requested_work: evaluation.requested_work,
+          requirements: evaluation.requirements
+        });
+      },
+      error: (err) => {
+        console.error('Error cargando la evaluación:', err);
+        alert('❌ No se pudo cargar la evaluación.');
+        this.location.back();
+      }
+    });
+  }
   
   onSubmit(): void {
-    if (this.evaluationForm.valid) {
-      this.evaluationService.createEvaluation(this.evaluationForm.value).subscribe({
-        next: (res) => {
-          alert('✅ Visita técnica agendada con éxito');
+    if (!this.evaluationForm.valid) return;
+
+    if (this.isEditMode && this.evaluationId) {
+      this.evaluationService.updateEvaluationDetails(this.evaluationId, this.evaluationForm.value).subscribe({
+        next: () => {
+          alert('✅ Evaluación actualizada con éxito');
           this.router.navigate(['/board']);
         },
-        error: (err) => console.error('Error al agendar visita técnica', err)
+        error: (err) => {
+          console.error('Error al actualizar la evaluación', err);
+          alert('❌ No se pudo actualizar la evaluación.');
+        }
       });
+      return;
     }
+
+    this.evaluationService.createEvaluation(this.evaluationForm.value).subscribe({
+      next: (res) => {
+        alert('✅ Visita técnica agendada con éxito');
+        this.router.navigate(['/board']);
+      },
+      error: (err) => console.error('Error al agendar visita técnica', err)
+    });
   }
 
   onCustomerChange(event: any) {

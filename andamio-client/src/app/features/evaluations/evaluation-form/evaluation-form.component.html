@@ -1,6 +1,6 @@
 <div class="form-container">
   <div class="form-header">
-    <h3>📋 AGENDAR NUEVA EVALUACIÓN TÉCNICA</h3>
+    <h3>{{ isEditMode ? '✏️ EDITAR EVALUACIÓN TÉCNICA' : '📋 AGENDAR NUEVA EVALUACIÓN TÉCNICA' }}</h3>
     <button type="button" class="btn-close" (click)="closeForm()" title="Cancelar">&times;</button>
   </div>
   
@@ -69,7 +69,7 @@
     </div>
 
     <button type="submit" class="btn-andamio full-width" [disabled]="evaluationForm.invalid">
-      CONFIRMAR Y AGENDAR VISITA
+      {{ isEditMode ? 'GUARDAR CAMBIOS' : 'CONFIRMAR Y AGENDAR VISITA' }}
     </button>
   </form>
 </div>

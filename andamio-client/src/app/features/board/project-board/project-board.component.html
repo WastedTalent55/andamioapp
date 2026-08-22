@@ -30,7 +30,8 @@
     <app-board-column 
       title="EVALUACIONES" 
       type="evaluations"
-      [items]="columns.evaluations">
+      [items]="columns.evaluations"
+      (cardDeleted)="refreshBoard()">
     </app-board-column>
 
 

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BoardCardComponent } from '../../../shared/cards/board-card/board-card.component';
 import { BoardRow } from '../../../core/services/project-board.service';
@@ -16,7 +16,7 @@ import { BoardRow } from '../../../core/services/project-board.service';
 
       <div class="column-body">
         @for (item of items; track (item.eval_id || item.quote_id)) {
-          <app-board-card [data]="item" [type]="type"></app-board-card>
+          <app-board-card [data]="item" [type]="type" (cardDeleted)="cardDeleted.emit()"></app-board-card>
         } @empty {
           <div class="empty-state">No hay registros</div>
         }
@@ -30,4 +30,7 @@ export class BoardColumnComponent {
   @Input() icon: string = '';
   @Input() type: string = '';
   @Input() items: BoardRow[] = [];
+
+  // 🆕 Se propaga hacia project-board para refrescar el tablero completo
+  @Output() cardDeleted = new EventEmitter<void>();
 }

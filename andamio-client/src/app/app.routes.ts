@@ -36,6 +36,7 @@ export const routes: Routes = [
 
             // Formulario de evaluacion
             { path: 'evaluations/new', component: EvaluationFormComponent },
+            { path: 'evaluations/:id/edit', component: EvaluationFormComponent },
             
             // Formulario de detalles de Evaluación
             { path: 'evaluations/:id/details', component: EvaluationDetailComponent },
