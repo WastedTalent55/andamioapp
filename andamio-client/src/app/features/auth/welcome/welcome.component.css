@@ -433,7 +433,7 @@ ESTILOS DE AUTENTICACIÓN (BOTONES)
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.15em;
-  color: var(--andamio-oro);
+  color: var(--andamio-oro-activo);
   margin-bottom: 12px;
   text-transform: uppercase;
 }
@@ -488,8 +488,8 @@ ESTILOS DE AUTENTICACIÓN (BOTONES)
   width: 100%;
   padding: 14px 24px;
   background: transparent;
-  color: var(--andamio-oro);
-  border: 2px solid var(--andamio-oro);
+  color: var(--andamio-oro-activo);
+  border: 2px solid var(--andamio-oro-activo);
   border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 700;
@@ -498,7 +498,7 @@ ESTILOS DE AUTENTICACIÓN (BOTONES)
 }
 
 .btn-andamio-outline:hover {
-  background: var(--andamio-oro);
+  background: var(--andamio-oro-activo);
   color: var(--andamio-fondo);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(255, 184, 0, 0.2);

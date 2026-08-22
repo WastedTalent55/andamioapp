@@ -26,8 +26,8 @@ header {
   border-radius: 4px;
   cursor: pointer;
   background: var(--andamio-gris-oscuro);
-  color: var(--andamio-gris-claro);
-  border: 1px solid var(--andamio-gris-medio);
+  color: var(--andamio-tiza);
+  border: 1px solid var(--andamio-concreto);
 }
 
 .btn-header:hover {
@@ -35,26 +35,26 @@ header {
 }
 
 .btn-quote {
-  border-color: var(--andamio-cian);
-  color: var(--andamio-cian);
+  border-color: var(--andamio-azul-plano);
+  color: var(--andamio-azul-plano);
   background: rgba(34, 211, 238, 0.05);
 }
 
 .btn-quote:hover {
-  background: var(--andamio-cian);
-  color: var(--andamio-obsidiana);
+  background: var(--andamio-azul-plano);
+  color: var(--andamio-fondo);
 }
 
 .project-info {
   background-color: rgba(30, 41, 59, 0.5);
   padding: 12px 16px;
   border-radius: 4px;
-  border-left: 4px solid var(--andamio-cian);
+  border-left: 4px solid var(--andamio-azul-plano);
   font-size: 0.9rem;
 }
 
 .project-info strong {
-  color: var(--andamio-cian);
+  color: var(--andamio-azul-plano);
   text-transform: uppercase;
   font-size: 0.75rem;
 }

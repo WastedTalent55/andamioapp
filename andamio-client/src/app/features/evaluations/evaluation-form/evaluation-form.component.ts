@@ -37,7 +37,7 @@ export class EvaluationFormComponent implements OnInit {
       customer_id: ['', [Validators.required]], 
       address_id: ['', Validators.required],
       scheduled_date: ['', [Validators.required]],
-      evaluation_cost: [0, [Validators.min(0)]], 
+      evaluation_cost: [null, [Validators.min(0)]], 
       requested_work: ['', [Validators.required, Validators.maxLength(255)]],
       requirements: ['']
     });
@@ -46,8 +46,8 @@ export class EvaluationFormComponent implements OnInit {
   ngOnInit(): void {
     this.customerService.getCustomers().subscribe({
       next: (res) => { 
-        this.customers = res.data,
-        this.filteredCustomers = res.data;
+        this.customers = res.data || [];
+        this.filteredCustomers = res.data || [];
 
         this.route.queryParams.subscribe(params => {
           const clientId = params['clientId'];

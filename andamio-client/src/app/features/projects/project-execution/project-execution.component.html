@@ -1,1 +1,45 @@
-<p>project-execution works!</p>
+<div class="execution-container">
+
+  <div class="loading-state" *ngIf="loading">Cargando proyecto...</div>
+
+  <div class="not-found-state" *ngIf="!loading && !project">
+    Proyecto no encontrado.
+    <a routerLink="/board">Volver al tablero</a>
+  </div>
+
+  <div class="card-andamio project-header" *ngIf="!loading && project">
+    <div>
+      <span class="status-pill" [ngClass]="project.status">{{ project.status | uppercase }}</span>
+      <h2>{{ project.project_name }}</h2>
+      <p class="control-description">
+        Cliente: <strong>{{ project.customer_name }}</strong> ·
+        Folio #{{ project.quote_folio }} ·
+        Total: ${{ project.total_amount | number:'1.2-2' }}
+      </p>
+    </div>
+  </div>
+
+  <div class="grid-row" *ngIf="!loading && project">
+    <div class="card-andamio">
+      <h3 class="sidebar-section-title">FECHAS</h3>
+      <p class="control-description">Inicio: {{ (project.start_date | date:'dd MMM yyyy') || 'Sin definir' }}</p>
+      <p class="control-description">Entrega estimada: {{ (project.estimated_end_date | date:'dd MMM yyyy') || 'Sin definir' }}</p>
+    </div>
+
+    <div class="card-andamio">
+      <h3 class="sidebar-section-title">CONTACTO</h3>
+      <p class="control-description">{{ project.phone || 'Sin teléfono' }}</p>
+      <p class="control-description">{{ project.full_address || 'Sin dirección' }}</p>
+    </div>
+  </div>
+
+  <div class="card-andamio" *ngIf="!loading && project && project.notes">
+    <h3 class="sidebar-section-title">NOTAS</h3>
+    <p class="control-description">{{ project.notes }}</p>
+  </div>
+
+  <!-- 🚧 Pendiente (Fase 4 del flujo maestro): Cálculo Dinámico de Utilidad.
+       Requiere capturar gastos reales del proyecto, algo que todavía no existe
+       en el schema — queda fuera del alcance de este cierre. -->
+
+</div>

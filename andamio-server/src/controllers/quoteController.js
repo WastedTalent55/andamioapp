@@ -1,5 +1,4 @@
-const Quote = require('../models/quoteModel');
-const db = require('../config/db');
+const QuoteService = require('../services/quoteService');
 
 
 const createQuote = async (req, res) => {
@@ -8,31 +7,7 @@ const createQuote = async (req, res) => {
 
         const tenantId = req.user.tenantId;
 
-        const [lastQuote] = await db.query(
-      'SELECT MAX(quote_folio) as lastFolio FROM quotes WHERE tenant_id = ?',
-      [tenantId]
-    );
-    const nextFolio = (lastQuote.lastFolio || 0) + 1;
-
-        const quoteData = {
-            ...req.body,
-            tenant_id: tenantId,
-            quote_folio: nextFolio
-        };
-
-
-        const quoteId = await Quote.create(quoteData);
-
-
-        if (req.body.items && req.body.items.length > 0) {
-
-            await Quote.createItems(
-                quoteId,
-                req.body.items
-            );
-
-        }
-
+        const quoteId = await QuoteService.createQuote(tenantId, req.body);
 
         res.json({
             success: true,
@@ -40,74 +15,61 @@ const createQuote = async (req, res) => {
             quoteId
         });
 
-
-    } catch(error) {
+    } catch (error) {
 
         console.error('Error creando cotización:', error);
 
         res.status(500).json({
-            success:false,
-            message:'Error al crear cotización',
-            error:error.message
+            success: false,
+            message: 'Error al crear cotización',
+            error: error.message
         });
 
     }
 
 };
 
-const getQuotes = async (req,res)=>{
+const getQuotes = async (req, res) => {
 
     try {
 
         const tenantId = req.user.tenantId;
 
-        const quotes = await Quote.getAllByTenant(tenantId);
-
+        const quotes = await QuoteService.getQuotes(tenantId);
 
         res.json({
-            success:true,
-            data:quotes
+            success: true,
+            data: quotes
         });
 
-
-    } catch(error){
+    } catch (error) {
 
         res.status(500).json({
-            success:false,
-            error:error.message
+            success: false,
+            error: error.message
         });
 
     }
 
 };
 
-const getQuoteById = async(req, res) => {
+const getQuoteById = async (req, res) => {
     try {
         const { id } = req.params;
+        const tenantId = req.user.tenantId;
 
-        // 1. Guardamos el resultado de la base de datos en una variable temporal
-        const result = await Quote.getById(id);
+        const quote = await QuoteService.getQuoteById(id, tenantId);
 
-        // ✅ CAMBIO CLAVE: Si result es un arreglo [ { ... } ], tomamos solo el primer objeto { ... }
-        // Si result ya es un objeto o es null, se queda igual.
-        const quote = Array.isArray(result) ? result : result;
-
-        // 2. Ahora la validación funcionará aunque la DB devuelva un arreglo vacío []
-        if (!quote || (Array.isArray(result) && result.length === 0)) {
+        if (!quote) {
             return res.status(404).json({
                 success: false,
                 message: 'Cotización no encontrada'
             });
         }
 
-        const items = await Quote.getItemsByQuote(id);
-
         res.json({
             success: true,
-            data: {
-                ...quote, // Ahora podemos esparcir las propiedades del objeto con seguridad
-                items
-            }
+            data: quote
         });
 
     } catch (error) {
@@ -118,53 +80,45 @@ const getQuoteById = async(req, res) => {
     }
 };
 
-const updateQuote = async(req,res)=>{
+const updateQuote = async (req, res) => {
 
     try {
 
         const { id } = req.params;
+        const tenantId = req.user.tenantId;
 
-        const {
-            items
-        } = req.body;
+        const result = await QuoteService.updateQuote(id, tenantId, req.body);
 
-
-        await Quote.update(
-            id,
-            req.body
-        );
-
-
-        await Quote.deleteItems(id);
-
-
-        if(items && items.length > 0){
-
-            await Quote.createItems(
-                id,
-                items
-            );
-
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                message: 'Cotización no encontrada'
+            });
         }
 
+        if (!result.versioned) {
+            return res.json({
+                success: true,
+                message: 'Cotización actualizada correctamente',
+                versioned: false,
+                quoteId: result.quoteId
+            });
+        }
 
         res.json({
-            success:true,
-            message:'Cotización actualizada correctamente'
+            success: true,
+            message: `Se creó la versión ${result.newVersionNumber} de la cotización`,
+            versioned: true,
+            quoteId: result.quoteId
         });
 
+    } catch (error) {
 
-    } catch(error){
-
-        console.error(
-            'Error actualizando cotización:',
-            error
-        );
-
+        console.error('Error actualizando cotización:', error);
 
         res.status(500).json({
-            success:false,
-            error:error.message
+            success: false,
+            error: error.message
         });
 
     }
@@ -174,32 +128,92 @@ const updateQuote = async(req,res)=>{
 const getQuoteByEvaluationId = async (req, res) => {
     try {
         const { evaluationId } = req.params;
+        const tenantId = req.user.tenantId;
 
-        const result = await Quote.getByEvaluationId(evaluationId);
-
-        const quote = Array.isArray(result) ? result[0] : result;
-
-        if (!quote || !quote.quote_id) {
-            return res.json({
-                success: true,
-                data: {
-                    items: []
-                }
-            });
-        }
-
-        const items = await Quote.getItemsByQuote(quote.quote_id);
+        const quote = await QuoteService.getQuoteByEvaluationId(evaluationId, tenantId);
 
         res.json({
             success: true,
-            data: {
-                ...quote,
-                items
-            }
+            data: quote
         });
 
     } catch (error) {
         console.error('Error en getQuoteByEvaluationId:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const updateQuoteStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const tenantId = req.user.tenantId;
+
+        const updated = await QuoteService.updateQuoteStatus(id, tenantId, status);
+
+        if (!updated) {
+            return res.status(404).json({
+                success: false,
+                message: 'Cotización no encontrada'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: `Cotización marcada como ${status}`
+        });
+
+    } catch (error) {
+
+        if (error.code === 'INVALID_STATUS') {
+            return res.status(400).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const getQuoteHistory = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const tenantId = req.user.tenantId;
+
+        const history = await QuoteService.getQuoteHistory(id, tenantId);
+
+        res.json({
+            success: true,
+            data: history
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+const getQuoteStats = async (req, res) => {
+    try {
+        const tenantId = req.user.tenantId;
+
+        const stats = await QuoteService.getStats(tenantId);
+
+        res.json({
+            success: true,
+            data: stats
+        });
+
+    } catch (error) {
         res.status(500).json({
             success: false,
             error: error.message
@@ -212,5 +226,8 @@ module.exports = {
     getQuotes,
     getQuoteById,
     getQuoteByEvaluationId,
-    updateQuote    
+    getQuoteHistory,
+    getQuoteStats,
+    updateQuote,
+    updateQuoteStatus
 };

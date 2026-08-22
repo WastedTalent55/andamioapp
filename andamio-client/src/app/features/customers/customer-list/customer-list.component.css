@@ -1,7 +1,7 @@
 :host {
   display: block;
   padding: 2rem;
-  background-color: var(--andamio-obsidiana);
+  background-color: var(--andamio-fondo);
 }
 
 .client-kpis{
@@ -171,7 +171,7 @@
   border-radius: 4px;
   display: flex;
   overflow: hidden;
-  border: 1px solid var(--andamio-gris-medio);
+  border: 1px solid var(--andamio-concreto);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -258,12 +258,12 @@
 .client-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-  border-color: var(--andamio-amarillo);
+  border-color: var(--andamio-oro-activo);
 }
 
 .card-status-bar {
   width: 6px;
-  background-color: var(--andamio-amarillo); 
+  background-color: var(--andamio-oro-activo); 
 }
 
 .card-body {
@@ -338,20 +338,20 @@
 
 .client-name {
   font-weight: 800; 
-  color: var(--andamio-gris-claro);
+  color: var(--andamio-tiza);
   margin-bottom: 8px;
   text-transform: uppercase;
 }
 
 .phone {
-  color: var(--andamio-cian);
+  color: var(--andamio-azul-plano);
   font-size: 1.1rem;
   margin-bottom: 12px;
 }
 
 .address {
   font-size: 0.85rem;
-  color: var(--andamio-gris-medio);
+  color: var(--andamio-concreto);
   line-height: 1.4;
 }
 
@@ -364,8 +364,8 @@
 
 .btn-action {
   background-color: transparent;
-  border: 1px solid var(--andamio-gris-medio);
-  color: var(--andamio-gris-claro);
+  border: 1px solid var(--andamio-concreto);
+  color: var(--andamio-tiza);
   padding: 8px;
   font-size: 0.75rem;
   font-weight: 800;
@@ -375,7 +375,7 @@
 }
 
 .btn-action:hover {
-  background-color: var(--andamio-amarillo);
-  color: var(--andamio-obsidiana);
-  border-color: var(--andamio-amarillo);
+  background-color: var(--andamio-oro-activo);
+  color: var(--andamio-fondo);
+  border-color: var(--andamio-oro-activo);
 }

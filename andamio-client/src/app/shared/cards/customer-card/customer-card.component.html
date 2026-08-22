@@ -3,6 +3,15 @@
     (click)="openCustomer()">
     <div class="customer-status"></div>
 
+    <div class="card-actions" *ngIf="!pickMode">
+      <button type="button" class="card-action-btn" (click)="editCustomer($event)" title="Editar cliente">
+        ✏️
+      </button>
+      <button type="button" class="card-action-btn delete" (click)="deleteCustomer($event)" title="Eliminar cliente" [disabled]="deleting">
+        🗑️
+      </button>
+    </div>
+
     <div class="card-header">
 
     <div class="avatar">

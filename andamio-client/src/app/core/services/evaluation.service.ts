@@ -2,6 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Evaluation } from '../models/evaluation.model';
+import { ApiResponse } from '../models/api-response.model';
+
+export interface EvaluationStats {
+  total: number;
+  pendiente: number;
+  realizada: number;
+  cancelada: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -12,25 +20,23 @@ export class EvaluationService {
   
   private apiUrl = 'http://localhost:3000/api/evaluations';
 
-  createEvaluation(evaluation: Evaluation): Observable<any> {
-    return this.http.post<any>(this.apiUrl, evaluation);
+  createEvaluation(evaluation: Partial<Evaluation>): Observable<ApiResponse<{ id: number }>> {
+    return this.http.post<ApiResponse<{ id: number }>>(this.apiUrl, evaluation);
   }
 
-  getEvaluations(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+  getEvaluations(): Observable<ApiResponse<Evaluation[]>> {
+    return this.http.get<ApiResponse<Evaluation[]>>(this.apiUrl);
   }
 
-  updateEvaluation(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, data);
+  updateEvaluation(id: number, data: { requirements: string }): Observable<ApiResponse<unknown>> {
+    return this.http.put<ApiResponse<unknown>>(`${this.apiUrl}/${id}`, data);
   }
 
-  getEvaluationById(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`);
+  getEvaluationById(id: number): Observable<ApiResponse<Evaluation>> {
+    return this.http.get<ApiResponse<Evaluation>>(`${this.apiUrl}/${id}`);
   }
 
-  getEvaluationCount() {
-    return this.http.get<{total:number, pendiente:number}>(
-      'http://localhost:3000/api/evaluations/count'
-    );
+  getEvaluationCount(): Observable<ApiResponse<EvaluationStats>> {
+    return this.http.get<ApiResponse<EvaluationStats>>(`${this.apiUrl}/count`);
   }
 }

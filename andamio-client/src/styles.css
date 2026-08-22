@@ -8,7 +8,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
-  /* --- 1. REVOLUCIÓN CROMÁTICA: ADIÓS AL NEGRO PURO --- */
+  /* --- 1. REVOLUCIÓN CROMÁTICA --- */
   --andamio-fondo: #0F172A;          /* Slate/Azul Marino Profundo: Oscuro, sumamente amigable y elegante */
   --andamio-antracita: #1E293B;      /* Superficie de tarjetas: Un tono más claro que genera capas suaves */
   --andamio-oro-activo: #FFB800;     /* Tu amarillo insignia: Resalta de forma espectacular sobre el fondo azulado */
@@ -22,7 +22,7 @@
   --andamio-gris-oscuro: #334155;    /* Bordes sutiles que delimitan los bloques sin golpear la vista */
   --andamio-concreto: #94A3B8;       /* Texto secundario y etiquetas técnicas */
   --andamio-tiza: #F8FAFC;           /* Blanco principal limpio, suave y con contraste óptimo */
-
+ 
   /* --- 2. TIPOGRAFÍA --- */
   --font-display: 'Archivo', system-ui, sans-serif;
   --font-main: 'Inter', system-ui, sans-serif;
@@ -145,29 +145,16 @@ h1, h2, h3, h4, .brand-heading {
    LAYOUT Y ARQUITECTURA
    ========================================================================== */
 .main-layout {
-  display: flex;
   min-height: 100vh;
   background-color: var(--andamio-fondo);
 }
 
-/* Sidebar flotante perfectamente integrada en el ecosistema azul marino */
-.sidebar-andamio {
-  flex-shrink: 0;
-  width: 240px;
-  height: calc(100% - 32px);
-  margin: 16px 0 16px 16px;
-  background-color: var(--andamio-antracita);
-  border: 1px solid var(--andamio-gris-oscuro);
-  border-radius: var(--radius-card);
-  padding: var(--spacing-md);
-  display: flex;
-  flex-direction: column;
-}
-
+/* Barra de navegación superior — antes era sidebar lateral (240px de ancho).
+   Al mover la navegación arriba recuperamos ese ancho completo para el contenido,
+   que es justo lo que más se aprovecha en tablet (prioridad #1 de UX). */
 .content-container {
-  flex: 1;
-  margin-left:260px;
   padding: var(--spacing-lg);
+  padding-top: calc(72px + var(--spacing-lg)); /* 72px = alto de .andamio-topbar */
   min-height: 100%;
   overflow-y: auto;
 

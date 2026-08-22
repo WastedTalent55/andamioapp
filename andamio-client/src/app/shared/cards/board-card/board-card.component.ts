@@ -58,8 +58,7 @@ export class BoardCardComponent {
 acceptQuote() {
     const confirmAction = confirm(`¿Confirmas que la cotización de ${this.data.customer_name} ha sido aceptada?`);
     if (confirmAction) {
-      console.log('Cambiando estado a Aceptado para:', this.data.quote_id);
-      // Aquí llamarías a tu servicio: this.quoteService.updateStatus(this.data.quote_id, 'accepted')...
+      this.router.navigate(['/projects/new', this.data.quote_id]);
     }
   }
 }

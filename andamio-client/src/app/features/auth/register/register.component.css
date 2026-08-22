@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--andamio-obsidiana); /* [4] */
+  background-color: var(--andamio-fondo);
 }
 
 .auth-card {
@@ -45,7 +45,7 @@ google-wrapper {
 
 .separator {
   margin: 15px 0;
-  color: var(--andamio-gris-medio);
+  color: var(--andamio-concreto);
   font-size: 0.8rem;
   text-transform: uppercase;
 }

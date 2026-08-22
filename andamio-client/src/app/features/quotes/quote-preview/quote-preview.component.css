@@ -1,9 +1,24 @@
-.preview-layout{
-    display:flex;
-    height:100vh;
-    overflow:hidden;
+.preview-layout {
+    display: flex;
+    width: 100%;
+    height: 100vh;
 
-    background:#0f172a;
+    background: var(--andamio-fondo);
+
+    overflow: hidden;
+}
+
+.preview-content {
+    flex: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    padding: 40px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .sidebar-content{
@@ -14,54 +29,63 @@
 
     flex-direction:column;
 
-    justify-content:space-between;
+    gap: 10px;
+
+    overflow-y: auto;
 
 }
 
-.preview-sidebar{
+.preview-sidebar {
+  width: 320px;
+  height: 100vh;
 
-    width:320px;
-    height:100vh;
+  flex-shrink: 0;
 
-    flex-shrink:0;
+  display: flex;
+  flex-direction: column;
 
-    display:flex;
-    flex-direction:column;
+  padding: 24px;
 
-    padding:20px;
+  gap: 14px;
 
-    gap:12px;
+  background: var(--andamio-fondo);
 
-    background:#0F172A;
+  border-right: 1px solid rgba(255,255,255,.06);
 
-    border-right:1px solid rgba(255,255,255,.05);
-
-    box-sizing:border-box;
+  box-sizing: border-box;
 }
 
 /* 📄 LIENZO DE PAPEL DIGITAL */
 .quote-canvas {
-  width:100%;
-  max-width:900px;
-  min-height:1200px;
-  background:#fff;
-  margin:0;
-  border-radius:10px;
+  width: 100%;
+  max-width: 900px;
 
+  min-height: 1200px;
 
-  color: #0F172A !important; /* Slate oscuro para legibilidad profesional */
-  padding: 50px;
-  box-shadow: 
-    0 30px 70px rgba(0,0,0,0.18),
-    0 10px 25px rgba(0,0,0,0.10);
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  color: #0F172A;
+
+  padding: 56px;
+
+  margin-bottom: 40px;
+
+  border-radius: 4px;
+
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.20),
+    0 8px 20px rgba(0,0,0,.10);
+
   position: relative;
   overflow: hidden;
 }
 
-.sidebar-header{
+.sidebar-header {
+  padding-bottom: 18px;
 
-    margin-bottom:8px;
-
+  border-bottom: 1px solid rgba(255,255,255,.06);
 }
 
 .sidebar-label{
@@ -118,11 +142,6 @@
     gap:12px;
 }
 
-/* ⚠️ OVERRIDE DE TEXTOS (Evita letras blancas) */
-.quote-canvas h1, .quote-canvas h2, .quote-canvas h3, 
-.quote-canvas p, .quote-canvas span, .quote-canvas td, .quote-canvas th {
-  color: #0F172A !important;
-}
 
 /* CONTROL DEL LOGO */
 .logo-render {
@@ -429,12 +448,19 @@
 }
 
 .quote-top-wrapper {
-  border-top: 12px solid; 
-  padding-top: var(--spacing-md);
+  position: relative;
+
   display: flex;
   justify-content: space-between;
-  align-items: stretch;
-  margin-bottom: 40px;
+  align-items: flex-start;
+
+  gap: 40px;
+
+  padding-top: 22px;
+
+  margin-bottom: 48px;
+
+  border-top: 8px solid var(--andamio-oro-activo);
 }
 
 .quote-header-left{
@@ -461,24 +487,31 @@
     justify-content:space-between;
 }
 
-.quote-label{
+.quote-label {
+  font-size: .7rem;
 
-    font-size:.75rem;
+  font-weight: 800;
 
-    letter-spacing:.20em;
+  letter-spacing: .18em;
 
-    text-transform:uppercase;
+  text-transform: uppercase;
 
-    color:#64748B;
+  color: #64748B;
 }
 
-.quote-client{
+.quote-client {
+  margin: 6px 0 10px;
 
-    margin:0;
+  font-family: var(--font-display);
 
-    font-size:2rem;
+  font-size: 2rem;
+  line-height: 1.1;
 
-    font-weight:700;
+  font-weight: 800;
+
+  letter-spacing: -0.03em;
+
+  color: #0F172A;
 }
 
 .quote-address{
@@ -506,9 +539,16 @@
     gap:4px;
 }
 
-.quote-meta strong{
+.quote-meta strong {
+  font-family: var(--font-technical);
 
-    font-size:1.6rem;
+  font-size: 1.45rem;
+
+  font-weight: 800;
+
+  letter-spacing: .04em;
+
+  color: #0F172A;
 }
 
 .quote-meta small{

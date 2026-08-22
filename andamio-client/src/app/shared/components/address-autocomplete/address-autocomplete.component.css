@@ -1,0 +1,51 @@
+.address-autocomplete {
+  position: relative;
+  width: 100%;
+}
+
+.address-input {
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
+
+  padding: 0 16px 0 42px;
+
+  background-color: var(--andamio-fondo);
+  border: 1px solid var(--andamio-concreto);
+  border-radius: 8px;
+
+  color: var(--andamio-tiza);
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.address-input::placeholder {
+  color: var(--andamio-concreto);
+}
+
+.address-input:focus {
+  outline: none;
+
+  border-color: var(--andamio-azul-plano);
+
+  box-shadow:
+    0 0 0 3px rgba(34, 211, 238, 0.10);
+}
+
+.address-icon {
+  position: absolute;
+
+  left: 14px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  z-index: 2;
+
+  font-size: 1rem;
+  pointer-events: none;
+}

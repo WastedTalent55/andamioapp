@@ -55,6 +55,7 @@ const getEvaluations = async (tenant_id)=>{
             e.*,
             c.first_name,
             c.last_name,
+            c.phone,
             ca.full_address AS address
 
         FROM evaluations e
@@ -77,37 +78,44 @@ const getEvaluations = async (tenant_id)=>{
 
 };
 
-const getEvaluationById = async(id)=>{
+const getEvaluationById = async(id, tenant_id)=>{
 
 
     const query = `
         SELECT
             e.*,
             c.first_name,
-            c.last_name
+            c.last_name,
+            c.phone,
+            ca.full_address AS address
 
         FROM evaluations e
 
         JOIN customers c
         ON e.customer_id = c.id
 
+        LEFT JOIN customer_addresses ca
+        ON e.address_id = ca.id
+
         WHERE e.id = ?
+        AND e.tenant_id = ?
     `;
 
 
-    const [rows] = await db.query(query,[id]);
+    const [rows] = await db.query(query,[id, tenant_id]);
 
     return rows[0];
 
 };
 
-const updateRequirements = async(id, requirements)=>{
+const updateRequirements = async(id, tenant_id, requirements)=>{
 
 
     const query = `
         UPDATE evaluations
         SET requirements = ?
         WHERE id = ?
+        AND tenant_id = ?
     `;
 
 
@@ -115,7 +123,8 @@ const updateRequirements = async(id, requirements)=>{
         query,
         [
             requirements,
-            id
+            id,
+            tenant_id
         ]
     );
 
@@ -124,13 +133,14 @@ const updateRequirements = async(id, requirements)=>{
 
 };
 
-const updateStatus = async (id, status) => {
+const updateStatus = async (id, tenant_id, status) => {
     const query = `
         UPDATE evaluations 
         SET status = ? 
         WHERE id = ?
+        AND tenant_id = ?
     `;
-    const [result] = await db.query(query, [status, id]);
+    const [result] = await db.query(query, [status, id, tenant_id]);
     return result;
 };
 
@@ -147,6 +157,30 @@ const syncCancelledStatus = async (tenant_id) => {
     return result;
 };
 
+// 🆕 Conteo agregado en SQL (antes se traían TODAS las evaluaciones del tenant
+// a memoria del servidor solo para contarlas con .filter() en el controller)
+const getStats = async (tenant_id) => {
+    const query = `
+        SELECT
+            COUNT(*) AS total,
+            SUM(status = 'pendiente') AS pendiente,
+            SUM(status = 'realizada') AS realizada,
+            SUM(status = 'cancelada') AS cancelada
+        FROM evaluations
+        WHERE tenant_id = ?
+    `;
+
+    const [rows] = await db.query(query, [tenant_id]);
+    const stats = rows[0];
+
+    return {
+        total: Number(stats.total) || 0,
+        pendiente: Number(stats.pendiente) || 0,
+        realizada: Number(stats.realizada) || 0,
+        cancelada: Number(stats.cancelada) || 0
+    };
+};
+
 module.exports = {
 
     createEvaluation,
@@ -154,6 +188,7 @@ module.exports = {
     getEvaluationById,
     updateRequirements,
     updateStatus, 
-    syncCancelledStatus 
+    syncCancelledStatus,
+    getStats
 
 };

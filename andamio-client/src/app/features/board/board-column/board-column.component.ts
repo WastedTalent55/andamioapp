@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BoardCardComponent } from '../../../shared/cards/board-card/board-card.component';
+import { BoardRow } from '../../../core/services/project-board.service';
 
 @Component({
   selector: 'app-board-column',
@@ -27,6 +28,6 @@ import { BoardCardComponent } from '../../../shared/cards/board-card/board-card.
 export class BoardColumnComponent {
   @Input() title: string = '';
   @Input() icon: string = '';
-  @Input() type: any;
-  @Input() items: any[] = [];
+  @Input() type: string = '';
+  @Input() items: BoardRow[] = [];
 }

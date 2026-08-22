@@ -1,4 +1,4 @@
-const Board = require('../models/boardModel');
+const BoardService = require('../services/boardService');
 
 const getSummary = async (req, res) => {
 
@@ -6,25 +6,7 @@ const getSummary = async (req, res) => {
 
         const tenantId = req.user.tenantId;
 
-        const data = await Board.getSummary(tenantId);
-
-        const summary = {
-
-            evaluations: data.filter(r => !r.quote_id),
-
-            quoting: data.filter(
-                r => r.quote_id && r.quote_status === 'borrador'
-            ),
-
-            active: data.filter(
-                r => r.quote_status === 'aceptada'
-            ),
-
-            finished: data.filter(
-                r => r.quote_status === 'finalizada'
-            )
-
-        };
+        const summary = await BoardService.getSummary(tenantId);
 
         res.json({
             success: true,

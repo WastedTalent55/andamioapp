@@ -10,6 +10,12 @@
         Cotización
     </h2>
 
+    <app-status-badge
+        *ngIf="quoteData"
+        [label]="quoteData.status"
+        [color]="statusBadgeColor(quoteData.status)">
+    </app-status-badge>
+
     <p>
         Personaliza la apariencia antes de exportar el PDF.
     </p>
@@ -47,10 +53,35 @@
       ACCIONES
 
     </h3>
-    <div class="card-andamio action-toolbar no-print">
+    <div class="card-andamio action-toolbar no-print" *ngIf="quoteData">
+
+      <div class="toolbar-actions" *ngIf="quoteData.status === 'borrador'">
+        <button class="sidebar-btn" [disabled]="updatingStatus" (click)="markAsSent()">
+          📤
+          <span>Marcar como enviada</span>
+        </button>
+      </div>
+
+      <div class="toolbar-actions" *ngIf="quoteData.status === 'enviada'">
+        <button class="sidebar-btn" [disabled]="updatingStatus" (click)="markAsAccepted()">
+          ✅
+          <span>Marcar como aceptada</span>
+        </button>
+        <button class="sidebar-btn sidebar-btn-secondary" [disabled]="updatingStatus" (click)="markAsRejected()">
+          ❌
+          <span>Marcar como rechazada</span>
+        </button>
+      </div>
+
+      <div class="toolbar-actions" *ngIf="quoteData.status === 'aceptada' || quoteData.status === 'rechazada'">
+        <span class="control-description">
+          Esta cotización ya fue {{ quoteData.status }}. Cualquier edición creará una versión nueva.
+        </span>
+      </div>
+
       <div class="toolbar-actions">
 
-        <button class="sidebar-btn">
+        <button class="sidebar-btn" (click)="editQuote()">
 
         ✏️
 
@@ -62,7 +93,7 @@
 
     </button>
 
-    <button class="sidebar-btn">
+    <button class="sidebar-btn" (click)="downloadPDF()">
 
         📄
 
@@ -74,7 +105,7 @@
 
     </button>
 
-    <button class="sidebar-btn sidebar-btn-secondary">
+    <button class="sidebar-btn sidebar-btn-secondary" (click)="closePreview()">
 
         ←
 
@@ -87,6 +118,16 @@
     </button>
 
 </div>
+    </div>
+
+    <h3 class="sidebar-section-title" *ngIf="versionHistory.length > 1">
+      HISTORIAL DE VERSIONES
+    </h3>
+    <div class="card-andamio" *ngIf="versionHistory.length > 1">
+      <div class="toolbar-actions" *ngFor="let v of versionHistory">
+        <span class="control-description">v{{ v.version_number }}{{ v.is_current ? ' (vigente)' : '' }}</span>
+        <app-status-badge [label]="v.status" [color]="statusBadgeColor(v.status)"></app-status-badge>
+      </div>
     </div>
     </div>
 
@@ -205,7 +246,7 @@
 
     </span>
 
-    <h3 class="table-category" [style.color]="selectedColor">
+    <h3 class="table-category">
 
         MATERIALES
 
@@ -334,5 +375,3 @@
     </div>
   </main>
 </div>
-
-

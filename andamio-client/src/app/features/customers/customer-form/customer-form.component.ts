@@ -1,29 +1,42 @@
-import { Component, inject, ElementRef, AfterViewInit, NgZone } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, AfterViewInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomerService } from '../../../core/services/customer.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { AddressAutocompleteComponent } from '../../../shared/components/address-autocomplete/address-autocomplete.component';
 import { AddressData } from '../../../core/models/address.model';
+import { LucideAngularModule, User } from 'lucide-angular';
 
 declare var google: any;
 
 @Component({
   selector: 'app-customer-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AddressAutocompleteComponent], 
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    AddressAutocompleteComponent,
+    LucideAngularModule
+  ], 
   templateUrl: './customer-form.component.html',
   styleUrl: './customer-form.component.css'
 })
-export class CustomerFormComponent {
+export class CustomerFormComponent implements OnInit {
   private ngZone = inject(NgZone);
  
   private location = inject(Location);
   private fb = inject(FormBuilder);
   private customerService = inject(CustomerService);
+  private route = inject(ActivatedRoute);
+
+  User = User;
   
   constructor(private router: Router ) {}
+
+  isEditMode = false;
+  customerId?: number;
+
   customerForm: FormGroup = this.fb.group({
     first_name: ['', [Validators.required]],
     last_name: ['', [Validators.required]],
@@ -35,8 +48,54 @@ export class CustomerFormComponent {
     city: [''],
     state: [''],
     postal_code: [''],
-    country: ['']
+    country: ['México']
   });
+
+  // 🆕 Fallback mientras Google Places (facturación) no está activo:
+  // permite capturar la dirección a mano sin bloquear el alta de clientes.
+  // En modo edición arrancamos aquí directo: no hay forma de "re-seleccionar"
+  // un pin ya guardado en el Autocomplete, así que mostramos los campos ya
+  // llenos y el usuario decide si quiere buscar una dirección nueva.
+  manualAddressMode = false;
+
+  ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+
+    if (idParam) {
+      this.isEditMode = true;
+      this.customerId = Number(idParam);
+      this.manualAddressMode = true;
+      this.loadCustomer(this.customerId);
+    }
+  }
+
+  private loadCustomer(id: number) {
+    this.customerService.getCustomerById(id).subscribe({
+      next: (res) => {
+        const customer = res.data;
+        if (!customer) return;
+
+        this.customerForm.patchValue({
+          first_name: customer.first_name,
+          last_name: customer.last_name,
+          phone: customer.phone,
+          address: customer.full_address || '',
+          place_id: customer.place_id || '',
+          latitude: customer.latitude ?? null,
+          longitude: customer.longitude ?? null,
+          city: customer.city || '',
+          state: customer.state || '',
+          postal_code: customer.postal_code || '',
+          country: customer.country || 'México'
+        });
+      },
+      error: (err) => {
+        console.error('Error cargando cliente:', err);
+        alert('❌ No se pudo cargar el cliente.');
+        this.location.back();
+      }
+    });
+  }
 
   // Función auxiliar para extraer datos específicos de Google
   private extractComponent(components: any[], type: string): string {
@@ -50,29 +109,54 @@ export class CustomerFormComponent {
   }
 
   onSubmit() {
-    if (this.customerForm.valid) {
-      this.customerService.createCustomer(this.customerForm.value).subscribe({
-        next: (response) => {
-          const confirmEval = confirm("✅ Cliente guardado con éxito.\n\n¿Deseas agendar la cita de evaluación ahora mismo?");
-        
-          if (confirmEval) {
-            this.router.navigate(['/evaluations/new'], { 
-              queryParams: { clientId: response.id } 
-            });
-          } else {
-            this.location.back();
-          }
+    if (!this.customerForm.valid) return;
+
+    if (this.isEditMode && this.customerId) {
+      this.customerService.updateCustomer(this.customerId, this.customerForm.value).subscribe({
+        next: () => {
+          alert('✅ Cliente actualizado correctamente.');
+          this.location.back();
         },
         error: (err) => {
-          console.error("Error en la infraestructura de datos:", err);
-          alert("Hubo un error al guardar. Revisa la consola.");
+          console.error('Error actualizando cliente:', err);
+          alert('❌ Hubo un error al actualizar. Revisa la consola.');
         }
       });
+      return;
     }
+
+    this.customerService.createCustomer(this.customerForm.value).subscribe({
+      next: (response) => {
+        const newCustomerId = response.data?.id;
+        if (!newCustomerId) return;
+
+        // Si veníamos del flujo de "cotizar directamente", saltamos la pregunta
+        // de la evaluación y vamos derecho al formulario de cotización con este cliente
+        const intent = this.route.snapshot.queryParamMap.get('intent');
+
+        if (intent === 'quote') {
+          this.router.navigate(['/quotes/new/customer', newCustomerId]);
+          return;
+        }
+
+        const confirmEval = confirm("✅ Cliente guardado con éxito.\n\n¿Deseas agendar la cita de evaluación ahora mismo?");
+      
+        if (confirmEval) {
+          this.router.navigate(['/evaluations/new'], { 
+            queryParams: { clientId: newCustomerId } 
+          });
+        } else {
+          this.location.back();
+        }
+      },
+      error: (err) => {
+        console.error("Error en la infraestructura de datos:", err);
+        alert("Hubo un error al guardar. Revisa la consola.");
+      }
+    });
   }
 
   onAddressSelected(data: AddressData) {
-  // Actualizamos el formulario con la "Estructura Orgánica" de los datos [2]
   this.customerForm.patchValue({
     address: data.full_address,
     place_id: data.place_id,
@@ -84,5 +168,21 @@ export class CustomerFormComponent {
     country: data.country
   });
 }
+
+  // 🆕 Alterna entre el buscador de Google Places y la captura manual.
+  // Al entrar a modo manual limpiamos place_id/lat/lng: sin Autocomplete no hay
+  // geocoding real, y no queremos guardar coordenadas de una búsqueda anterior
+  // que ya no corresponden a lo que el usuario está por escribir.
+  toggleManualAddress() {
+    this.manualAddressMode = !this.manualAddressMode;
+
+    if (this.manualAddressMode) {
+      this.customerForm.patchValue({
+        place_id: '',
+        latitude: null,
+        longitude: null
+      });
+    }
+  }
 
 }

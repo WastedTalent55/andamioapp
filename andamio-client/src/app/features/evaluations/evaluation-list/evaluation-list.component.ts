@@ -21,7 +21,7 @@ export class EvaluationListComponent implements OnInit {
   loadEvaluations() {
     this.evaluationService.getEvaluations().subscribe({
       next: (res) => {
-        this.evaluations = res.data;
+        this.evaluations = res.data || [];
       },
       error: (err) => console.error('Error al cargar evaluaciones:', err)
     });

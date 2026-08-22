@@ -19,9 +19,27 @@ router.get(
 );
 
 router.get(
+    '/count',
+    verifyToken,
+    quoteController.getQuoteStats
+);
+
+router.get(
     '/evaluation/:evaluationId',
     verifyToken,
     quoteController.getQuoteByEvaluationId
+);
+
+router.patch(
+    '/:id/status',
+    verifyToken,
+    quoteController.updateQuoteStatus
+);
+
+router.get(
+    '/:id/history',
+    verifyToken,
+    quoteController.getQuoteHistory
 );
 
 router.get(

@@ -1,6 +1,6 @@
-<nav class="andamio-sidebar">
+<nav class="andamio-topbar">
   <div class="brand">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="100%" height="100%" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="180" height="45" fill="none">
       <g transform="translate(15, 15)">
         <line x1="25" y1="5" x2="5" y2="45" stroke="#FFB800" stroke-width="5" stroke-linecap="square"/>
         <line x1="25" y1="5" x2="45" y2="45" stroke="#FFB800" stroke-width="5" stroke-linecap="square"/>
@@ -15,36 +15,36 @@
   <ul class="nav-links">
     <li><a routerLink="/dashboard" routerLinkActive="active">
       <lucide-icon [img]="LayoutDashboard" size="18"></lucide-icon>
-      DASHBOARD</a>
+      <span>DASHBOARD</span></a>
     </li>
-    
+
     <li><a routerLink="/board" routerLinkActive="active">
-      <lucide-icon [img]="Kanban" size="18"></lucide-icon> 
-      TABLERO</a>
+      <lucide-icon [img]="Kanban" size="18"></lucide-icon>
+      <span>TABLERO</span></a>
     </li>
-    
+
     <li><a routerLink="/customer" routerLinkActive="active">
       <lucide-icon [img]="Users" size="18"></lucide-icon>
-      CLIENTXS</a>
+      <span>CLIENTXS</span></a>
     </li>
-    
-    <li><a routerLink="/quotes" routerLinkActive="active">      
+
+    <li><a routerLink="/quotes" routerLinkActive="active">
       <lucide-icon [img]="FileText" size="18"></lucide-icon>
-      COTIZACIONES</a>
+      <span>COTIZACIONES</span></a>
     </li>
-    
+
     <li><a routerLink="/projects" routerLinkActive="active">
       <lucide-icon [img]="HardHat" size="18"></lucide-icon>
-      PROYECTOS</a>
+      <span>PROYECTOS</span></a>
     </li>
 
     <li><a routerLink="/settings" routerLinkActive="active">
       <lucide-icon [img]="Settings" size="18"></lucide-icon>
-      CONFIGURACIÓN</a>
+      <span>CONFIGURACIÓN</span></a>
     </li>
   </ul>
-  
-  <div class="sidebar-footer">
-    <span class="tenant-tag">{{ tenantName || 'ANDAMIO' | uppercase }}</span> 
+
+  <div class="topbar-tenant">
+    <span class="tenant-tag">{{ tenantName || 'ANDAMIO' | uppercase }}</span>
   </div>
 </nav>

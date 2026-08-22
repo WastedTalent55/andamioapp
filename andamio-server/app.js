@@ -21,7 +21,11 @@ app.use('/api/evaluations', require('./src/routes/evaluationRoutes'));
 
 app.use('/api/quotes', require('./src/routes/quoteRoutes'));
 
+app.use('/api/projects', require('./src/routes/projectRoutes'));
+
 app.use('/api/board', require('./src/routes/boardRoutes'));
+
+app.use('/api/activity', require('./src/routes/activityRoutes'));
 
 app.use('/api/tenants', require('./src/routes/tenantRoutes'));
 

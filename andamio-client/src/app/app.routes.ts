@@ -6,6 +6,7 @@ import { QuoteListComponent } from './features/quotes/quote-list/quote-list.comp
 import { DashboardComponent } from './features/dashboard/dashboard.component'; 
 import { ProjectBoardComponent } from './features/board/project-board/project-board.component'; 
 import { ProjectExecutionComponent } from './features/projects/project-execution/project-execution.component';
+import { ProjectFormComponent } from './features/projects/project-form/project-form.component';
 import { CustomerFormComponent } from './features/customers/customer-form/customer-form.component';
 import { CustomerListComponent } from './features/customers/customer-list/customer-list.component';
 import { WelcomeComponent } from './features/auth/welcome/welcome.component';
@@ -25,6 +26,7 @@ export const routes: Routes = [
 
             // Gestion de formulario para nuevos client
             { path: 'customer/new', component: CustomerFormComponent },
+            { path: 'customer/new/:id', component: CustomerFormComponent },
 
             // Gestion de lista de clientes
             { path: 'customer', component: CustomerListComponent }, 
@@ -41,11 +43,14 @@ export const routes: Routes = [
             // Cotización y Versionamiento
             { path: 'evaluations/:evaluationId/create-quote', component: QuoteFormComponent },
             { path: 'quotes/new', component: QuoteFormComponent },
+            { path: 'quotes/new/customer/:customerId', component: QuoteFormComponent },
             { path: 'quotes/edit/:evaluationId', component: QuoteFormComponent },
+            { path: 'quotes/edit-direct/:id', component: QuoteFormComponent },
             { path: 'quotes', component: QuoteListComponent },
             { path: 'quotes/preview/:id', component: QuotePreviewComponent },
 
             // 6. Fase de Ejecución y Rentabilidad (El trabajo ya agendado)
+            { path: 'projects/new/:quoteId', component: ProjectFormComponent },
             { path: 'projects/:id/execution', component: ProjectExecutionComponent },
 
             //7. Ajustes del tenant

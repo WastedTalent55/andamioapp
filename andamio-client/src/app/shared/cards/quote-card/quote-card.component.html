@@ -1,0 +1,48 @@
+<div class="quote-card" (click)="openQuote()">
+
+  <div class="card-header">
+
+    <div class="header-info">
+
+      <h3 class="quote-folio data-number">
+        COT-{{ quote.quote_folio }}
+      </h3>
+
+      <span class="quote-customer">
+        {{ quote.customer_name }}
+      </span>
+
+    </div>
+
+    <app-status-badge
+      [label]="quote.status"
+      [color]="statusColor(quote.status)">
+    </app-status-badge>
+
+  </div>
+
+  <div class="card-body">
+
+    <div class="info-row">
+      <span class="info-icon">💰</span>
+      <span class="info-value data-number">
+        ${{ quote.total_amount | number:'1.0-0' }}
+      </span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-icon">📅</span>
+      <span class="info-value">
+        {{ quote.created_at | date:'d MMM yyyy' }}
+      </span>
+    </div>
+
+  </div>
+
+  <div class="card-footer">
+    <span class="version-tag data-number">
+      v{{ quote.version_number }}
+    </span>
+  </div>
+
+</div>

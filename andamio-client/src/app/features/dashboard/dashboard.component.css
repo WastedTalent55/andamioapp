@@ -175,6 +175,12 @@
 
 }
 
+.activity-dot.red{
+
+    background:var(--andamio-rojo-alerta);
+
+}
+
 .activity-item p{
 
     color:var(--andamio-concreto);

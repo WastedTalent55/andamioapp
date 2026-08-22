@@ -1,9 +1,16 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ProjectBoardService } from '../../../core/services/project-board.service';
+import { ProjectBoardService, BoardSummary } from '../../../core/services/project-board.service';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
 import { BoardColumnComponent } from "../board-column/board-column.component";
+
+const EMPTY_BOARD: BoardSummary = {
+  evaluations: [],
+  quoting: [],
+  active: [],
+  finished: []
+};
 
 @Component({
   selector: 'app-project-board',
@@ -18,20 +25,23 @@ export class ProjectBoardComponent implements OnInit {
   private router: Router
   ) {}
   private boardService = inject(ProjectBoardService);
-  
-  columns: any = {
-    evaluations: [],
-    quoting: [],
-    active: [],
-    finished: []
-  };
+
+  columns: BoardSummary = { ...EMPTY_BOARD };
 
   createCustomer() {
   this.router.navigate(['/customer/new']);
   }
 
   createEvaluation() {
-this.router.navigate(['/evaluation/new']);
+this.router.navigate(['/evaluations/new']);
+}
+
+createQuote() {
+  this.router.navigate(['/quotes/new']);
+}
+
+createProject() {
+  this.router.navigate(['/project/new']);
 }
 
   ngOnInit() {
@@ -40,16 +50,15 @@ this.router.navigate(['/evaluation/new']);
 
   loadBoard() {
   this.boardService.getBoardData().subscribe(res => {
-console.log(res.data.quoting[0]);
-    if (res.success) {
-      this.columns = res.data; 
+    if (res.success && res.data) {
+      this.columns = res.data;
     }
   });
 }
 
   refreshBoard() {
   this.boardService.getBoardData().subscribe(res => {
-    if (res.success) {
+    if (res.success && res.data) {
       this.columns = res.data;
     }
   });

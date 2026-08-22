@@ -100,7 +100,7 @@
             type="number"
             min="1"
             formControlName="delivery_time"
-            placeholder="3">  
+            placeholder="Ej: 3">  
       </div>
     </section>
 
@@ -119,11 +119,14 @@
           <span class="data-number">{{ finalAmount | currency }}</span>
         </div>
       </div>
-      <button type="button" (click)="onSubmit()" class="btn-andamio full-width">
-        {{ isEditMode ? 'GUARDAR CAMBIOS' : 'FINALIZAR COTIZACIÓN' }}
-      </button>
+      <button
+  type="submit"
+  class="btn-andamio full-width">
+
+  {{ isEditMode ? 'GUARDAR CAMBIOS' : 'FINALIZAR COTIZACIÓN' }}
+
+</button>
     </footer>
   </form>
-</main>
-  
+</main> 
 </div>

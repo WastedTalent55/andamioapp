@@ -39,7 +39,7 @@
         [icon]="Users"
         title="Clientes"
         [value]="totalClientes"
-        subtitle="+3 este mes">
+        [subtitle]="'+' + clientesNuevos + ' este mes'">
     </app-kpi-card>
  
     <app-kpi-card
@@ -52,15 +52,15 @@
     <app-kpi-card
         [icon]="FileText"
         title="Cotizaciones"
-        [value]="3"
-        subtitle="2 enviadas">
+        [value]="totalCotizaciones"
+        [subtitle]="cotizacionesEnviadas + ' enviadas'">
     </app-kpi-card>
 
     <app-kpi-card
         [icon]="HardHat"
         title="Proyectos"
-        [value]="12"
-        subtitle="2 activos">
+        [value]="totalProyectos"
+        [subtitle]="proyectosActivos + ' activos'">
     </app-kpi-card>
   </section>
 
@@ -79,43 +79,23 @@
 
     <div class="activity-list">
 
-      <div class="activity-item">
-
-        <span class="activity-dot blue"></span>
-
-        <div>
-
-          <strong>Evaluación creada</strong>
-
-          <p>Casa de Juan Pérez</p>
-
-        </div>
-
+      <div class="activity-item" *ngIf="loadingActivity">
+        <p>Cargando...</p>
       </div>
 
-      <div class="activity-item">
-
-        <span class="activity-dot yellow"></span>
-
-        <div>
-
-          <strong>Cotización enviada</strong>
-
-          <p>Remodelación Cocina</p>
-
-        </div>
-
+      <div class="activity-item" *ngIf="!loadingActivity && recentActivity.length === 0">
+        <p>Todavía no hay actividad registrada.</p>
       </div>
 
-      <div class="activity-item">
+      <div class="activity-item" *ngFor="let item of recentActivity">
 
-        <span class="activity-dot green"></span>
+        <span class="activity-dot" [ngClass]="item.color"></span>
 
         <div>
 
-          <strong>Proyecto iniciado</strong>
+          <strong>{{ item.title }}</strong>
 
-          <p>Oficinas Centro</p>
+          <p>{{ item.subtitle }}</p>
 
         </div>
 

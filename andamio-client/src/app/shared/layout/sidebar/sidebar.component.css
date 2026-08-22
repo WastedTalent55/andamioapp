@@ -1,74 +1,74 @@
-.andamio-sidebar {
-  width: 260px;
-  height: 100vh;
-  background-color: var(--andamio-antracita); 
-  border-right: var(--border-thin);
-  padding: var(--spacing-md); 
+.andamio-topbar {
+  width: 100%;
+  height: 72px;
+
+  background-color: var(--andamio-antracita);
+  border-bottom: var(--border-thin);
+
+  padding: 0 var(--spacing-md);
+
   display: flex;
-  flex-direction: column;
-  position: fixed; 
+  align-items: center;
+  gap: 2rem;
+
+  position: fixed;
   left: 0;
   top: 0;
   z-index: 1000;
+
+  overflow-x: auto;
 }
 
-.brand h2 {
-  font-family: var(--font-main);
-  font-weight: 800; 
-  color: var(--andamio-gris-claro);
-  letter-spacing: 2px;
+.brand {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .nav-links {
   list-style: none;
-  margin-top: 2rem;
+  margin: 0;
+  padding: 0;
   flex-grow: 1;
 
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 6px;
 }
 
 .nav-links li a {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 
-  padding: 14px 18px;
+  padding: 10px 14px;
+  white-space: nowrap;
 
   color: var(--andamio-tiza);
   text-decoration: none;
 
   font-family: var(--font-main);
   font-weight: 600;
+  font-size: 0.85rem;
 
-  border-radius: 12px;
+  border-radius: 10px;
+  border-bottom: 3px solid transparent;
 
   transition: .25s;
 }
 
 .nav-links li a.active {
-
   background: rgba(255,184,0,.12);
-
   color: var(--andamio-oro-activo);
-
-  border-left: 4px solid var(--andamio-oro-activo);
-
+  border-bottom: 3px solid var(--andamio-oro-activo);
 }
 
-.nav-links li a:hover{
-
-    background: rgba(255,255,255,.05);
-
+.nav-links li a:hover {
+  background: rgba(255,255,255,.05);
 }
 
-.sidebar-footer {
-  margin-top: auto;
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--andamio-gris-oscuro);
-  display: flex;
-  justify-content: center;
+.topbar-tenant {
+  flex-shrink: 0;
 }
 
 .tenant-tag {
@@ -81,4 +81,28 @@
   background: rgba(255, 184, 0, 0.1);
   border-radius: var(--radius-interactive);
   text-align: center;
+  white-space: nowrap;
+}
+
+/* Tablet (prioridad #1 de UX): con menos ancho, priorizamos íconos sobre texto
+   para que las 6 secciones + marca + tenant quepan sin scroll horizontal */
+@media (max-width: 1024px) {
+  .nav-links li a span {
+    display: none;
+  }
+
+  .nav-links li a {
+    padding: 10px;
+  }
+}
+
+/* Móvil (prioridad #2): la topbar hace scroll horizontal en vez de romper el layout */
+@media (max-width: 640px) {
+  .andamio-topbar {
+    gap: 1rem;
+  }
+
+  .topbar-tenant {
+    display: none;
+  }
 }

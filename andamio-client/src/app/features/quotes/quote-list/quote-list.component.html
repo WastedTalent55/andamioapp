@@ -1,1 +1,84 @@
-<p>quote-list works!</p>
+<app-page-header
+  title="Cotizaciones"
+  subtitle="Da seguimiento a cada cotización, desde borrador hasta aceptación."
+  buttonLabel="Nueva cotización"
+  (onButtonClick)="openStartOptions()">
+</app-page-header>
+
+<div class="card-andamio start-options" *ngIf="showStartOptions">
+
+  <div class="start-options-header">
+    <h3 class="sidebar-section-title">¿CÓMO QUIERES COTIZAR?</h3>
+    <button class="close-btn" (click)="closeStartOptions()">✕</button>
+  </div>
+
+  <div class="start-options-grid">
+
+    <button class="start-option-btn" (click)="startFromEvaluation()">
+      <span class="start-option-icon">📋</span>
+      <span class="start-option-title">Desde una evaluación</span>
+      <span class="start-option-desc">El flujo estándar: cliente → visita de evaluación → cotización.</span>
+    </button>
+
+    <button class="start-option-btn" (click)="startDirectQuote()">
+      <span class="start-option-icon">⚡</span>
+      <span class="start-option-title">Cotizar directamente</span>
+      <span class="start-option-desc">Omite la evaluación. Busca al cliente (o créalo ahí mismo) y cotiza de una vez.</span>
+    </button>
+
+  </div>
+
+</div>
+
+<div class="quote-kpis">
+
+  <div class="kpi-card">
+    <span class="kpi-value">{{ totalCount }}</span>
+    <span class="kpi-label">TOTAL</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-value">{{ enviadasCount }}</span>
+    <span class="kpi-label">ENVIADAS</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-value">{{ aceptadasCount }}</span>
+    <span class="kpi-label">ACEPTADAS</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-value data-number">${{ montoAceptado | number:'1.0-0' }}</span>
+    <span class="kpi-label">MONTO ACEPTADO</span>
+  </div>
+
+</div>
+
+<div class="quote-feature-container">
+
+  <div class="search-toolbar">
+
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar por cliente o folio..."
+        (input)="onSearch($event)">
+    </div>
+
+  </div>
+
+  <div class="quote-grid" *ngIf="filteredQuotes.length > 0; else emptyState">
+    @for (quote of filteredQuotes; track quote.id) {
+      <app-quote-card [quote]="quote"></app-quote-card>
+    }
+  </div>
+
+  <ng-template #emptyState>
+    <div class="empty-state card-andamio">
+      <p>Todavía no hay cotizaciones.</p>
+    </div>
+  </ng-template>
+
+</div>

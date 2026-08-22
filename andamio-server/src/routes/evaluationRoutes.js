@@ -28,6 +28,7 @@ router.get(
 
 router.get(
     '/:id',
+    verifyToken,
     controller.getOne
 );
 
@@ -35,6 +36,7 @@ router.get(
 
 router.put(
     '/:id',
+    verifyToken,
     controller.update
 );
 

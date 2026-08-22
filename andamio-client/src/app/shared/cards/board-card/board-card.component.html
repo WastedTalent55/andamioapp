@@ -57,7 +57,7 @@
 
   } @else {
 
-    {{ data.requested_work }}
+    {{ data.requested_work || 'Cotización directa' }}
 
   }
 
@@ -184,8 +184,6 @@
       </div>
     }
   </div>
-</div>
+</div> 
 
 <pre>{{ customer | json }}</pre>
-
-

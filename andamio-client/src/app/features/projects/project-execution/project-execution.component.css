@@ -1,0 +1,93 @@
+:host {
+  display: block;
+  min-height: 100%;
+  width: 100%;
+  padding: 2rem;
+  background: var(--andamio-fondo);
+}
+
+.execution-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 1100px;
+}
+
+.loading-state,
+.not-found-state {
+  color: var(--andamio-concreto);
+  font-family: var(--font-main);
+  padding: 2rem;
+  text-align: center;
+}
+
+.not-found-state a {
+  display: block;
+  margin-top: 0.75rem;
+  color: var(--andamio-azul-plano);
+}
+
+.project-header h2 {
+  margin: 0.5rem 0 0.25rem;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--andamio-tiza);
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .grid-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.control-description {
+  display: block;
+  margin-bottom: 8px;
+  color: #94A3B8;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.sidebar-section-title {
+  margin: 4px 0 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #64748B;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radius-interactive);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.status-pill.activo {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--andamio-verde-obra);
+}
+
+.status-pill.pausado {
+  background: rgba(255, 184, 0, 0.15);
+  color: var(--andamio-oro-activo);
+}
+
+.status-pill.finalizado {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--andamio-azul-plano);
+}
+
+.status-pill.cancelado {
+  background: rgba(251, 113, 133, 0.15);
+  color: var(--andamio-rojo-alerta);
+}

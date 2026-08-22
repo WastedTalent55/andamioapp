@@ -38,8 +38,8 @@ export class EvaluationDetailComponent implements OnInit {
 
   loadEvaluation(): void {
     this.evaluationService.getEvaluationById(this.evaluationId).subscribe({
-      next: (data) => {
-        console.log('Jefe, esto es lo que llega:', data); 
+      next: (res) => {
+        const data = res.data;
 
         if (data) {
           this.evaluation = data; 
@@ -47,8 +47,8 @@ export class EvaluationDetailComponent implements OnInit {
           this.notesForm.patchValue({
             notes: data.requirements || '' 
           });
-                console.log('✅ Datos cargados para:', data.first_name);
 
+          console.log('✅ Datos cargados para:', data.first_name);
           console.log('Notas inyectadas al lienzo:', data.requirements);
         }
       },

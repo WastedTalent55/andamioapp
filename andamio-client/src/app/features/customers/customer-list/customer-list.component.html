@@ -1,11 +1,11 @@
 <app-page-header
-  title="Clientes"
-  subtitle="Administra tus relaciones de trabajo y da seguimiento a cada proyecto."
+  [title]="pickForQuote ? 'Elige un cliente para cotizar' : 'Clientes'"
+  [subtitle]="pickForQuote ? 'Busca al cliente para el que quieres crear la cotización directa. Si no existe, créalo desde aquí.' : 'Administra tus relaciones de trabajo y da seguimiento a cada proyecto.'"
   buttonLabel="Nuevo cliente"
   (onButtonClick)="navegarANuevoCliente()">
 </app-page-header>
 
-<div class="client-kpis">
+<div class="client-kpis" *ngIf="!pickForQuote">
 
   <div class="kpi-card">
     <span class="kpi-value">
@@ -81,7 +81,10 @@
   <div class="client-grid">
   @for (customer of filteredCustomers; track customer.id) {
     <app-customer-card
-      [customer]="customer">
+      [customer]="customer"
+      [pickMode]="pickForQuote"
+      (picked)="onCustomerPicked($event)"
+      (deleted)="onCustomerDeleted($event)">
     </app-customer-card>
   }
   </div>
