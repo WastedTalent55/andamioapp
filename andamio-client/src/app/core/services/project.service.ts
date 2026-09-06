@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Project, ProjectFormData } from '../models/project.model';
 import { ApiResponse } from '../models/api-response.model';
+import { environment } from '../../../enviroments/environment'; 
 
 export interface ProjectStats {
   total: number;
@@ -17,7 +18,7 @@ export interface ProjectStats {
 })
 export class ProjectService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/projects';
+  private apiUrl = `${environment.apiUrl}/projects`;
 
   createFromQuote(quoteId: number, data: ProjectFormData): Observable<ApiResponse<{ projectId: number }>> {
     return this.http.post<ApiResponse<{ projectId: number }>>(`${this.apiUrl}/from-quote/${quoteId}`, data);

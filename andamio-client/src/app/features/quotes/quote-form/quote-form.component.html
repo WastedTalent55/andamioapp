@@ -1,6 +1,6 @@
 <div class="quote-container">
   <aside class="reference-panel">
-    <h3>📋 Observaciones de Evaluación</h3>
+    <h3><lucide-icon [img]="ClipboardList" size="18"></lucide-icon> Observaciones de Evaluación</h3>
     <div class="notes-content">{{ evaluationNotes }}</div>
   </aside>  
 
@@ -10,8 +10,8 @@
       <h2>{{ isEditMode ? 'EDITAR COTIZACIÓN' : 'GENERAR COTIZACIÓN' }}</h2>
       <p class="subtitle">ESTABLECIENDO INFRAESTRUCTURA DE COSTOS</p>
     </div>
-    <button type="button" class="btn-close-quote" (click)="closeForm()" title="Cerrar y volver">
-      &times;
+    <button type="button" class="btn-close" (click)="closeForm()" title="Cerrar y volver">
+      <lucide-icon [img]="X" size="20"></lucide-icon>
     </button>
   </header>
 

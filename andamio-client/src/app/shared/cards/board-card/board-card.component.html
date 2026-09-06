@@ -198,6 +198,26 @@
           </lucide-icon>
           Cotización aceptada
         </button>
+        <button
+          class="btn-icon warning"
+          title="Cotización rechazada"
+          [disabled]="deleting"
+          (click)="rejectQuote($event)">
+          <lucide-icon
+            [img]="CircleX"
+            size="18">
+          </lucide-icon>
+        </button>
+        <button
+          class="btn-icon delete"
+          title="Eliminar cotización"
+          [disabled]="deleting"
+          (click)="deleteQuoteCard($event)">
+          <lucide-icon
+            [img]="Trash2"
+            size="18">
+          </lucide-icon>
+        </button>
       </div>
     }
   </div>

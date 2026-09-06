@@ -1,0 +1,29 @@
+<div class="project-card" (click)="openProject()">
+
+  <span class="status-pill" [ngClass]="project.status">{{ project.status | uppercase }}</span>
+
+  <h3 class="project-name">{{ project.project_name }}</h3>
+
+  <p class="customer-name">{{ project.customer_name }}</p>
+
+  <div class="project-info">
+    <span class="info-row" *ngIf="project.phone">
+      <lucide-icon [img]="Phone" size="14"></lucide-icon> {{ project.phone }}
+    </span>
+    <span class="info-row" *ngIf="project.full_address">
+      <lucide-icon [img]="MapPin" size="14"></lucide-icon> {{ project.full_address }}
+    </span>
+  </div>
+
+  <div class="project-footer">
+    <span class="info-row">
+      <lucide-icon [img]="Calendar" size="14"></lucide-icon>
+      {{ (project.start_date | date:'dd MMM yyyy') || 'Sin fecha de inicio' }}
+    </span>
+    <span class="info-row amount">
+      <lucide-icon [img]="Wallet" size="14"></lucide-icon>
+      {{ project.total_amount | currency }}
+    </span>
+  </div>
+
+</div>

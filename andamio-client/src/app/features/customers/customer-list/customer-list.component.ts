@@ -5,6 +5,7 @@ import { Customer } from '../../../core/models/customer.model';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
 import { CustomerCardComponent } from '../../../shared/cards/customer-card/customer-card.component'; 
+import { LucideAngularModule, Search } from 'lucide-angular';
 
 @Component({
   selector: 'app-customer-list',
@@ -12,12 +13,15 @@ import { CustomerCardComponent } from '../../../shared/cards/customer-card/custo
   imports: [
     CommonModule,
     PageHeaderComponent,
-    CustomerCardComponent
+    CustomerCardComponent,
+    LucideAngularModule
 ],
   templateUrl: './customer-list.component.html',
   styleUrl: './customer-list.component.css'
 })
 export class CustomerListComponent implements OnInit {
+  Search = Search;
+
   private customerService = inject(CustomerService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -29,9 +33,31 @@ export class CustomerListComponent implements OnInit {
   // 🆕 Modo selección: cuando llegamos aquí desde "Cotizar directamente"
   pickForQuote: boolean = false;
 
+  nuevosEsteMes = 0;
+
   ngOnInit(): void {
     this.pickForQuote = this.route.snapshot.queryParamMap.get('mode') === 'pick-for-quote';
     this.loadCustomers();
+    this.loadStats();
+  }
+
+  private loadStats() {
+    this.customerService.getCustomerCount().subscribe({
+      next: (res) => {
+        this.nuevosEsteMes = res.data?.newThisMonth || 0;
+      },
+      error: (err) => console.error('Error cargando estadísticas de clientes', err)
+    });
+  }
+
+  // 🆕 "Activos" = tienen al menos un proyecto (sea cual sea su status)
+  get activosCount(): number {
+    return this.customers.filter(c => (c.projects_count || 0) > 0).length;
+  }
+
+  // 🆕 "Con evaluación" = ya se les agendó al menos una visita
+  get conEvaluacionCount(): number {
+    return this.customers.filter(c => (c.evaluations_count || 0) > 0).length;
   }
 
   navegarANuevoCliente() {

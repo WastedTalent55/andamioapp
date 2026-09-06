@@ -7,6 +7,7 @@ import { EvaluationService } from '../../core/services/evaluation.service';
 import { QuoteService } from '../../core/services/quote.service';
 import { ProjectService } from '../../core/services/project.service';
 import { ActivityService, ActivityItem } from '../../core/services/activity.service';
+import { TenantService } from '../../core/services/tenant.service';
 import { Router } from '@angular/router';
 import {
   Users,
@@ -43,6 +44,7 @@ export class DashboardComponent implements OnInit {
   private quoteService = inject(QuoteService);
   private projectService = inject(ProjectService);
   private activityService = inject(ActivityService);
+  private tenantService = inject(TenantService);
   private router = inject(Router);
   
   userName: string = '';
@@ -64,8 +66,11 @@ export class DashboardComponent implements OnInit {
   loadingActivity = true;
 
   ngOnInit() {
-  // 1. Datos de sesión
-  this.userName = localStorage.getItem('andamio_user_name') || '';
+  // 1. Nombre del admin — arranca con lo que ya había, y se actualiza en vivo
+  // si se edita en Configuración (sin necesidad de recargar la página)
+  this.tenantService.userName$.subscribe(name => {
+    this.userName = name;
+  });
 
   // 2. Carga única de Clientes (Total + Nuevos)
   this.customerService.getCustomerCount().subscribe({

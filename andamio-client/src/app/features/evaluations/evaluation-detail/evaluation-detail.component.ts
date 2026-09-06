@@ -5,15 +5,20 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EvaluationService } from '../../../core/services/evaluation.service';
 import { Evaluation } from '../../../core/models/evaluation.model';
 import { Router } from '@angular/router';
+import { LucideAngularModule, NotebookPen, FileText, Save } from 'lucide-angular';
 
 @Component({
   selector: 'app-evaluation-detail',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LucideAngularModule],
   templateUrl: './evaluation-detail.component.html',
   styleUrls: ['./evaluation-detail.component.css']
 })
 export class EvaluationDetailComponent implements OnInit {
+  NotebookPen = NotebookPen;
+  FileText = FileText;
+  Save = Save;
+
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   private evaluationService = inject(EvaluationService);

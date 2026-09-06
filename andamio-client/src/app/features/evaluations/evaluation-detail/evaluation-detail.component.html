@@ -1,12 +1,12 @@
 <div class="canvas-container">
   <header>
     <div class="header-main">
-      <h2>📝 Notas de Evaluación</h2>
+      <h2><lucide-icon [img]="NotebookPen" size="20"></lucide-icon> Notas de Evaluación</h2>
       <button 
           *ngIf="evaluation?.requirements" 
           (click)="convertToQuote()" 
           class="btn-header btn-quote">
-          🏗️ Crear Cotización
+          <lucide-icon [img]="FileText" size="16"></lucide-icon> Crear Cotización
           </button>
       <button routerLink="/board" class="btn-header btn-back">Volver al Tablero</button>
     </div>
@@ -27,7 +27,8 @@
 
     <div class="form-actions">
       <button class="btn-andamio" type="submit">
-        {{ evaluation?.requirements ? '💾 Guardar Cambios' : '💾 Guardar Notas de Visita' }}
+        <lucide-icon [img]="Save" size="16"></lucide-icon>
+        {{ evaluation?.requirements ? 'Guardar Cambios' : 'Guardar Notas de Visita' }}
       </button>
     </div>
   </form>

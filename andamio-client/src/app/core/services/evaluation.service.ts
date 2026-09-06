@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Evaluation } from '../models/evaluation.model';
 import { ApiResponse } from '../models/api-response.model';
+import { environment } from '../../../enviroments/environment'; 
 
 export interface EvaluationStats {
   total: number;
@@ -18,7 +19,7 @@ export interface EvaluationStats {
 export class EvaluationService {
   private http = inject(HttpClient);
   
-  private apiUrl = 'http://localhost:3000/api/evaluations';
+  private apiUrl = `${environment.apiUrl}/evaluations`;
 
   createEvaluation(evaluation: Partial<Evaluation>): Observable<ApiResponse<{ id: number }>> {
     return this.http.post<ApiResponse<{ id: number }>>(this.apiUrl, evaluation);

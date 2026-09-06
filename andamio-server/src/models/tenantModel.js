@@ -14,6 +14,7 @@ const Tenant = {
             bank_name,
             bank_account,
             bank_clabe,
+            terms_conditions,
             logo,
             brand_color
         } = tenantData;
@@ -29,6 +30,7 @@ const Tenant = {
             bank_name = ?, 
             bank_account = ?, 
             bank_clabe = ?, 
+            terms_conditions = ?,
             logo = ?,
             brand_color = ?
             WHERE id = ?
@@ -44,6 +46,7 @@ const Tenant = {
             bank_name,
             bank_account,
             bank_clabe,
+            terms_conditions,
             logo,
             brand_color,
             id

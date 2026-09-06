@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
+import { environment } from '../../../enviroments/environment'; 
 
 // Una fila del board puede ser una evaluación pura, una cotización, o un
 // proyecto — según la columna, distintos campos vienen o no. Se modela como
@@ -40,7 +41,7 @@ export interface BoardSummary {
 @Injectable({ providedIn: 'root' })
 export class ProjectBoardService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/board';
+  private apiUrl = `${environment.apiUrl}/board`;
 
   getBoardData(): Observable<ApiResponse<BoardSummary>> {
     return this.http.get<ApiResponse<BoardSummary>>(`${this.apiUrl}/summary`);

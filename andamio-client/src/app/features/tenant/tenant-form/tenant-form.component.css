@@ -1,58 +1,87 @@
+.tenant-page {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.tenant-page .card-andamio {
+  padding: 18px 20px;
+}
+
 .tenant-header {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+}
+
+.tenant-header h1 {
+  font-size: 1.2rem;
+}
+
+.tenant-header p {
+  font-size: 0.8rem;
 }
 
 .section-title {
-  margin-top: var(--spacing-md);
-  padding-bottom: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+  margin-bottom: 4px;
+  padding-bottom: 4px;
   border-bottom: 1px solid var(--andamio-gris-oscuro);
   color: var(--andamio-oro-activo);
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
 .form-grid {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: 4px;
 }
 
-input {
+.form-group label {
+  font-size: 0.8rem;
+}
+
+input,
+textarea {
   background-color: var(--andamio-fondo);
   border: 1px solid var(--andamio-gris-oscuro);
   border-radius: var(--radius-interactive);
-  padding: 12px;
+  padding: 8px 10px;
   color: var(--andamio-tiza);
   font-family: var(--font-main);
+  font-size: 0.88rem;
   transition: var(--transition-friendly);
 }
 
-input:focus {
+textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+input:focus,
+textarea:focus {
   outline: none;
   border-color: var(--andamio-oro-activo);
   box-shadow: 0 0 8px rgba(255, 184, 0, 0.2);
 }
 
 .form-actions {
-  margin-top: var(--spacing-lg);
+  margin-top: var(--spacing-sm);
   display: flex;
   justify-content: flex-end;
 }
 
 .logo-upload-section {
-  margin-bottom: var(--spacing-lg);
-  padding: var(--spacing-md);
+  padding: 10px 12px;
   background-color: rgba(255, 255, 255, 0.02); 
   border-radius: var(--radius-card);
   border: 2px dashed var(--andamio-gris-oscuro);
@@ -71,22 +100,22 @@ input:focus {
 .upload-container {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-sm);
+  gap: 10px;
+  margin-top: 4px;
 }
 
 /* Caja de vista previa del logo */
 .logo-preview-box {
-  width: 120px;
-  height: 120px;
+  width: 44px;
+  height: 44px;
   background-color: #FFFFFF;
-  border-radius: var(--radius-interactive);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   border: 2px solid var(--andamio-verde-obra); /* El marco verde confirma que "todo está bien" */
-  box-shadow: 0 0 15px rgba(52, 211, 153, 0.2); /* Un resplandor de éxito */
+  flex-shrink: 0;
 }
 
 .logo-preview-box img {
@@ -98,44 +127,44 @@ input:focus {
 .upload-controls {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: 4px;
 }
 
-/* Mensaje de confirmación en Verde Obra [1] */
+/* Mensaje de confirmación en Verde Obra */
 .upload-confirmation {
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: rgba(52, 211, 153, 0.1); /* Fondo sutil Verde Obra */
-  padding: 8px 12px;
+  background-color: rgba(52, 211, 153, 0.1);
+  padding: 5px 10px;
   border-radius: var(--radius-interactive);
-  margin-top: 12px;
-  animation: var(--transition-friendly); /* Aparece con el pop orgánico [3] */
-}
-
-.success-text {
-  color: var(--andamio-verde-obra); /* #34D399 [2] */
-  font-family: var(--font-technical); /* Space Mono para dar un look verificado [3] */
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  margin-top: 6px;
 }
 
 .success-text {
   color: var(--andamio-verde-obra);
+  font-family: var(--font-technical);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   font-weight: 700;
+}
+
+.tenant-tag {
+  font-size: 0.72rem;
 }
 
 .btn-andamio-outline {
   display: inline-flex;
   align-items: center;
-  padding: 10px 20px;
+  gap: 5px;
+  padding: 5px 12px;
   border: 1px solid var(--andamio-oro-activo);
-  border-radius: var(--radius-interactive);
+  border-radius: 8px;
   color: var(--andamio-oro-activo);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.72rem;
   cursor: pointer;
   transition: var(--transition-friendly);
 }
@@ -147,51 +176,30 @@ input:focus {
 }
 
 .branding-header-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; 
-  gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-sm);
   border-bottom: 1px solid var(--andamio-gris-oscuro); 
 }
 
-.color-input-wrapper {
+.checkbox-inline {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  background-color: var(--andamio-antracita);
-  padding: 10px;
-  border-radius: var(--radius-interactive);
-  border: 1px solid var(--andamio-gris-oscuro);
-}
+  gap: 6px;
 
-.color-config-container {
-  background-color: var(--andamio-antracita);
-  padding: var(--spacing-md);
-  border-radius: var(--radius-interactive);
-  border: 1px solid var(--andamio-gris-oscuro);
-  height: 100%; 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+  margin-top: 4px;
 
-.color-input-wrapper {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  margin: var(--spacing-sm) 0;
-}
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--andamio-concreto);
+  text-transform: none;
+  letter-spacing: normal;
 
-.input-color-andamio {
-  width: 60px;
-  height: 60px;
-  border: 3px solid var(--andamio-tiza);
-  border-radius: 50%; 
   cursor: pointer;
-  background: none;
-  overflow: hidden;
 }
 
-.input-color-andamio::-webkit-color-swatch-wrapper { padding: 0; }
-.input-color-andamio::-webkit-color-swatch { border: none; }
+.checkbox-inline input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--andamio-oro-activo);
+  cursor: pointer;
+}

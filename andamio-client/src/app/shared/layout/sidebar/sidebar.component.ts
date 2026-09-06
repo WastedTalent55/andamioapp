@@ -1,7 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TenantService } from '../../../core/services/tenant.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { 
   LucideAngularModule,  
   LayoutDashboard,
@@ -9,7 +10,9 @@ import {
   Users,
   FileText,
   HardHat,
-  Settings 
+  Settings,
+  ChevronDown,
+  LogOut
 } from 'lucide-angular';
 
 @Component({
@@ -26,12 +29,16 @@ export class SidebarComponent implements OnInit {
   FileText = FileText;
   HardHat = HardHat;
   Settings = Settings;
+  ChevronDown = ChevronDown;
+  LogOut = LogOut;
   
   tenantName: string = 'Andamio';
+  isAccountMenuOpen = false;
 
-  constructor(
-    private tenantService: TenantService
-  ){}
+  private tenantService = inject(TenantService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private elementRef = inject(ElementRef);
 
   ngOnInit() {
       this.tenantService.tenantName$.subscribe(name => {
@@ -56,4 +63,23 @@ export class SidebarComponent implements OnInit {
     }
   });
 }
+
+  toggleAccountMenu(event: Event) {
+    event.stopPropagation();
+    this.isAccountMenuOpen = !this.isAccountMenuOpen;
+  }
+
+  // Cierra el menú si se hace clic en cualquier lugar fuera de él
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    if (this.isAccountMenuOpen && !this.elementRef.nativeElement.contains(event.target)) {
+      this.isAccountMenuOpen = false;
+    }
+  }
+
+  logout() {
+    this.isAccountMenuOpen = false;
+    this.authService.logout();
+    this.router.navigate(['/']);
+  }
 }

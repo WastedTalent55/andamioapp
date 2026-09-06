@@ -93,40 +93,6 @@ main {
   letter-spacing: .12em;
 }
 
-.btn-close-quote {
-  width: 40px;
-  height: 40px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: transparent;
-
-  border: 1px solid var(--andamio-concreto);
-  border-radius: 10px;
-
-  color: var(--andamio-concreto);
-
-  font-size: 1.5rem;
-  line-height: 1;
-
-  cursor: pointer;
-
-  transition:
-    background-color .2s ease,
-    border-color .2s ease,
-    color .2s ease;
-}
-
-.btn-close-quote:hover {
-  background: rgba(248,113,113,.08);
-
-  border-color: var(--andamio-rojo-alerta);
-
-  color: var(--andamio-rojo-alerta);
-}
-
 .btn-add-industrial {
   display: inline-flex;
   align-items: center;

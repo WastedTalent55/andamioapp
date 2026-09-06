@@ -69,9 +69,14 @@
 
 .topbar-tenant {
   flex-shrink: 0;
+  position: relative;
 }
 
 .tenant-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
   font-family: var(--font-technical); /* Space Mono para ese toque industrial [9] */
   font-size: 0.75rem;
   font-weight: 700;
@@ -79,13 +84,85 @@
   letter-spacing: 0.1em;
   padding: 4px 12px;
   background: rgba(255, 184, 0, 0.1);
+  border: 1px solid transparent;
   border-radius: var(--radius-interactive);
   text-align: center;
   white-space: nowrap;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.tenant-tag:hover,
+.topbar-tenant.open .tenant-tag {
+  background: rgba(255, 184, 0, 0.18);
+  border-color: rgba(255, 184, 0, 0.4);
+}
+
+.topbar-tenant.open .tenant-tag lucide-icon {
+  transform: rotate(180deg);
+}
+
+.tenant-tag lucide-icon {
+  transition: transform .2s;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+
+  min-width: 190px;
+
+  background: var(--andamio-gris-oscuro);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+
+  padding: 6px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  z-index: 1001;
+}
+
+.account-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  background: none;
+  border: none;
+  border-radius: 8px;
+
+  color: var(--andamio-tiza);
+  font-family: var(--font-main);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: left;
+
+  cursor: pointer;
+  transition: .15s;
+}
+
+.account-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.account-dropdown-item.danger {
+  color: var(--andamio-rojo-alerta);
+}
+
+.account-dropdown-item.danger:hover {
+  background: rgba(248, 113, 113, 0.1);
 }
 
 /* Tablet (prioridad #1 de UX): con menos ancho, priorizamos íconos sobre texto
-   para que las 6 secciones + marca + tenant quepan sin scroll horizontal */
+   para que las 5 secciones + marca + tenant quepan sin scroll horizontal */
 @media (max-width: 1024px) {
   .nav-links li a span {
     display: none;
@@ -96,13 +173,10 @@
   }
 }
 
-/* Móvil (prioridad #2): la topbar hace scroll horizontal en vez de romper el layout */
+/* Móvil (prioridad #2): la topbar hace scroll horizontal en vez de romper el layout.
+   El menú de cuenta YA NO se oculta aquí — es la única vía a Configuración/Cerrar sesión. */
 @media (max-width: 640px) {
   .andamio-topbar {
     gap: 1rem;
-  }
-
-  .topbar-tenant {
-    display: none;
   }
 }

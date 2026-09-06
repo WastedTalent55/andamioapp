@@ -1,0 +1,42 @@
+<app-page-header
+  title="Proyectos"
+  subtitle="Todo lo que ya se aceptó y está en marcha (o ya cerró).">
+</app-page-header>
+
+<div class="client-kpis">
+  <div class="kpi-card">
+    <span class="kpi-value">{{ totalCount }}</span>
+    <span class="kpi-label">TOTAL</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-value">{{ activosCount }}</span>
+    <span class="kpi-label">ACTIVOS</span>
+  </div>
+
+  <div class="kpi-card">
+    <span class="kpi-value">{{ finalizadosCount }}</span>
+    <span class="kpi-label">FINALIZADOS</span>
+  </div>
+</div>
+
+<div class="search-box">
+  <span class="search-icon"><lucide-icon [img]="Search" size="16"></lucide-icon></span>
+  <input
+    type="text"
+    placeholder="Buscar por proyecto o cliente..."
+    (input)="onSearch($event)">
+</div>
+
+<div class="project-grid" *ngIf="!loading">
+  <app-project-card
+    *ngFor="let project of filteredProjects"
+    [project]="project">
+  </app-project-card>
+
+  <div class="empty-state" *ngIf="filteredProjects.length === 0">
+    Todavía no tienes proyectos. Se crean al aceptar una cotización.
+  </div>
+</div>
+
+<div class="loading-state" *ngIf="loading">Cargando proyectos...</div>

@@ -57,18 +57,18 @@
 
       <div class="toolbar-actions" *ngIf="quoteData.status === 'borrador'">
         <button class="sidebar-btn" [disabled]="updatingStatus" (click)="markAsSent()">
-          📤
+          <lucide-icon [img]="Send" size="16"></lucide-icon>
           <span>Marcar como enviada</span>
         </button>
       </div>
 
       <div class="toolbar-actions" *ngIf="quoteData.status === 'enviada'">
         <button class="sidebar-btn" [disabled]="updatingStatus" (click)="markAsAccepted()">
-          ✅
+          <lucide-icon [img]="CircleCheck" size="16"></lucide-icon>
           <span>Marcar como aceptada</span>
         </button>
         <button class="sidebar-btn sidebar-btn-secondary" [disabled]="updatingStatus" (click)="markAsRejected()">
-          ❌
+          <lucide-icon [img]="CircleX" size="16"></lucide-icon>
           <span>Marcar como rechazada</span>
         </button>
       </div>
@@ -83,7 +83,7 @@
 
         <button class="sidebar-btn" (click)="editQuote()">
 
-        ✏️
+        <lucide-icon [img]="Pencil" size="16"></lucide-icon>
 
         <span>
 
@@ -95,7 +95,7 @@
 
     <button class="sidebar-btn" (click)="downloadPDF()">
 
-        📄
+        <lucide-icon [img]="FileDown" size="16"></lucide-icon>
 
         <span>
 
@@ -357,7 +357,7 @@
         <span>
 
             {{ ((laborSubtotal + materialsSubtotal - evaluationDiscount)/2) | currency }}
-
+ 
         </span>
 
     </div>
@@ -370,6 +370,11 @@
   <p><strong>{{ tenantConfig?.bank_name || 'BBVA' }}</strong></p>
   <p>CUENTA: <span class="data-number">{{ tenantConfig?.bank_account }}</span></p>
   <p>CLABE: <span class="data-number">{{ tenantConfig?.bank_clabe }}</span></p>
+</section>
+<!-- 📄 TÉRMINOS Y CONDICIONES -->
+<section class="terms-section" *ngIf="tenantConfig?.terms_conditions">
+  <h4>Términos y Condiciones</h4>
+  <p>{{ tenantConfig.terms_conditions }}</p>
 </section>
 <div class="final-thanks">!!GRACIAS POR LA CONFIANZA!!</div>
     </div>

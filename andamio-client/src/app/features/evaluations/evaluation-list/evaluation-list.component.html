@@ -1,6 +1,6 @@
 <div class="container" style="padding: 20px;">
   <div>
-    <h2>📋 Visitas de Evaluación Agendadas</h2>
+    <h2><lucide-icon [img]="ClipboardList" size="20"></lucide-icon> Visitas de Evaluación Agendadas</h2>
     <button class="btn-primary" routerLink="/evaluations/new">+ Agendar Nueva Visita</button>
   </div>
 
@@ -24,14 +24,14 @@
           </td>
           <td style="padding: 12px;"><strong>{{ ev.first_name }} {{ ev.last_name }}</strong></td>
           <td style="padding: 12px;">
-            <small style="display: block;">📞 {{ ev.phone }}</small>
-            <small style="color: #666;">📍 {{ ev.address }}</small>
+            <small style="display: block;"><lucide-icon [img]="Phone" size="13"></lucide-icon> {{ ev.phone }}</small>
+            <small style="color: #666;"><lucide-icon [img]="MapPin" size="13"></lucide-icon> {{ ev.address }}</small>
           </td>
           <td style="padding: 12px;">{{ ev.requested_work }}</td>
           <td style="padding: 12px; text-align: center;">{{ ev.evaluation_cost | currency }}</td>
           <td style="padding: 12px; text-align: center;">
             <button [routerLink]="['/evaluations', ev.id, 'details']">
-              📝 Añadir Detalles
+              <lucide-icon [img]="Pencil" size="14"></lucide-icon> Añadir Detalles
             </button>
           </td>
         </tr>

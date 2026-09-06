@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Customer } from '../models/customer.model';
 import { ApiResponse } from '../models/api-response.model';
+import { environment } from '../../../enviroments/environment';
 
 export interface CustomerStats {
   total: number;
@@ -15,7 +16,7 @@ export interface CustomerStats {
 
 export class CustomerService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/customers';
+  private apiUrl = `${environment.apiUrl}/customers`;
 
   getCustomers(): Observable<ApiResponse<Customer[]>> {
     return this.http.get<ApiResponse<Customer[]>>(this.apiUrl);

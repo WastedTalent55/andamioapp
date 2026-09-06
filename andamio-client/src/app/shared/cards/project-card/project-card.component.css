@@ -1,0 +1,97 @@
+.project-card {
+  background: var(--andamio-fondo);
+  border: 1px solid rgba(255, 255, 255, .06);
+  border-radius: 18px;
+  padding: 18px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  cursor: pointer;
+  transition: .2s;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--andamio-oro-activo);
+}
+
+.status-pill {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 4px 12px;
+  border-radius: var(--radius-interactive);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.status-pill.activo {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--andamio-verde-obra);
+}
+
+.status-pill.pausado {
+  background: rgba(255, 184, 0, 0.15);
+  color: var(--andamio-oro-activo);
+}
+
+.status-pill.finalizado {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--andamio-azul-plano);
+}
+
+.status-pill.cancelado {
+  background: rgba(251, 113, 133, 0.15);
+  color: var(--andamio-rojo-alerta);
+}
+
+.project-name {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--andamio-tiza);
+}
+
+.customer-name {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--andamio-concreto);
+}
+
+.project-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 0.78rem;
+  color: var(--andamio-concreto);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, .06);
+}
+
+.info-row.amount {
+  color: var(--andamio-oro-activo);
+  font-family: var(--font-technical);
+  font-weight: 700;
+}

@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Customer } from '../../../core/models/customer.model';
 import { EvaluationService } from '../../../core/services/evaluation.service';
-import { LucideAngularModule, MapPin, Phone, Wallet, Calendar, FileText, CircleCheck, Clock, Eye, Pencil, Trash2 } from 'lucide-angular';
+import { QuoteService } from '../../../core/services/quote.service';
+import { LucideAngularModule, MapPin, Phone, Wallet, Calendar, FileText, CircleCheck, CircleX, Clock, Eye, Pencil, Trash2 } from 'lucide-angular';
 
 @Component({
   selector: 'app-board-card',
@@ -23,6 +24,7 @@ export class BoardCardComponent {
   Eye = Eye
   Pencil = Pencil;
   Trash2 = Trash2;
+  CircleX = CircleX;
 
   @Input() data: any;
   @Input() customer!: Customer;
@@ -38,6 +40,7 @@ export class BoardCardComponent {
 
   private router = inject(Router);
   private evaluationService = inject(EvaluationService);
+  private quoteService = inject(QuoteService);
 
   deleting = false;
 
@@ -109,5 +112,65 @@ acceptQuote() {
     if (confirmAction) {
       this.router.navigate(['/projects/new', this.data.quote_id]);
     }
+  }
+
+  // 🆕 Marca la cotización como rechazada — el board ya la excluye de todas
+  // las columnas para ese status, así que solo hace falta refrescar
+  rejectQuote(event: Event) {
+    event.stopPropagation();
+
+    if (!this.data.quote_id || this.deleting) return;
+
+    const confirmReject = confirm(
+      `¿Marcar como rechazada la cotización de ${this.data.customer_name}? Dejará de aparecer en el tablero.`
+    );
+
+    if (!confirmReject) return;
+
+    this.deleting = true;
+
+    this.quoteService.updateQuoteStatus(this.data.quote_id, 'rechazada').subscribe({
+      next: () => {
+        this.deleting = false;
+        this.cardDeleted.emit();
+      },
+      error: (err) => {
+        this.deleting = false;
+        console.error('Error marcando cotización como rechazada:', err);
+        alert('❌ No se pudo actualizar la cotización.');
+      }
+    });
+  }
+
+  deleteQuoteCard(event: Event) {
+    event.stopPropagation();
+
+    if (!this.data.quote_id || this.deleting) return;
+
+    const confirmDelete = confirm(
+      `¿Eliminar la cotización de ${this.data.customer_name}? Esta acción no se puede deshacer.`
+    );
+
+    if (!confirmDelete) return;
+
+    this.deleting = true;
+
+    this.quoteService.deleteQuote(this.data.quote_id).subscribe({
+      next: () => {
+        this.deleting = false;
+        this.cardDeleted.emit();
+      },
+      error: (err) => {
+        this.deleting = false;
+
+        if (err.status === 409) {
+          alert(`⚠️ ${err.error?.message || 'Esta cotización no se puede eliminar.'}`);
+          return;
+        }
+
+        console.error('Error eliminando cotización:', err);
+        alert('❌ No se pudo eliminar la cotización.');
+      }
+    });
   }
 }

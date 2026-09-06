@@ -8,16 +8,22 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Location } from '@angular/common';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 import { Quote, QuoteItem, QuoteVersionHistoryEntry } from '../../../core/models/quote.model';
+import { LucideAngularModule, Send, CircleCheck, CircleX, Pencil, FileDown } from 'lucide-angular';
 
 @Component({
   selector: 'app-quote-preview',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, StatusBadgeComponent], 
+  imports: [CommonModule, FormsModule, RouterModule, StatusBadgeComponent, LucideAngularModule], 
   templateUrl: './quote-preview.component.html',
   styleUrls: ['./quote-preview.component.css']
 })
 
 export class QuotePreviewComponent implements OnInit {
+  Send = Send;
+  CircleCheck = CircleCheck;
+  CircleX = CircleX;
+  Pencil = Pencil;
+  FileDown = FileDown;
   quoteId: string | null = null;
   selectedColor: string = '#FFB800'; 
   tenantConfig: any = null; // sin modelo de Tenant definido aún; fuera del alcance de este refactor

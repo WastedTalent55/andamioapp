@@ -37,14 +37,23 @@
       <lucide-icon [img]="HardHat" size="18"></lucide-icon>
       <span>PROYECTOS</span></a>
     </li>
-
-    <li><a routerLink="/settings" routerLinkActive="active">
-      <lucide-icon [img]="Settings" size="18"></lucide-icon>
-      <span>CONFIGURACIÓN</span></a>
-    </li>
   </ul>
 
-  <div class="topbar-tenant">
-    <span class="tenant-tag">{{ tenantName || 'ANDAMIO' | uppercase }}</span>
+  <div class="topbar-tenant" [class.open]="isAccountMenuOpen">
+    <button type="button" class="tenant-tag" (click)="toggleAccountMenu($event)">
+      {{ tenantName || 'ANDAMIO' | uppercase }}
+      <lucide-icon [img]="ChevronDown" size="14"></lucide-icon>
+    </button>
+
+    <div class="account-dropdown" *ngIf="isAccountMenuOpen">
+      <a routerLink="/settings" class="account-dropdown-item" (click)="isAccountMenuOpen = false">
+        <lucide-icon [img]="Settings" size="16"></lucide-icon>
+        Configuración
+      </a>
+      <button type="button" class="account-dropdown-item danger" (click)="logout()">
+        <lucide-icon [img]="LogOut" size="16"></lucide-icon>
+        Cerrar sesión
+      </button>
+    </div>
   </div>
 </nav>

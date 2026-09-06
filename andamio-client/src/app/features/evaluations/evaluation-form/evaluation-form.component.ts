@@ -7,16 +7,22 @@ import { CustomerService } from '../../../core/services/customer.service';
 import { EvaluationService } from '../../../core/services/evaluation.service';
 import { Customer } from '../../../core/models/customer.model';
 import { ActivatedRoute } from '@angular/router';
+import { LucideAngularModule, X, ClipboardList, TriangleAlert, Pencil } from 'lucide-angular';
 
 @Component({
   selector: 'app-evaluation-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], 
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule], 
   templateUrl: './evaluation-form.component.html',
   styleUrl: './evaluation-form.component.css'
 })
 
 export class EvaluationFormComponent implements OnInit {
+  X = X;
+  ClipboardList = ClipboardList;
+  TriangleAlert = TriangleAlert;
+  Pencil = Pencil;
+
   private location = inject(Location);
   private fb = inject(FormBuilder);
   private router = inject(Router); 

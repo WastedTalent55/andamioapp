@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Quote, QuoteItem, QuoteVersionHistoryEntry } from '../models/quote.model';
 import { ApiResponse } from '../models/api-response.model';
+import { environment } from '../../../enviroments/environment';
 
 export interface QuoteStats {
   total: number;
@@ -12,31 +13,15 @@ export interface QuoteStats {
   rechazada: number;
 }
 
-// ⚠️ A diferencia del resto de endpoints, createQuote y updateQuote NO envuelven
-// su payload en `data` — el backend los devuelve "planos" (quoteId al nivel raíz).
-// Se tipan aparte para no mentir sobre la forma real de la respuesta.
-export interface CreateQuoteResponse {
-  success: boolean;
-  message?: string;
-  quoteId: number;
-}
-
-export interface UpdateQuoteResponse {
-  success: boolean;
-  message?: string;
-  versioned: boolean;
-  quoteId: number;
-}
-
 @Injectable({
   providedIn: 'root'
 })
 export class QuoteService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/quotes';
+  private apiUrl = `${environment.apiUrl}/quotes`;
 
-  createQuote(quoteData: Partial<Quote>): Observable<CreateQuoteResponse> {
-    return this.http.post<CreateQuoteResponse>(this.apiUrl, quoteData);
+  createQuote(quoteData: Partial<Quote>): Observable<ApiResponse<{ quoteId: number }>> {
+    return this.http.post<ApiResponse<{ quoteId: number }>>(this.apiUrl, quoteData);
   }
 
   getQuotes(): Observable<ApiResponse<Quote[]>> {
@@ -51,8 +36,8 @@ export class QuoteService {
     return this.http.get<ApiResponse<Quote & { items: QuoteItem[] }>>(`${this.apiUrl}/${id}`);
   }
 
-  updateQuote(id: number, data: Partial<Quote>): Observable<UpdateQuoteResponse> {
-    return this.http.put<UpdateQuoteResponse>(`${this.apiUrl}/${id}`, data);
+  updateQuote(id: number, data: Partial<Quote>): Observable<ApiResponse<{ quoteId: number; versioned: boolean }>> {
+    return this.http.put<ApiResponse<{ quoteId: number; versioned: boolean }>>(`${this.apiUrl}/${id}`, data);
   }
 
   updateQuoteStatus(id: number, status: string): Observable<ApiResponse<unknown>> {
@@ -69,5 +54,9 @@ export class QuoteService {
 
   getQuoteStats(): Observable<ApiResponse<QuoteStats>> {
     return this.http.get<ApiResponse<QuoteStats>>(`${this.apiUrl}/count`);
+  }
+
+  deleteQuote(id: number): Observable<ApiResponse<unknown>> {
+    return this.http.delete<ApiResponse<unknown>>(`${this.apiUrl}/${id}`);
   }
 }

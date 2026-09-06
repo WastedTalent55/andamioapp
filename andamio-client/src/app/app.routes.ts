@@ -7,6 +7,7 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { ProjectBoardComponent } from './features/board/project-board/project-board.component'; 
 import { ProjectExecutionComponent } from './features/projects/project-execution/project-execution.component';
 import { ProjectFormComponent } from './features/projects/project-form/project-form.component';
+import { ProjectListComponent } from './features/projects/project-list/project-list.component';
 import { CustomerFormComponent } from './features/customers/customer-form/customer-form.component';
 import { CustomerListComponent } from './features/customers/customer-list/customer-list.component';
 import { WelcomeComponent } from './features/auth/welcome/welcome.component';
@@ -51,6 +52,7 @@ export const routes: Routes = [
             { path: 'quotes/preview/:id', component: QuotePreviewComponent },
 
             // 6. Fase de Ejecución y Rentabilidad (El trabajo ya agendado)
+            { path: 'projects', component: ProjectListComponent },
             { path: 'projects/new/:quoteId', component: ProjectFormComponent },
             { path: 'projects/:id/execution', component: ProjectExecutionComponent },
 

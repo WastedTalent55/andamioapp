@@ -3,15 +3,21 @@ import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Customer } from '../../../core/models/customer.model';
 import { CustomerService } from '../../../core/services/customer.service';
+import { LucideAngularModule, Pencil, Trash2, Phone, MapPin } from 'lucide-angular';
 
 @Component({
   selector: 'app-customer-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './customer-card.component.html',
   styleUrl: './customer-card.component.css'
 })
 export class CustomerCardComponent {
+  Pencil = Pencil;
+  Trash2 = Trash2;
+  Phone = Phone;
+  MapPin = MapPin;
+
   @Input() customer!: Customer;
 
   // 🆕 Cuando pickMode es true, la tarjeta deja de navegar al perfil del cliente

@@ -1,7 +1,12 @@
 <div class="form-container">
   <div class="form-header">
-    <h3>{{ isEditMode ? '✏️ EDITAR EVALUACIÓN TÉCNICA' : '📋 AGENDAR NUEVA EVALUACIÓN TÉCNICA' }}</h3>
-    <button type="button" class="btn-close" (click)="closeForm()" title="Cancelar">&times;</button>
+    <h3>
+      <lucide-icon [img]="isEditMode ? Pencil : ClipboardList" size="20"></lucide-icon>
+      {{ isEditMode ? 'EDITAR EVALUACIÓN TÉCNICA' : 'AGENDAR NUEVA EVALUACIÓN TÉCNICA' }}
+    </h3>
+    <button type="button" class="btn-close" (click)="closeForm()" title="Cancelar">
+      <lucide-icon [img]="X" size="20"></lucide-icon>
+    </button>
   </div>
   
   <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()" class="andamio-form">
@@ -40,7 +45,7 @@
           </option>
         </select>
         <small class="alert-text" *ngIf="filteredAddresses.length === 0">
-          ⚠️ SELECCIONA UN CLIENTE PRIMERO.
+          <lucide-icon [img]="TriangleAlert" size="14"></lucide-icon> SELECCIONA UN CLIENTE PRIMERO.
         </small>
       </div>
     </div>

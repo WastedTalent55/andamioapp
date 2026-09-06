@@ -38,7 +38,8 @@
     <app-board-column 
       title="EN COTIZACIÓN" 
       type="quoting"
-      [items]="columns.quoting">
+      [items]="columns.quoting"
+      (cardDeleted)="refreshBoard()">
     </app-board-column>
 
 

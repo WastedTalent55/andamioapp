@@ -5,6 +5,7 @@ import { QuoteService } from '../../../core/services/quote.service';
 import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
 import { QuoteCardComponent } from '../../../shared/cards/quote-card/quote-card.component';
 import { Quote } from '../../../core/models/quote.model';
+import { LucideAngularModule, X, ClipboardList, Zap, Search } from 'lucide-angular';
 
 @Component({
   selector: 'app-quote-list',
@@ -12,12 +13,18 @@ import { Quote } from '../../../core/models/quote.model';
   imports: [
     CommonModule,
     PageHeaderComponent,
-    QuoteCardComponent
+    QuoteCardComponent,
+    LucideAngularModule
   ],
   templateUrl: './quote-list.component.html',
   styleUrl: './quote-list.component.css'
 })
 export class QuoteListComponent implements OnInit {
+  X = X;
+  ClipboardList = ClipboardList;
+  Zap = Zap;
+  Search = Search;
+
   private quoteService = inject(QuoteService);
   private router = inject(Router);
 

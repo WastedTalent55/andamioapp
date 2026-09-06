@@ -8,15 +8,19 @@ import { Location } from '@angular/common';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Quote, QuoteItem } from '../../../core/models/quote.model';
+import { LucideAngularModule, X, ClipboardList } from 'lucide-angular';
 
 @Component({
   selector: 'app-quote-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LucideAngularModule],
   templateUrl: './quote-form.component.html',
   styleUrls: ['./quote-form.component.css']
 })
 export class QuoteFormComponent implements OnInit {
+  X = X;
+  ClipboardList = ClipboardList;
+
   private location = inject(Location)
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
@@ -248,7 +252,7 @@ export class QuoteFormComponent implements OnInit {
     if (this.isEditMode && this.quoteId) {
       this.quoteService.updateQuote(this.quoteId, finalData).subscribe({
         next: (res) => {
-          if (res.versioned) {
+          if (res.data?.versioned) {
             alert(`✅ El cliente ya había recibido esta cotización, así que se creó la versión ${this.currentVersion + 1} sin perder el historial.`);
           } else {
             alert('✅ CAMBIOS GUARDADOS CORRECTAMENTE');
@@ -261,9 +265,9 @@ export class QuoteFormComponent implements OnInit {
         this.quoteService.createQuote(finalData).subscribe({
         next: (res) => {
           alert('✅ ¡COTIZACIÓN FINALIZADA Y GUARDADA!');
-          if (this.directMode && res.quoteId) {
+          if (this.directMode && res.data?.quoteId) {
             // Sin evaluación no hay tarjeta en el board todavía: el destino natural es su propio preview
-            this.router.navigate(['/quotes/preview', res.quoteId]);
+            this.router.navigate(['/quotes/preview', res.data.quoteId]);
           } else {
             this.router.navigate(['/board']);
           }

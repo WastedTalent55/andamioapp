@@ -6,15 +6,19 @@ import { Location } from '@angular/common';
 import { ProjectService } from '../../../core/services/project.service';
 import { QuoteService } from '../../../core/services/quote.service';
 import { Quote, QuoteItem } from '../../../core/models/quote.model';
+import { LucideAngularModule, X, HardHat } from 'lucide-angular';
 
 @Component({
   selector: 'app-project-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './project-form.component.html',
   styleUrl: './project-form.component.css'
 })
 export class ProjectFormComponent implements OnInit {
+  X = X;
+  HardHat = HardHat;
+
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);

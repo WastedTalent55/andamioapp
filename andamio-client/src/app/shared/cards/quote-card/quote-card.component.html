@@ -24,14 +24,14 @@
   <div class="card-body">
 
     <div class="info-row">
-      <span class="info-icon">💰</span>
+      <span class="info-icon"><lucide-icon [img]="Wallet" size="14"></lucide-icon></span>
       <span class="info-value data-number">
         ${{ quote.total_amount | number:'1.0-0' }}
       </span>
     </div>
 
     <div class="info-row">
-      <span class="info-icon">📅</span>
+      <span class="info-icon"><lucide-icon [img]="Calendar" size="14"></lucide-icon></span>
       <span class="info-value">
         {{ quote.created_at | date:'d MMM yyyy' }}
       </span>

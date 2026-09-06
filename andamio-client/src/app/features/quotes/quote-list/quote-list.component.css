@@ -166,26 +166,6 @@
 
 }
 
-.close-btn {
-
-    background: transparent;
-
-    border: none;
-
-    color: var(--andamio-concreto);
-
-    font-size: 1.1rem;
-
-    cursor: pointer;
-
-}
-
-.close-btn:hover {
-
-    color: var(--andamio-tiza);
-
-}
-
 .start-options-grid {
 
     display: grid;

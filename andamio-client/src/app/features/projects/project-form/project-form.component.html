@@ -1,7 +1,9 @@
 <div class="form-container">
   <div class="form-header">
-    <h3>🏗️ INICIAR PROYECTO</h3>
-    <button type="button" class="btn-close" (click)="closeForm()">&times;</button>
+    <h3><lucide-icon [img]="HardHat" size="20"></lucide-icon> INICIAR PROYECTO</h3>
+    <button type="button" class="btn-close" (click)="closeForm()" title="Cerrar">
+      <lucide-icon [img]="X" size="20"></lucide-icon>
+    </button>
   </div>
 
   <div class="quote-context card-andamio" *ngIf="quoteData">

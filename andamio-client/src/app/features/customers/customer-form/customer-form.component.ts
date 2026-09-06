@@ -6,7 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { AddressAutocompleteComponent } from '../../../shared/components/address-autocomplete/address-autocomplete.component';
 import { AddressData } from '../../../core/models/address.model';
-import { LucideAngularModule, User } from 'lucide-angular';
+import { LucideAngularModule, User, X, MapPin, Pencil } from 'lucide-angular';
 
 declare var google: any;
 
@@ -31,16 +31,20 @@ export class CustomerFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   User = User;
+  X = X;
+  MapPin = MapPin;
+  Pencil = Pencil;
   
   constructor(private router: Router ) {}
 
   isEditMode = false;
   customerId?: number;
+  submitting = false;
 
   customerForm: FormGroup = this.fb.group({
     first_name: ['', [Validators.required]],
-    last_name: ['', [Validators.required]],
-    phone: ['', [Validators.required]],
+    last_name: [''],
+    phone: [''],
     address: ['', [Validators.required]],
     place_id: [''],
     latitude: [null],
@@ -109,15 +113,19 @@ export class CustomerFormComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.customerForm.valid) return;
+    if (!this.customerForm.valid || this.submitting) return;
+
+    this.submitting = true;
 
     if (this.isEditMode && this.customerId) {
       this.customerService.updateCustomer(this.customerId, this.customerForm.value).subscribe({
         next: () => {
+          this.submitting = false;
           alert('✅ Cliente actualizado correctamente.');
           this.location.back();
         },
         error: (err) => {
+          this.submitting = false;
           console.error('Error actualizando cliente:', err);
           alert('❌ Hubo un error al actualizar. Revisa la consola.');
         }
@@ -127,10 +135,18 @@ export class CustomerFormComponent implements OnInit {
 
     this.customerService.createCustomer(this.customerForm.value).subscribe({
       next: (response) => {
+        this.submitting = false;
         const newCustomerId = response.data?.id;
-        if (!newCustomerId) return;
 
-        // Si veníamos del flujo de "cotizar directamente", saltamos la pregunta
+        if (!newCustomerId) {
+          // No debería pasar nunca con el backend actual — si aparece, es señal
+          // de que el server de Node está corriendo una versión vieja del controller.
+          console.error('⚠️ La respuesta no trae data.id — respuesta completa:', response);
+          alert('⚠️ El cliente puede haberse guardado, pero la respuesta del servidor no vino completa. Revisa la consola y la lista de clientes antes de reintentar (para no duplicarlo).');
+          return;
+        }
+
+        // 🆕 Si veníamos del flujo de "cotizar directamente", saltamos la pregunta
         // de la evaluación y vamos derecho al formulario de cotización con este cliente
         const intent = this.route.snapshot.queryParamMap.get('intent');
 
@@ -150,6 +166,7 @@ export class CustomerFormComponent implements OnInit {
         }
       },
       error: (err) => {
+        this.submitting = false;
         console.error("Error en la infraestructura de datos:", err);
         alert("Hubo un error al guardar. Revisa la consola.");
       }
@@ -157,6 +174,7 @@ export class CustomerFormComponent implements OnInit {
   }
 
   onAddressSelected(data: AddressData) {
+  // Actualizamos el formulario con la "Estructura Orgánica" de los datos [2]
   this.customerForm.patchValue({
     address: data.full_address,
     place_id: data.place_id,

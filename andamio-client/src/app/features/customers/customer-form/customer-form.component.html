@@ -1,7 +1,12 @@
 <div class="form-container">
   <div class="form-header">
-    <h3>{{ isEditMode ? '✏️ EDITAR CLIENT&#64;' : '👤 NUEVO CLIENT&#64;' }}</h3>
-    <button type="button" class="btn-close" (click)="closeForm()">&times;</button>
+    <h3>
+      <lucide-icon [img]="isEditMode ? Pencil : User" size="20"></lucide-icon>
+      {{ isEditMode ? 'EDITAR CLIENT&#64;' : 'NUEVO CLIENT&#64;' }}
+    </h3>
+    <button type="button" class="btn-close" (click)="closeForm()">
+      <lucide-icon [img]="X" size="20"></lucide-icon>
+    </button>
   </div>
 
   <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="andamio-form">
@@ -30,28 +35,19 @@
       </app-address-autocomplete>
 
       <div class="manual-address-block" *ngIf="manualAddressMode">
-        <input type="text" formControlName="address" class="form-control" placeholder="Calle, número, colonia">
-
-        <div class="grid-row">
-          <input type="text" formControlName="city" class="form-control" placeholder="Ciudad">
-          <input type="text" formControlName="state" class="form-control" placeholder="Estado">
-        </div>
-
-        <div class="grid-row">
-          <input type="text" formControlName="postal_code" class="form-control" placeholder="Código postal">
-          <input type="text" formControlName="country" class="form-control" placeholder="País">
-        </div>
+        <input type="text" formControlName="address" class="form-control" placeholder="Dirección completa: calle, número, colonia, ciudad, CP">
       </div>
 
       <button type="button" class="btn-link-toggle" (click)="toggleManualAddress()">
+        <lucide-icon [img]="manualAddressMode ? MapPin : Pencil" size="14"></lucide-icon>
         {{ manualAddressMode
-          ? '📍 Usar buscador de Google Maps'
-          : '✏️ ¿No puedes usar el buscador? Ingresa la dirección manualmente' }}
+          ? 'Usar buscador de Google Maps'
+          : '¿No puedes usar el buscador? Ingresa la dirección manualmente' }}
       </button>
     </div>
 
-    <button type="submit" class="btn-andamio full-width" [disabled]="customerForm.invalid">
-      {{ isEditMode ? 'GUARDAR CAMBIOS' : 'GUARDAR Y DAR DE ALTA' }}
+    <button type="submit" class="btn-andamio full-width" [disabled]="customerForm.invalid || submitting">
+      {{ submitting ? 'GUARDANDO...' : (isEditMode ? 'GUARDAR CAMBIOS' : 'GUARDAR Y DAR DE ALTA') }}
     </button>
   </form>
 </div>
