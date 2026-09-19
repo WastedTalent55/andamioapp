@@ -230,3 +230,28 @@ exports.remove = async (req, res) => {
     }
 
 };
+
+exports.getWithoutQuote = async (req, res) => {
+
+    try {
+
+        const tenantId = req.user.tenantId;
+        const evaluations = await EvaluationService.getEvaluationsWithoutQuote(tenantId);
+
+        res.json({
+            success: true,
+            data: evaluations
+        });
+
+    } catch (error) {
+
+        console.error('❌ Error en evaluationController.getWithoutQuote:', error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+
+};

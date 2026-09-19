@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { PageHeaderComponent } from '../../shared/layout/page-header/page-header.component';
 import { CommonModule } from '@angular/common';
 import { KpiCardComponent } from '../../shared/cards/kpi-card/kpi-card.component';
+import { NewQuoteModalComponent } from '../quotes/new-quote-modal/new-quote-modal.component';
 import { CustomerService } from '../../core/services/customer.service';
 import { EvaluationService } from '../../core/services/evaluation.service';
 import { QuoteService } from '../../core/services/quote.service';
@@ -26,7 +27,8 @@ import {
     CommonModule, 
     PageHeaderComponent,
     KpiCardComponent,
-    LucideAngularModule
+    LucideAngularModule,
+    NewQuoteModalComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
@@ -137,8 +139,10 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/evaluations/new']);
   }
 
+  showNewQuoteModal = false;
+
   createQuote() {
-    this.router.navigate(['/quotes/new']);
+    this.showNewQuoteModal = true;
   }
 
   goToBoard() {

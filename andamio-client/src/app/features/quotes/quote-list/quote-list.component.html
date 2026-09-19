@@ -5,32 +5,7 @@
   (onButtonClick)="openStartOptions()">
 </app-page-header>
 
-<div class="card-andamio start-options" *ngIf="showStartOptions">
-
-  <div class="start-options-header">
-    <h3 class="sidebar-section-title">¿CÓMO QUIERES COTIZAR?</h3>
-    <button class="btn-close btn-close-sm" (click)="closeStartOptions()">
-      <lucide-icon [img]="X" size="16"></lucide-icon>
-    </button>
-  </div>
-
-  <div class="start-options-grid">
-
-    <button class="start-option-btn" (click)="startFromEvaluation()">
-      <span class="start-option-icon"><lucide-icon [img]="ClipboardList" size="22"></lucide-icon></span>
-      <span class="start-option-title">Desde una evaluación</span>
-      <span class="start-option-desc">El flujo estándar: cliente → visita de evaluación → cotización.</span>
-    </button>
-
-    <button class="start-option-btn" (click)="startDirectQuote()">
-      <span class="start-option-icon"><lucide-icon [img]="Zap" size="22"></lucide-icon></span>
-      <span class="start-option-title">Cotizar directamente</span>
-      <span class="start-option-desc">Omite la evaluación. Busca al cliente (o créalo ahí mismo) y cotiza de una vez.</span>
-    </button>
-
-  </div>
-
-</div>
+<app-new-quote-modal *ngIf="showNewQuoteModal" (closed)="showNewQuoteModal = false"></app-new-quote-modal>
 
 <div class="quote-kpis">
 

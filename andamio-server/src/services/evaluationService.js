@@ -79,6 +79,10 @@ const EvaluationService = {
         return Evaluation.getStats(tenantId);
     },
 
+    getEvaluationsWithoutQuote: async (tenantId) => {
+        return Evaluation.getWithoutQuote(tenantId);
+    },
+
 };
 
 

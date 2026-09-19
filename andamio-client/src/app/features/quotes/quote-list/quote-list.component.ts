@@ -1,11 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { QuoteService } from '../../../core/services/quote.service';
 import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
 import { QuoteCardComponent } from '../../../shared/cards/quote-card/quote-card.component';
+import { NewQuoteModalComponent } from '../new-quote-modal/new-quote-modal.component';
 import { Quote } from '../../../core/models/quote.model';
-import { LucideAngularModule, X, ClipboardList, Zap, Search } from 'lucide-angular';
+import { LucideAngularModule, Search } from 'lucide-angular';
 
 @Component({
   selector: 'app-quote-list',
@@ -14,25 +14,22 @@ import { LucideAngularModule, X, ClipboardList, Zap, Search } from 'lucide-angul
     CommonModule,
     PageHeaderComponent,
     QuoteCardComponent,
+    NewQuoteModalComponent,
     LucideAngularModule
   ],
   templateUrl: './quote-list.component.html',
   styleUrl: './quote-list.component.css'
 })
 export class QuoteListComponent implements OnInit {
-  X = X;
-  ClipboardList = ClipboardList;
-  Zap = Zap;
   Search = Search;
 
   private quoteService = inject(QuoteService);
-  private router = inject(Router);
 
   quotes: Quote[] = [];
   filteredQuotes: Quote[] = [];
 
-  // 🆕 Panel de "¿cómo quieres cotizar?" que se abre al pulsar Nueva cotización
-  showStartOptions: boolean = false;
+  // 🆕 Modal "¿cómo quieres cotizar?" que se abre al pulsar Nueva cotización
+  showNewQuoteModal = false;
 
   ngOnInit(): void {
     this.loadQuotes();
@@ -82,20 +79,6 @@ export class QuoteListComponent implements OnInit {
   }
 
   openStartOptions() {
-    this.showStartOptions = true;
-  }
-
-  closeStartOptions() {
-    this.showStartOptions = false;
-  }
-
-  // 🆕 Camino 1: cotizar a partir de una visita de evaluación (flujo normal)
-  startFromEvaluation() {
-    this.router.navigate(['/customer']);
-  }
-
-  // 🆕 Camino 2: cotizar directamente, eligiendo (o creando) un cliente sin pasar por evaluación
-  startDirectQuote() {
-    this.router.navigate(['/customer'], { queryParams: { mode: 'pick-for-quote' } });
+    this.showNewQuoteModal = true;
   }
 }

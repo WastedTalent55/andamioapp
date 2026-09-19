@@ -228,6 +228,32 @@ const deleteEvaluation = async (id, tenant_id) => {
     return result.affectedRows > 0;
 };
 
+// 🆕 Evaluaciones que todavía no tienen ninguna cotización asociada —
+// usado por el selector "Nueva Cotización → Desde una evaluación"
+const getWithoutQuote = async (tenant_id) => {
+
+    const [rows] = await db.query(
+        `
+        SELECT
+            e.*,
+            CONCAT(c.first_name, ' ', IFNULL(c.last_name, '')) AS customer_name,
+            c.phone
+
+        FROM evaluations e
+        JOIN customers c ON e.customer_id = c.id
+        LEFT JOIN quotes q ON q.evaluation_id = e.id
+
+        WHERE e.tenant_id = ?
+        AND q.id IS NULL
+
+        ORDER BY e.scheduled_date DESC
+        `,
+        [tenant_id]
+    );
+
+    return rows;
+};
+
 module.exports = {
 
     createEvaluation,
@@ -239,6 +265,7 @@ module.exports = {
     syncCancelledStatus,
     hasQuote,
     deleteEvaluation,
-    getStats
+    getStats,
+    getWithoutQuote
 
 };

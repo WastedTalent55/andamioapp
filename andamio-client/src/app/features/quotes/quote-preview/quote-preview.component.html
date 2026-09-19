@@ -1,134 +1,123 @@
 <div class="preview-layout">
   <aside class="preview-sidebar">
     <div class="sidebar-header">
+      <div class="sidebar-header-top">
+        <span class="sidebar-label">VISTA PREVIA</span>
+        <button type="button" class="btn-close btn-close-sm no-print" (click)="closePreview()" title="Cerrar y volver">
+          <lucide-icon [img]="X" size="18"></lucide-icon>
+        </button>
+      </div>
 
-    <span class="sidebar-label">
-        VISTA PREVIA
-    </span>
+      <h2>Cotización</h2>
 
-    <h2>
-        Cotización
-    </h2>
-
-    <app-status-badge
+      <app-status-badge
         *ngIf="quoteData"
         [label]="quoteData.status"
         [color]="statusBadgeColor(quoteData.status)">
-    </app-status-badge>
-
-    <p>
-        Personaliza la apariencia antes de exportar el PDF.
-    </p>
-
+      </app-status-badge>
     </div>
+
     <div class="sidebar-content">
 
-    <h3 class="sidebar-section-title">
-      APARIENCIA
-    </h3>
-    <div class="card-andamio preview-toolbar">
-      <div class="color-control">
-        <div class="color-info">
-          <label class="control-title">
-            Color de identidad
-          </label>
-          <span class="control-description">
-            Este color aparecerá en la cotización y en el PDF.
-          </span>
+      <!-- Acciones frecuentes: discretas, en una sola fila -->
+      <div class="quick-actions no-print" *ngIf="quoteData">
+        <button
+          class="icon-action"
+          *ngIf="quoteData.status === 'borrador'"
+          [disabled]="updatingStatus"
+          (click)="markAsSent()"
+          title="Marcar como enviada">
+          <lucide-icon [img]="Send" size="17"></lucide-icon>
+          <span>Enviar</span>
+        </button>
+
+        <button class="icon-action" (click)="editQuote()" title="Editar cotización">
+          <lucide-icon [img]="Pencil" size="17"></lucide-icon>
+          <span>Editar</span>
+        </button>
+
+        <button class="icon-action" (click)="downloadPDF()" title="Descargar PDF">
+          <lucide-icon [img]="FileDown" size="17"></lucide-icon>
+          <span>PDF</span>
+        </button>
+
+        <button class="icon-action" (click)="sendWhatsApp()" title="Enviar por WhatsApp">
+          <lucide-icon [img]="MessageCircle" size="17"></lucide-icon>
+          <span>WhatsApp</span>
+        </button>
+      </div>
+
+      <h3 class="sidebar-section-title">MARCA</h3>
+      <div class="card-andamio preview-toolbar">
+        <div class="color-control">
+          <div class="color-info">
+            <label class="control-title">Color de identidad</label>
+            <span class="control-description">Este color aparecerá en la cotización y en el PDF.</span>
+          </div>
+          <div class="color-picker-row">
+            <input type="color" [(ngModel)]="selectedColor" class="color-picker">
+            <span class="color-code">{{ selectedColor }}</span>
+          </div>
         </div>
-        <div class="color-picker-row">
-          <input
-            type="color"
-            [(ngModel)]="selectedColor"
-            class="color-picker">
-          <span class="color-code">
-            {{ selectedColor }}
-          </span>
+
+        <div class="logo-shape-control" *ngIf="tenantConfig?.logo">
+          <label class="control-title">Forma del logo</label>
+          <div class="shape-toggle">
+            <button
+              type="button"
+              class="shape-option"
+              [class.active]="logoShape === 'square'"
+              (click)="setLogoShape('square')"
+              title="Cuadrado">
+              <span class="shape-preview shape-square"></span>
+            </button>
+            <button
+              type="button"
+              class="shape-option"
+              [class.active]="logoShape === 'circle'"
+              (click)="setLogoShape('circle')"
+              title="Redondo">
+              <span class="shape-preview shape-circle"></span>
+            </button>
+          </div>
         </div>
-      </div>
-      <button class="btn-andamio" (click)="saveColorDefault()">FIJAR MARCA</button>
-    </div>
-    <h3 class="sidebar-section-title">
 
-      ACCIONES
-
-    </h3>
-    <div class="card-andamio action-toolbar no-print" *ngIf="quoteData">
-
-      <div class="toolbar-actions" *ngIf="quoteData.status === 'borrador'">
-        <button class="sidebar-btn" [disabled]="updatingStatus" (click)="markAsSent()">
-          <lucide-icon [img]="Send" size="16"></lucide-icon>
-          <span>Marcar como enviada</span>
-        </button>
+        <button class="btn-andamio btn-brand-save" (click)="saveColorDefault()">Guardar como predeterminado</button>
       </div>
 
-      <div class="toolbar-actions" *ngIf="quoteData.status === 'enviada'">
-        <button class="sidebar-btn" [disabled]="updatingStatus" (click)="markAsAccepted()">
-          <lucide-icon [img]="CircleCheck" size="16"></lucide-icon>
-          <span>Marcar como aceptada</span>
-        </button>
-        <button class="sidebar-btn sidebar-btn-secondary" [disabled]="updatingStatus" (click)="markAsRejected()">
-          <lucide-icon [img]="CircleX" size="16"></lucide-icon>
-          <span>Marcar como rechazada</span>
-        </button>
-      </div>
+      <ng-container *ngIf="quoteData">
+        <ng-container *ngIf="quoteData.status === 'enviada' || quoteData.status === 'aceptada' || quoteData.status === 'rechazada'">
+          <h3 class="sidebar-section-title">ESTADO</h3>
+          <div class="card-andamio action-toolbar no-print">
+            <div class="toolbar-actions" *ngIf="quoteData.status === 'enviada'">
+              <button class="sidebar-btn" [disabled]="updatingStatus" (click)="markAsAccepted()">
+                <lucide-icon [img]="CircleCheck" size="16"></lucide-icon>
+                <span>Marcar como aceptada</span>
+              </button>
+              <button class="sidebar-btn sidebar-btn-secondary" [disabled]="updatingStatus" (click)="markAsRejected()">
+                <lucide-icon [img]="CircleX" size="16"></lucide-icon>
+                <span>Marcar como rechazada</span>
+              </button>
+            </div>
 
-      <div class="toolbar-actions" *ngIf="quoteData.status === 'aceptada' || quoteData.status === 'rechazada'">
-        <span class="control-description">
-          Esta cotización ya fue {{ quoteData.status }}. Cualquier edición creará una versión nueva.
-        </span>
-      </div>
+            <div class="toolbar-actions" *ngIf="quoteData.status === 'aceptada' || quoteData.status === 'rechazada'">
+              <span class="control-description">
+                Esta cotización ya fue {{ quoteData.status }}. Cualquier edición creará una versión nueva.
+              </span>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
 
-      <div class="toolbar-actions">
-
-        <button class="sidebar-btn" (click)="editQuote()">
-
-        <lucide-icon [img]="Pencil" size="16"></lucide-icon>
-
-        <span>
-
-            Editar cotización
-
-        </span>
-
-    </button>
-
-    <button class="sidebar-btn" (click)="downloadPDF()">
-
-        <lucide-icon [img]="FileDown" size="16"></lucide-icon>
-
-        <span>
-
-            Descargar PDF
-
-        </span>
-
-    </button>
-
-    <button class="sidebar-btn sidebar-btn-secondary" (click)="closePreview()">
-
-        ←
-
-        <span>
-
-            Volver
-
-        </span>
-
-    </button>
-
-</div>
-    </div>
-
-    <h3 class="sidebar-section-title" *ngIf="versionHistory.length > 1">
-      HISTORIAL DE VERSIONES
-    </h3>
-    <div class="card-andamio" *ngIf="versionHistory.length > 1">
-      <div class="toolbar-actions" *ngFor="let v of versionHistory">
-        <span class="control-description">v{{ v.version_number }}{{ v.is_current ? ' (vigente)' : '' }}</span>
-        <app-status-badge [label]="v.status" [color]="statusBadgeColor(v.status)"></app-status-badge>
-      </div>
-    </div>
+      <ng-container *ngIf="versionHistory.length > 1">
+        <h3 class="sidebar-section-title">HISTORIAL DE VERSIONES</h3>
+        <div class="card-andamio">
+          <div class="toolbar-actions" *ngFor="let v of versionHistory">
+            <span class="control-description">v{{ v.version_number }}{{ v.is_current ? ' (vigente)' : '' }}</span>
+            <app-status-badge [label]="v.status" [color]="statusBadgeColor(v.status)"></app-status-badge>
+          </div>
+        </div>
+      </ng-container>
     </div>
 
   </aside>
@@ -168,7 +157,8 @@
     <img
         *ngIf="tenantConfig?.logo"
         [src]="getSafeUrl(tenantConfig.logo)"
-        class="quote-logo-render">
+        class="quote-logo-render"
+        [class.logo-round]="logoShape === 'circle'">
 
     <div class="quote-meta">
 
@@ -229,8 +219,8 @@
         <td class="text-center">{{ item.unit || 'SERVICIO' }}</td>
         <td class="data-number text-right">{{ (item.unit_price * item.quantity) | currency }}</td>
       </tr>
-      <tr class="subtotal-row">
-        <td colspan="4"></td>
+      <tr class="section-total-row">
+        <td colspan="4" class="text-right"><strong>SUMA TOTAL DE MANO DE OBRA</strong></td>
         <td class="data-number text-right">{{ laborSubtotal | currency }}</td>
       </tr>
     </tbody>
@@ -262,7 +252,7 @@
         <td class="text-center">{{ mat.unit }}</td>
         <td class="data-number text-right">{{ (mat.unit_price * mat.quantity) | currency }}</td>
       </tr>
-      <tr class="materials-total-row">
+      <tr class="section-total-row">
         <td colspan="4" class="text-right"><strong>SUMA TOTAL DE MATERIALES</strong></td>
         <td class="data-number text-right">{{ materialsSubtotal | currency }}</td>
       </tr>
@@ -365,18 +355,38 @@
 </div>
 
 </footer>
-<!-- 🏦 DATOS BANCARIOS [3] -->
-<section class="bank-section" [style.background-color]="selectedColor + '10'">
-  <p><strong>{{ tenantConfig?.bank_name || 'BBVA' }}</strong></p>
-  <p>CUENTA: <span class="data-number">{{ tenantConfig?.bank_account }}</span></p>
-  <p>CLABE: <span class="data-number">{{ tenantConfig?.bank_clabe }}</span></p>
+<!-- 🏦 DATOS BANCARIOS: solo si el tenant capturó al menos la cuenta -->
+<section class="info-strip" *ngIf="tenantConfig?.bank_account">
+  <span class="info-strip-accent" [style.background]="selectedColor"></span>
+  <div class="info-strip-body">
+    <span class="info-strip-title">{{ tenantConfig?.bank_name || 'Banco' }}</span>
+    <div class="info-strip-row">
+      <span><label>Cuenta</label><span class="data-number">{{ tenantConfig?.bank_account }}</span></span>
+      <span *ngIf="tenantConfig?.bank_clabe"><label>CLABE</label><span class="data-number">{{ tenantConfig?.bank_clabe }}</span></span>
+    </div>
+  </div>
 </section>
 <!-- 📄 TÉRMINOS Y CONDICIONES -->
 <section class="terms-section" *ngIf="tenantConfig?.terms_conditions">
-  <h4>Términos y Condiciones</h4>
+  <h4>Términos y condiciones</h4>
   <p>{{ tenantConfig.terms_conditions }}</p>
 </section>
-<div class="final-thanks">!!GRACIAS POR LA CONFIANZA!!</div>
+<!-- 📇 QUIÉN ENVÍA LA COTIZACIÓN: solo los datos que el tenant llenó en su configuración -->
+<section
+  class="sender-footer"
+  [style.background]="selectedColor"
+  *ngIf="tenantConfig?.phone || tenantConfig?.email || tenantConfig?.address || tenantConfig?.social_media">
+  <div class="sender-footer-name">
+    {{ tenantConfig?.company_name }}<span *ngIf="tenantConfig?.owner_name"> — {{ tenantConfig?.owner_name }}</span>
+  </div>
+  <div class="sender-footer-contacts">
+    <span *ngIf="tenantConfig?.phone">{{ tenantConfig.phone }}</span>
+    <span *ngIf="tenantConfig?.email">{{ tenantConfig.email }}</span>
+    <span *ngIf="tenantConfig?.address">{{ tenantConfig.address }}</span>
+    <span *ngIf="tenantConfig?.social_media">{{ tenantConfig.social_media }}</span>
+  </div>
+</section>
+<div class="final-thanks">Gracias por la confianza</div>
     </div>
   </main>
 </div>

@@ -225,6 +225,11 @@ export class QuoteFormComponent implements OnInit {
       return;
     }
 
+    if (!this.customerId) {
+      alert('❌ No hay un cliente asignado a esta cotización. Regresa e inicia el flujo desde "Nueva Cotización" en Cotizaciones.');
+      return;
+    }
+
     const allItems = [
       ...this.quoteForm.value.laborItems.map((i: { description: string; unit_price: number; quantity: number; unit: string }) => ({ 
         ...i, 
@@ -259,7 +264,10 @@ export class QuoteFormComponent implements OnInit {
           }
           this.location.back();
         },
-        error: () => alert('❌ Error al actualizar en MySQL')
+        error: (err) => {
+          console.error('Error al actualizar cotización:', err);
+          alert('❌ Error al actualizar en MySQL');
+        }
       });
     } else {
         this.quoteService.createQuote(finalData).subscribe({
@@ -272,7 +280,10 @@ export class QuoteFormComponent implements OnInit {
             this.router.navigate(['/board']);
           }
         },
-        error: () => alert('❌ Error al crear la cotización')
+        error: (err) => {
+          console.error('Error al crear cotización:', err);
+          alert('❌ Error al crear la cotización');
+        }
       });
     }              
   }

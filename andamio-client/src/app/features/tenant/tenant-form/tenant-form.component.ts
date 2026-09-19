@@ -45,7 +45,8 @@ export class TenantFormComponent implements OnInit {
       bank_clabe: ['', [Validators.pattern('^[0-9]{18}$')]], 
       terms_conditions: [''],
       brand_color: ['#FFB800'],
-      logo: [''] ,
+      logo: [''],
+      social_media: [''],
     });
   }
 

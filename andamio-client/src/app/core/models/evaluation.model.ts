@@ -11,4 +11,5 @@ export interface Evaluation {
   last_name: string;
   phone: string;
   address: string;
+  customer_name?: string; // solo viene en getEvaluationsWithoutQuote()
 }

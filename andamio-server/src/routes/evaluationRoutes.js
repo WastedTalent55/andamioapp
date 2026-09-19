@@ -21,6 +21,12 @@ router.get(
 );
 
 router.get(
+    '/without-quote',
+    verifyToken,
+    controller.getWithoutQuote
+);
+
+router.get(
     '/',
     verifyToken,
     controller.getAll

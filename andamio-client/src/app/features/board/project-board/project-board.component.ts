@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PageHeaderComponent } from '../../../shared/layout/page-header/page-header.component';
 import { BoardColumnComponent } from "../board-column/board-column.component";
+import { NewQuoteModalComponent } from '../../quotes/new-quote-modal/new-quote-modal.component'; 
 
 const EMPTY_BOARD: BoardSummary = {
   evaluations: [],
@@ -15,7 +16,7 @@ const EMPTY_BOARD: BoardSummary = {
 @Component({
   selector: 'app-project-board',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, BoardColumnComponent],
+  imports: [CommonModule, PageHeaderComponent, BoardColumnComponent, NewQuoteModalComponent],
   templateUrl: './project-board.component.html',
   styleUrl: './project-board.component.css'
 })
@@ -27,6 +28,7 @@ export class ProjectBoardComponent implements OnInit {
   private boardService = inject(ProjectBoardService);
 
   columns: BoardSummary = { ...EMPTY_BOARD };
+  showNewQuoteModal = false;
 
   createCustomer() {
   this.router.navigate(['/customer/new']);
@@ -37,7 +39,7 @@ this.router.navigate(['/evaluations/new']);
 }
 
 createQuote() {
-  this.router.navigate(['/quotes/new']);
+  this.showNewQuoteModal = true;
 }
 
 createProject() {

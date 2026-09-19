@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Evaluation } from '../models/evaluation.model';
 import { ApiResponse } from '../models/api-response.model';
-import { environment } from '../../../enviroments/environment'; 
+import { environment } from '../../../enviroments/environment.production';
 
 export interface EvaluationStats {
   total: number;
@@ -47,5 +47,9 @@ export class EvaluationService {
 
   deleteEvaluation(id: number): Observable<ApiResponse<unknown>> {
     return this.http.delete<ApiResponse<unknown>>(`${this.apiUrl}/${id}`);
+  }
+
+  getEvaluationsWithoutQuote(): Observable<ApiResponse<Evaluation[]>> {
+    return this.http.get<ApiResponse<Evaluation[]>>(`${this.apiUrl}/without-quote`);
   }
 }

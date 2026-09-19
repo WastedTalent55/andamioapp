@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 
 const Tenant = {
-
+ 
 
     update: async (id, tenantData) => {
         const {
@@ -16,7 +16,9 @@ const Tenant = {
             bank_clabe,
             terms_conditions,
             logo,
-            brand_color
+            brand_color,
+            logo_shape,
+            social_media
         } = tenantData;
 
 
@@ -32,7 +34,9 @@ const Tenant = {
             bank_clabe = ?, 
             terms_conditions = ?,
             logo = ?,
-            brand_color = ?
+            brand_color = ?,
+            logo_shape = ?,
+            social_media = ?
             WHERE id = ?
         `;
 
@@ -49,6 +53,8 @@ const Tenant = {
             terms_conditions,
             logo,
             brand_color,
+            logo_shape || 'square',
+            social_media,
             id
         ]);
 

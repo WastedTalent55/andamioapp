@@ -1,0 +1,86 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="stopPropagation($event)">
+
+    <button type="button" class="btn-close" (click)="close()">
+      <lucide-icon [img]="X" size="20"></lucide-icon>
+    </button>
+
+    <!-- Paso 1: elegir camino -->
+    <ng-container *ngIf="step === 'choose'">
+      <h3 class="modal-title">¿Cómo quieres cotizar?</h3>
+
+      <div class="choice-grid">
+        <button class="choice-card" (click)="openEvaluationPicker()">
+          <lucide-icon [img]="ClipboardList" size="26"></lucide-icon>
+          <span class="choice-title">Desde una evaluación</span>
+          <span class="choice-desc">El flujo estándar: cliente → visita de evaluación → cotización.</span>
+        </button>
+
+        <button class="choice-card" (click)="openCustomerPicker()">
+          <lucide-icon [img]="Zap" size="26"></lucide-icon>
+          <span class="choice-title">Cotizar directamente</span>
+          <span class="choice-desc">Omite la evaluación. Busca al cliente (o créalo) y cotiza de una vez.</span>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- Paso 2a: elegir evaluación sin cotización -->
+    <ng-container *ngIf="step === 'pick-evaluation'">
+      <button type="button" class="back-link" (click)="goToChoose()">← Volver</button>
+      <h3 class="modal-title">Elige una evaluación</h3>
+
+      <div class="search-box">
+        <lucide-icon [img]="Search" size="16"></lucide-icon>
+        <input type="text" placeholder="Buscar por cliente o trabajo..." (input)="onSearchEvaluations($event)">
+      </div>
+
+      <div class="picker-list">
+        <div class="loading-state" *ngIf="loading">Cargando evaluaciones...</div>
+
+        <div class="empty-state" *ngIf="!loading && filteredEvaluations.length === 0">
+          No tienes evaluaciones sin cotización todavía.
+        </div>
+
+        <button
+          type="button"
+          class="picker-item"
+          *ngFor="let ev of filteredEvaluations"
+          (click)="pickEvaluation(ev)">
+          <span class="picker-item-title">{{ ev.customer_name }}</span>
+          <span class="picker-item-sub">{{ ev.requested_work }} · {{ ev.scheduled_date | date:'dd MMM yyyy' }}</span>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- Paso 2b: buscar/crear cliente para cotización directa -->
+    <ng-container *ngIf="step === 'pick-customer'">
+      <button type="button" class="back-link" (click)="goToChoose()">← Volver</button>
+      <h3 class="modal-title">¿Para qué cliente es esta cotización?</h3>
+
+      <div class="search-box">
+        <lucide-icon [img]="Search" size="16"></lucide-icon>
+        <input type="text" placeholder="Escribe el nombre del cliente..." (input)="onSearchCustomers($event)" [disabled]="loading">
+      </div>
+
+      <div class="picker-list" *ngIf="!loading">
+        <button
+          type="button"
+          class="picker-item"
+          *ngFor="let c of filteredCustomers"
+          (click)="pickCustomer(c)">
+          <span class="picker-item-title">{{ c.first_name }} {{ c.last_name }}</span>
+          <span class="picker-item-sub" *ngIf="c.phone">{{ c.phone }}</span>
+        </button>
+
+        <div class="no-match-box" *ngIf="showNoMatches">
+          <p>Ese cliente no existe en tu base de datos.</p>
+          <button type="button" class="btn-andamio full-width" (click)="createNewCustomer()">
+            <lucide-icon [img]="UserPlus" size="16"></lucide-icon>
+            Crear cliente nuevo
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+  </div>
+</div>

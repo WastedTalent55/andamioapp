@@ -1,0 +1,218 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.65);
+  backdrop-filter: blur(2px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 2000;
+  padding: 1.5rem;
+}
+
+.modal-card {
+  position: relative;
+
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+
+  background-color: var(--andamio-gris-oscuro);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+
+  padding: 1.75rem;
+}
+
+.modal-card .btn-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+}
+
+.modal-title {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--andamio-tiza);
+  padding-right: 2rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+
+  background: none;
+  border: none;
+  padding: 0;
+
+  color: var(--andamio-concreto);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.back-link:hover {
+  color: var(--andamio-tiza);
+}
+
+/* Paso 1: elegir camino */
+.choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 520px) {
+  .choice-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.choice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+
+  text-align: left;
+
+  background: var(--andamio-fondo);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-md);
+
+  color: var(--andamio-oro-activo);
+
+  cursor: pointer;
+  transition: var(--transition-friendly);
+}
+
+.choice-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--andamio-oro-activo);
+}
+
+.choice-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--andamio-tiza);
+  font-size: 1rem;
+}
+
+.choice-desc {
+  color: var(--andamio-concreto);
+  font-size: .85rem;
+  line-height: 1.4;
+}
+
+/* Búsqueda + lista (pasos 2a/2b) */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 0 14px;
+  height: 48px;
+
+  background: var(--andamio-fondo);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: var(--radius-interactive);
+
+  color: var(--andamio-concreto);
+
+  margin-bottom: 1rem;
+}
+
+.search-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--andamio-tiza);
+  font-size: 0.9rem;
+}
+
+.search-box input:focus {
+  outline: none;
+}
+
+.picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.picker-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+
+  width: 100%;
+  text-align: left;
+
+  padding: 10px 14px;
+
+  background: var(--andamio-fondo);
+  border: 1px solid rgba(255, 255, 255, .06);
+  border-radius: 10px;
+
+  cursor: pointer;
+  transition: .15s;
+}
+
+.picker-item:hover {
+  border-color: var(--andamio-oro-activo);
+}
+
+.picker-item-title {
+  font-weight: 700;
+  color: var(--andamio-tiza);
+  font-size: 0.88rem;
+}
+
+.picker-item-sub {
+  color: var(--andamio-concreto);
+  font-size: 0.78rem;
+}
+
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 24px 10px;
+  color: var(--andamio-concreto);
+  font-size: 0.85rem;
+}
+
+.no-match-box {
+  margin-top: 8px;
+  padding: 14px;
+
+  background: rgba(255, 184, 0, 0.06);
+  border: 1px dashed var(--andamio-oro-activo);
+  border-radius: 10px;
+
+  text-align: center;
+}
+
+.no-match-box p {
+  margin: 0 0 10px;
+  color: var(--andamio-concreto);
+  font-size: 0.85rem;
+}
+
+.no-match-box .full-width {
+  width: 100%;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
