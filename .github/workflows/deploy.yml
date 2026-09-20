@@ -38,6 +38,15 @@ jobs:
       - name: Build Angular
         run: npm run build -- --base-href /andamioapp/
 
+      # Sin esto, cualquier link directo a una ruta de Angular (ej. /quotes/preview/8)
+      # da 404 de GitHub Pages en vez de dejar que el router de Angular la resuelva.
+      # Tiene que copiarse DESPUÉS del build porque index.html ya trae los <script>
+      # con el hash correcto — un 404.html estático de antemano no los tendría.
+      - name: SPA fallback (404 -> index.html)
+        run: |
+          cp dist/andamio-client/browser/index.html dist/andamio-client/browser/404.html
+          touch dist/andamio-client/browser/.nojekyll
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
