@@ -218,28 +218,115 @@ export class QuotePreviewComponent implements OnInit {
     const companyName = this.tenantConfig?.company_name || 'Andamio';
     const folio = this.quoteData.quote_folio || this.quoteData.quote_id;
 
-    // ENCABEZADO
+    // ENCABEZADO: "Cotización" grande a la izquierda, fecha a la derecha
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
+    doc.setFontSize(22);
     doc.setTextColor(...obsidiana);
-    doc.text(companyName, 14, 20);
-
-    // Línea de acento con el color de marca, mismo espíritu que el borde superior del preview
-    doc.setDrawColor(...brandColor);
-    doc.setLineWidth(1.2);
-    doc.line(14, 24, 196, 24);
+    doc.text('Cotización', 14, 22);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text(`Cotización: ${folio}`, 14, 30);
-    doc.text(`Fecha: ${this.formatDate(this.quoteData.created_at)}`, 150, 20);
+    doc.text(this.formatDate(this.quoteData.created_at), 196, 20, { align: 'right' });
+
+    // Línea de acento con el color de marca
+    doc.setDrawColor(...brandColor);
+    doc.setLineWidth(1.2);
+    doc.line(14, 28, 196, 28);
+
+    // DE (tenant) / PARA (cliente): dos cajas separadas, no mezcladas
+    const fromLines = [
+      this.tenantConfig?.owner_name,
+      this.tenantConfig?.phone,
+      this.tenantConfig?.email,
+      this.tenantConfig?.address,
+      this.tenantConfig?.social_media
+    ].filter(Boolean) as string[];
+
+    const toLines = [
+      this.quoteData.full_address,
+      this.quoteData.phone
+    ].filter(Boolean) as string[];
+
+    const partyBoxTop = 36;
+    const partyLineHeight = 5;
+    const minBoxHeightForLogo = this.tenantConfig?.logo ? 46 : 0;
+    const partyBoxHeight = Math.max(16 + Math.max(fromLines.length, toLines.length) * partyLineHeight, minBoxHeightForLogo);
+    const boxWidth = 87;
+    const leftBoxX = 14;
+    const rightBoxX = 14 + boxWidth + 8;
+
+    doc.setFillColor(248, 250, 252);
+    doc.rect(leftBoxX, partyBoxTop, boxWidth, partyBoxHeight, 'F');
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.4);
+    doc.rect(rightBoxX, partyBoxTop, boxWidth, partyBoxHeight, 'S');
+
+    // Logo del tenant, esquina superior derecha del recuadro DE
+    // (el logo ya se guarda en base64, así que jsPDF lo puede leer sin cargas asíncronas;
+    // nota: jsPDF no soporta recortar a círculo, así que aquí siempre se ve cuadrado/rectangular
+    // aunque en el navegador hayas elegido "redondo" — es una limitación de la librería)
+    if (this.tenantConfig?.logo) {
+      try {
+        const props = doc.getImageProperties(this.tenantConfig.logo);
+        const maxW = 42;
+        const maxH = 28;
+        const ratio = Math.min(maxW / props.width, maxH / props.height);
+        const logoW = props.width * ratio;
+        const logoH = props.height * ratio;
+        doc.addImage(
+          this.tenantConfig.logo,
+          props.fileType,
+          leftBoxX + boxWidth - logoW - 6,
+          partyBoxTop + 6,
+          logoW,
+          logoH
+        );
+      } catch {
+        // Si el logo no está en un formato que jsPDF pueda leer, simplemente se omite
+      }
+    }
+
+    // Contenido caja DE
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text('DE', leftBoxX + 6, partyBoxTop + 8);
 
     doc.setFontSize(11);
-    doc.setTextColor(0);
-    doc.text(`Cliente: ${this.quoteData.customer_name || ''}`, 14, 41);
-    doc.text(`Dirección: ${this.quoteData.full_address || ''}`, 14, 47);
-    doc.text(`Teléfono: ${this.quoteData.phone || ''}`, 14, 53);
+    doc.setTextColor(...obsidiana);
+    doc.text(companyName, leftBoxX + 6, partyBoxTop + 15);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(71, 85, 105);
+    fromLines.forEach((line, i) => {
+      doc.text(line, leftBoxX + 6, partyBoxTop + 21 + i * partyLineHeight);
+    });
+
+    // Contenido caja PARA
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text('PARA', rightBoxX + 6, partyBoxTop + 8);
+
+    doc.setFontSize(11);
+    doc.setTextColor(...obsidiana);
+    doc.text(this.quoteData.customer_name || '', rightBoxX + 6, partyBoxTop + 15);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(71, 85, 105);
+    toLines.forEach((line, i) => {
+      doc.text(line, rightBoxX + 6, partyBoxTop + 21 + i * partyLineHeight);
+    });
+
+    // Folio, discreto, esquina inferior derecha del recuadro PARA
+    doc.setFontSize(7.5);
+    doc.setTextColor(148, 163, 184);
+    doc.text(String(folio), rightBoxX + boxWidth - 6, partyBoxTop + partyBoxHeight - 6, { align: 'right' });
+
+    const tableStartY = partyBoxTop + partyBoxHeight + 14;
 
     // TABLA DE MANO DE OBRA
     const laborRows = this.laborItems.map((item) => [
@@ -251,7 +338,7 @@ export class QuotePreviewComponent implements OnInit {
     ]);
 
     autoTable(doc, {
-      startY: 61,
+      startY: tableStartY,
       head: [['MANO DE OBRA', 'PRECIO UNITARIO', 'CANTIDAD', 'UNIDAD', 'PRECIO TOTAL']],
       body: laborRows,
       headStyles: { fillColor: brandColor },
@@ -332,35 +419,9 @@ export class QuotePreviewComponent implements OnInit {
       finalY += termsLines.length * 4.5 + 10;
     }
 
-    // 📇 FRANJA DE CONTACTO: solo los datos que el tenant llenó en su configuración
-    const contactParts = [
-      this.tenantConfig?.phone,
-      this.tenantConfig?.email,
-      this.tenantConfig?.address,
-      this.tenantConfig?.social_media
-    ].filter(Boolean);
-
-    if (contactParts.length > 0) {
-      doc.setFillColor(...brandColor);
-      doc.rect(14, finalY, 182, 22, 'F');
-
-      doc.setTextColor(255, 255, 255);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      let senderLine = companyName;
-      if (this.tenantConfig?.owner_name) senderLine += ` — ${this.tenantConfig.owner_name}`;
-      doc.text(senderLine, 18, finalY + 9);
-
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8.5);
-      doc.text(contactParts.join('   ·   '), 18, finalY + 17);
-
-      finalY += 30;
-    }
-
     doc.setTextColor(148, 163, 184);
     doc.setFontSize(8);
-    doc.text('GRACIAS POR LA CONFIANZA', 105, finalY, { align: 'center' });
+    doc.text('GRACIAS POR LA CONFIANZA', 105, finalY + 10, { align: 'center' });
 
     doc.save(`Cotizacion_${folio}.pdf`);
   }

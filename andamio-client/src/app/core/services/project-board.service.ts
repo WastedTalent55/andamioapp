@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { environment } from '../../../enviroments/environment'; 
+import { environment } from '../../../environments/environment'; 
 
 // Una fila del board puede ser una evaluación pura, una cotización, o un
 // proyecto — según la columna, distintos campos vienen o no. Se modela como

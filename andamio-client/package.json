@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "predeploy": "ng build --configuration production --base-href /andamioapp/ && cp dist/andamio-client/browser/index.html dist/andamio-client/browser/404.html",
+    "deploy": "npx angular-cli-ghpages --dir=dist/andamio-client/browser"
   },
   "private": true,
   "dependencies": {

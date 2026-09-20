@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Customer } from '../models/customer.model';
 import { ApiResponse } from '../models/api-response.model';
-import { environment } from '../../../enviroments/environment';
+import { environment } from '../../../environments/environment';
 
 export interface CustomerStats {
   total: number;

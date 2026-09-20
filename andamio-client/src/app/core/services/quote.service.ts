@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Quote, QuoteItem, QuoteVersionHistoryEntry } from '../models/quote.model';
 import { ApiResponse } from '../models/api-response.model';
-import { environment } from '../../../enviroments/environment';
+import { environment } from '../../../environments/environment';
 
 export interface QuoteStats {
   total: number;

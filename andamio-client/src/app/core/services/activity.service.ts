@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { environment } from '../../../enviroments/environment'; 
+import { environment } from '../../../environments/environment'; 
 
 export interface ActivityItem {
   type: 'evaluation' | 'quote' | 'project';

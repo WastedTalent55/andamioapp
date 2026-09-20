@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Project, ProjectFormData } from '../models/project.model';
 import { ApiResponse } from '../models/api-response.model';
-import { environment } from '../../../enviroments/environment'; 
+import { environment } from '../../../environments/environment'; 
 
 export interface ProjectStats {
   total: number;

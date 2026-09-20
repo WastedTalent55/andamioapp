@@ -124,65 +124,41 @@
 
   <main class="preview-content">
     <div class="quote-canvas">
-      <!-- ENCABEZADO: IDENTIDAD DIGITAL -->
+      <!-- ENCABEZADO: IDENTIDAD DE MARCA -->
       <header class="quote-top-wrapper" [style.border-top-color]="selectedColor">
-        <div class="quote-header-left">
 
-    <span class="quote-label">
-        CLIENTE
-    </span>
+        <div class="quote-title-bar">
+          <h1 class="quote-title-big">Cotización</h1>
+          <span class="quote-title-date">{{ quoteData?.created_at | date:'dd/MM/yyyy' }}</span>
+        </div>
 
-    <h1 class="quote-client">
+        <!-- DE (quién cotiza) / PARA (cliente) — separados a propósito -->
+        <div class="quote-parties">
+          <div class="party-block party-from">
+            <img
+              *ngIf="tenantConfig?.logo"
+              [src]="getSafeUrl(tenantConfig.logo)"
+              class="quote-logo-render party-logo"
+              [class.logo-round]="logoShape === 'circle'">
+            <span class="party-label">DE</span>
+            <strong class="party-name">{{ tenantConfig?.company_name }}</strong>
+            <span class="party-line" *ngIf="tenantConfig?.owner_name">{{ tenantConfig.owner_name }}</span>
+            <span class="party-line" *ngIf="tenantConfig?.phone">{{ tenantConfig.phone }}</span>
+            <span class="party-line" *ngIf="tenantConfig?.email">{{ tenantConfig.email }}</span>
+            <span class="party-line" *ngIf="tenantConfig?.address">{{ tenantConfig.address }}</span>
+            <span class="party-line" *ngIf="tenantConfig?.social_media">{{ tenantConfig.social_media }}</span>
+          </div>
 
-        {{ quoteData?.customer_name }}
+          <div class="party-divider"></div>
 
-    </h1>
-
-    <p class="quote-address">
-
-        {{ quoteData?.full_address }}
-
-    </p>
-
-    <p class="quote-phone">
-
-        {{ quoteData?.phone }}
-
-    </p>
-
-</div>
-
-<div class="quote-header-right">
-
-    <img
-        *ngIf="tenantConfig?.logo"
-        [src]="getSafeUrl(tenantConfig.logo)"
-        class="quote-logo-render"
-        [class.logo-round]="logoShape === 'circle'">
-
-    <div class="quote-meta">
-
-        <span>
-
-            Cotización
-
-        </span>
-
-        <strong>
-
-            {{ quoteData?.quote_folio || quoteData?.quote_id }}
-
-        </strong>
-
-        <small>
-
-            {{ quoteData?.created_at | date:'dd/MM/yyyy' }}
-
-        </small>
-
-    </div>
-
-</div>
+          <div class="party-block party-to">
+            <span class="party-label">PARA</span>
+            <strong class="party-name">{{ quoteData?.customer_name }}</strong>
+            <span class="party-line" *ngIf="quoteData?.full_address">{{ quoteData?.full_address }}</span>
+            <span class="party-line" *ngIf="quoteData?.phone">{{ quoteData?.phone }}</span>
+            <span class="party-folio">{{ quoteData?.quote_folio || quoteData?.quote_id }}</span>
+          </div>
+        </div>
       </header>
       <!-- 🛠️ SECCIÓN: MANO DE OBRA (5 COLUMNAS) -->
       <div class="table-wrapper">
@@ -370,21 +346,6 @@
 <section class="terms-section" *ngIf="tenantConfig?.terms_conditions">
   <h4>Términos y condiciones</h4>
   <p>{{ tenantConfig.terms_conditions }}</p>
-</section>
-<!-- 📇 QUIÉN ENVÍA LA COTIZACIÓN: solo los datos que el tenant llenó en su configuración -->
-<section
-  class="sender-footer"
-  [style.background]="selectedColor"
-  *ngIf="tenantConfig?.phone || tenantConfig?.email || tenantConfig?.address || tenantConfig?.social_media">
-  <div class="sender-footer-name">
-    {{ tenantConfig?.company_name }}<span *ngIf="tenantConfig?.owner_name"> — {{ tenantConfig?.owner_name }}</span>
-  </div>
-  <div class="sender-footer-contacts">
-    <span *ngIf="tenantConfig?.phone">{{ tenantConfig.phone }}</span>
-    <span *ngIf="tenantConfig?.email">{{ tenantConfig.email }}</span>
-    <span *ngIf="tenantConfig?.address">{{ tenantConfig.address }}</span>
-    <span *ngIf="tenantConfig?.social_media">{{ tenantConfig.social_media }}</span>
-  </div>
 </section>
 <div class="final-thanks">Gracias por la confianza</div>
     </div>

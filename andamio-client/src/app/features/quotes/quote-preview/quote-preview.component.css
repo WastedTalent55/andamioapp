@@ -1,4 +1,8 @@
 .preview-layout {
+    position: fixed;
+    inset: 0;
+    z-index: 1001; /* por encima de .andamio-navbar (fixed, z-index:1000) */
+
     display: flex;
     width: 100%;
     height: 100vh;
@@ -19,6 +23,22 @@
 
     overflow-y: auto;
     overflow-x: hidden;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,.15) transparent;
+}
+
+.preview-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.preview-content::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.15);
+  border-radius: 10px;
+}
+
+.preview-content::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .sidebar-content{
@@ -88,7 +108,7 @@
 
   margin-bottom: 40px;
 
-  border-radius: 4px;
+  border-radius: 18px;
 
   box-shadow:
     0 24px 60px rgba(0,0,0,.20),
@@ -358,42 +378,6 @@
   background-color: #F1F5F9;
 }
 
-.table-category{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    margin-top:55px;
-
-    margin-bottom:8px;
-
-    background:none !important;
-
-    color:#0F172A;
-
-    font-size:1.6rem;
-
-    font-weight:700;
-
-    letter-spacing:.06em;
-}
-
-.table-category::before{
-
-    content:"";
-
-    width:5px;
-
-    height:38px;
-
-    border-radius:20px;
-
-    background:currentColor;
-}
-
 .section-total-row td {
   background: #F1F5F9;
   font-weight: 800;
@@ -484,10 +468,9 @@
   position: relative;
 
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
 
-  gap: 40px;
+  gap: 28px;
 
   padding-top: 22px;
 
@@ -587,6 +570,123 @@
 .quote-meta small{
 
     color:#64748B;
+}
+
+/* DE (tenant) / PARA (cliente) — dos bloques bien separados, no mezclados */
+.quote-parties {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+.party-divider {
+  width: 1px;
+  background: #E2E8F0;
+}
+
+.party-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 18px 20px;
+  border-radius: 12px;
+}
+
+.party-from {
+  background: #F8FAFC;
+}
+
+.party-to {
+  background: #ffffff;
+  border: 1px solid #E2E8F0;
+}
+
+.party-label {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #94A3B8;
+  margin-bottom: 6px;
+}
+
+.party-name {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 2px;
+}
+
+.party-line {
+  font-size: .85rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+/* Título del documento: "Cotización" grande a la izquierda, fecha a la derecha */
+.quote-title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 22px;
+}
+
+.quote-title-big {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0F172A;
+}
+
+.quote-title-date {
+  font-size: .88rem;
+  color: #64748B;
+}
+
+/* Logo dentro del recuadro DE, esquina superior derecha */
+.party-from {
+  position: relative;
+  padding-top: 30px;
+  padding-right: 138px;
+}
+
+.party-from .quote-logo-render.party-logo {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  max-width: 112px;
+  max-height: 72px;
+  object-fit: contain;
+}
+
+.party-from .quote-logo-render.party-logo.logo-round {
+  width: 72px;
+  height: 72px;
+  max-width: 72px;
+  max-height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Folio discreto dentro del recuadro PARA, esquina inferior derecha */
+.party-to {
+  position: relative;
+  padding-bottom: 32px;
+}
+
+.party-folio {
+  position: absolute;
+  bottom: 14px;
+  right: 18px;
+  font-family: var(--font-technical);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #94A3B8;
 }
 
 .client-info-container {
@@ -802,35 +902,45 @@
 
     align-items:center;
 
-    gap:14px;
+    gap:16px;
 
-    margin:48px 0 24px;
+    margin:48px 0 18px;
 }
 
 .section-bar{
 
-    width:6px;
+    order: 2;
 
-    height:34px;
+    flex: 1;
 
-    border-radius:8px;
+    width: auto;
+
+    height: 2px;
+
+    border-radius: 2px;
 
     display:block;
 }
 
 .section-title h3{
 
+    order: 1;
+
     margin:0;
 
-    font-size:1.25rem;
+    font-family: var(--font-display);
 
-    font-weight:700;
+    font-size:1rem;
 
-    letter-spacing:.08em;
+    font-weight:800;
+
+    letter-spacing:.12em;
 
     text-transform:uppercase;
 
     color:#0F172A;
+
+    white-space: nowrap;
 }
 .company-header{
 
