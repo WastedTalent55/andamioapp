@@ -36,7 +36,8 @@ export class RegisterComponent implements OnInit {
       },
       error: (err) => {
         console.error("Fallo en la estructura de conexión:", err);
-        alert("Hubo un error al crear tu cuenta. Revisa la consola.");
+        const detalle = err?.error?.message || err?.message || 'Revisa la consola.';
+        alert(`Hubo un error al crear tu cuenta: ${detalle}`);
       }
     });
   }

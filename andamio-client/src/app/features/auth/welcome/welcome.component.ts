@@ -54,7 +54,11 @@ export class WelcomeComponent {
           this.router.navigate(['/dashboard']);
         });
       },
-      error: (err) => console.error("Fallo en la estructura", err)
+      error: (err) => {
+        console.error("Fallo en la estructura", err);
+        const detalle = err?.error?.message || err?.message || 'No se pudo conectar con el servidor.';
+        alert(`No se pudo iniciar sesión: ${detalle}`);
+      }
     });
   }
   

@@ -34,7 +34,7 @@ const googleLogin = async (req, res) => {
             const tokenJWT = jwt.sign(
                 {
                     userId: user.id,
-                    tenantId: user.display_name || user.tenant_id
+                    tenantId: user.tenant_id
                 },
                 process.env.JWT_SECRET
             );
@@ -42,6 +42,7 @@ const googleLogin = async (req, res) => {
             return res.json({
                 success: true,
                 token: tokenJWT,
+                tenant_id: user.tenant_id,
                 user_name: user.name
             });
 
