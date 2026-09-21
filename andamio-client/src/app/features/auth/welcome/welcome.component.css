@@ -353,7 +353,11 @@
         display: flex;
         flex-direction: column;
 
-        overflow: hidden;
+        height: auto;
+        min-height: 100vh;
+
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
 
@@ -390,6 +394,8 @@
     .action-panel {
         width: 100%;
         flex: 0 0 0%;
+
+        overflow: visible;
 
         border-top: 1px solid rgba(255, 255, 255, .05);
         border-left: none;
