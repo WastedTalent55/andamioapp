@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { AddressAutocompleteComponent } from '../../../shared/components/address-autocomplete/address-autocomplete.component';
 import { AddressData } from '../../../core/models/address.model';
+import { EvaluationPromptModalComponent } from '../evaluation-prompt-modal/evaluation-prompt-modal.component';
 import { LucideAngularModule, User, X, MapPin, Pencil } from 'lucide-angular';
 
 declare var google: any;
@@ -17,6 +18,7 @@ declare var google: any;
     CommonModule, 
     ReactiveFormsModule, 
     AddressAutocompleteComponent,
+    EvaluationPromptModalComponent,
     LucideAngularModule
   ], 
   templateUrl: './customer-form.component.html',
@@ -40,6 +42,9 @@ export class CustomerFormComponent implements OnInit {
   isEditMode = false;
   customerId?: number;
   submitting = false;
+
+  showEvaluationPrompt = false;
+  pendingCustomer: { id: number; name: string } | null = null;
 
   customerForm: FormGroup = this.fb.group({
     first_name: ['', [Validators.required]],
@@ -155,15 +160,11 @@ export class CustomerFormComponent implements OnInit {
           return;
         }
 
-        const confirmEval = confirm("✅ Cliente guardado con éxito.\n\n¿Deseas agendar la cita de evaluación ahora mismo?");
-      
-        if (confirmEval) {
-          this.router.navigate(['/evaluations/new'], { 
-            queryParams: { clientId: newCustomerId } 
-          });
-        } else {
-          this.location.back();
-        }
+        this.pendingCustomer = {
+          id: newCustomerId,
+          name: `${this.customerForm.value.first_name} ${this.customerForm.value.last_name || ''}`.trim()
+        };
+        this.showEvaluationPrompt = true;
       },
       error: (err) => {
         this.submitting = false;
@@ -171,6 +172,19 @@ export class CustomerFormComponent implements OnInit {
         alert("Hubo un error al guardar. Revisa la consola.");
       }
     });
+  }
+
+  onScheduleEvaluation() {
+    if (!this.pendingCustomer) return;
+    this.showEvaluationPrompt = false;
+    this.router.navigate(['/evaluations/new'], {
+      queryParams: { clientId: this.pendingCustomer.id }
+    });
+  }
+
+  onSkipEvaluation() {
+    this.showEvaluationPrompt = false;
+    this.location.back();
   }
 
   onAddressSelected(data: AddressData) {

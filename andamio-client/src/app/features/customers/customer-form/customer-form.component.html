@@ -51,3 +51,10 @@
     </button>
   </form>
 </div>
+
+<app-evaluation-prompt-modal
+  *ngIf="showEvaluationPrompt"
+  [customerName]="pendingCustomer?.name || ''"
+  (scheduleEvaluation)="onScheduleEvaluation()"
+  (skip)="onSkipEvaluation()">
+</app-evaluation-prompt-modal>

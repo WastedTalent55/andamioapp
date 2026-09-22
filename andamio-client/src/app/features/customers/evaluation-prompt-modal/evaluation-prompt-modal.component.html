@@ -1,0 +1,28 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="stopPropagation($event)">
+
+    <button type="button" class="btn-close" (click)="close()">
+      <lucide-icon [img]="X" size="20"></lucide-icon>
+    </button>
+
+    <h3 class="modal-title">
+      ✅ {{ customerName ? (customerName + ' se guardó') : 'Cliente guardado' }} con éxito
+    </h3>
+    <p class="modal-subtitle">¿Qué quieres hacer ahora?</p>
+
+    <div class="choice-grid">
+      <button class="choice-card" (click)="chooseSchedule()">
+        <lucide-icon [img]="CalendarClock" size="26"></lucide-icon>
+        <span class="choice-title">Agendar evaluación</span>
+        <span class="choice-desc">Programa de una vez la visita de evaluación con este cliente.</span>
+      </button>
+
+      <button class="choice-card" (click)="chooseSkip()">
+        <lucide-icon [img]="UserCheck" size="26"></lucide-icon>
+        <span class="choice-title">Solo guardar cliente</span>
+        <span class="choice-desc">Por ahora nada más — puedes agendar la evaluación después.</span>
+      </button>
+    </div>
+
+  </div>
+</div>
