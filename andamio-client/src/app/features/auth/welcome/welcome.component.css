@@ -466,6 +466,18 @@ ESTILOS DE AUTENTICACIÓN (BOTONES)
   min-height: 40px; /* Evita saltos mientras carga el botón de Google */
 }
 
+.google-load-error {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #f2b8b5;
+  background: rgba(242, 184, 181, 0.08);
+  border: 1px solid rgba(242, 184, 181, 0.25);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: -10px 0 20px;
+  text-align: center;
+}
+
 /* Separador "o" */
 .separator {
   display: flex;

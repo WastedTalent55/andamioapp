@@ -1,4 +1,5 @@
 import { Component, NgZone, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service'; 
 import { Router } from '@angular/router';
 import { 
@@ -15,7 +16,8 @@ declare var google: any;
   selector: 'app-welcome',
   standalone: true,
   imports: [
-    LucideAngularModule
+    LucideAngularModule,
+    CommonModule
   ],
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.css'
@@ -31,18 +33,42 @@ export class WelcomeComponent {
   private router = inject(Router);
   private ngZone = inject(NgZone);
 
-  ngOnInit() {
-    // 1. Preparamos la conexión con tu Client ID oficial [2]
-    google.accounts.id.initialize({
-      client_id: '990420064714-v1g3927kpik6bo5tqjuj4qjl86dgd9ff.apps.googleusercontent.com',
-      callback: (response: any) => this.handleGoogleLogin(response)
-    });
+  googleLoadFailed = false;
 
-    // 2. Pintamos el botón justo en el panel derecho
-    google.accounts.id.renderButton(
-      document.getElementById('google-btn'),
-      { theme: 'outline', size: 'large', width: '250' }
-    );
+  ngAfterViewInit() {
+    this.waitForGoogleAndRender();
+  }
+
+  // El script de Google carga con async/defer, así que puede no estar listo
+  // todavía cuando el componente arranca (más común en Safari/iOS, que además
+  // lo carga más despacio por sus protecciones de privacidad). Reintentamos
+  // durante unos segundos en vez de asumir que ya está disponible.
+  private waitForGoogleAndRender(intentos = 0) {
+    const listo = typeof google !== 'undefined' && google?.accounts?.id;
+
+    if (listo) {
+      google.accounts.id.initialize({
+        client_id: '990420064714-v1g3927kpik6bo5tqjuj4qjl86dgd9ff.apps.googleusercontent.com',
+        callback: (response: any) => this.handleGoogleLogin(response)
+      });
+
+      const contenedor = document.getElementById('google-btn');
+      if (contenedor) {
+        google.accounts.id.renderButton(
+          contenedor,
+          { theme: 'outline', size: 'large', width: '250' }
+        );
+      }
+      return;
+    }
+
+    if (intentos < 20) {
+      // hasta 20 intentos cada 250ms = 5 segundos de margen
+      setTimeout(() => this.waitForGoogleAndRender(intentos + 1), 250);
+    } else {
+      console.error('El script de Google (accounts.google.com/gsi/client) no cargó a tiempo.');
+      this.ngZone.run(() => { this.googleLoadFailed = true; });
+    }
   }
 
   handleGoogleLogin(response: any) {
@@ -56,7 +82,7 @@ export class WelcomeComponent {
       },
       error: (err) => {
         console.error("Fallo en la estructura", err);
-        const detalle = err?.error?.message || err?.message || 'No se pudo conectar con el servidor.';
+        const detalle = err?.error?.error || err?.error?.message || err?.message || 'No se pudo conectar con el servidor.';
         alert(`No se pudo iniciar sesión: ${detalle}`);
       }
     });

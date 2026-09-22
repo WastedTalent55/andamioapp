@@ -94,6 +94,12 @@
         class="google-wrapper">
       </div>
 
+      <p *ngIf="googleLoadFailed" class="google-load-error">
+        No se pudo cargar el botón de Google en este navegador. Si estás en Safari/iPhone,
+        prueba desactivando "Prevenir rastreo entre sitios" en Ajustes → Safari, o intenta
+        con Chrome.
+      </p>
+
       <div class="separator">
         <span>o</span>
       </div>
