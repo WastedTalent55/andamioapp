@@ -859,6 +859,109 @@
   gap: var(--spacing-sm);
 }
 
+/* 📱 MÓVIL: el layout de escritorio (sidebar fijo de 300px + documento tipo carta)
+   no tenía NINGÚN ajuste para pantallas chicas — por eso se cortaba por completo.
+   Aquí: el sidebar pasa arriba del documento en vez de al lado, y el documento
+   reduce sus paddings/columnas fijas para caber en el ancho real de un celular. */
+@media (max-width: 768px) {
+  .preview-layout {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .preview-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+  }
+
+  .preview-content {
+    padding: 20px 14px 60px;
+  }
+
+  .quote-canvas {
+    padding: 24px 18px;
+    min-height: auto;
+  }
+
+  .quote-title-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .quote-title-big {
+    font-size: 1.6rem;
+  }
+
+  /* DE/PARA: de dos columnas a una sola, sin la línea divisoria vertical */
+  .quote-parties {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .party-divider {
+    display: none;
+  }
+
+  /* El logo ya no puede flotar en la esquina de una caja angosta —
+     pasa a ocupar su propia línea arriba del nombre de la empresa */
+  .party-from {
+    padding-right: 20px;
+    padding-top: 18px;
+  }
+
+  .party-from .quote-logo-render.party-logo {
+    position: static;
+    display: block;
+    margin-bottom: 10px;
+    max-width: 90px;
+    max-height: 56px;
+  }
+
+  .party-from .quote-logo-render.party-logo.logo-round {
+    width: 56px;
+    height: 56px;
+    max-width: 56px;
+    max-height: 56px;
+  }
+
+  /* La tabla de 5 columnas no cabe angosta sin aplastarse — mejor que
+     haga su propio scroll horizontal, contenida, en vez de romper el documento */
+  .table-wrapper {
+    margin-top: 28px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .quote-table-industrial {
+    min-width: 560px;
+  }
+
+  /* Entrega + resumen: de lado a lado a apilados */
+  .quote-footer-industrial {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .delivery-box {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .totals-side {
+    width: 100%;
+    margin-left: 0;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+}
+
 /* Evita que el sidebar (botones, selector de color, historial de versiones)
    salga en el PDF, y evita que el contenido se corte por el layout de pantalla */
 @media print {
