@@ -203,3 +203,17 @@ textarea:focus {
   accent-color: var(--andamio-oro-activo);
   cursor: pointer;
 }
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tenant-page .card-andamio {
+    padding: 14px 14px;
+  }
+
+  .upload-container {
+    flex-wrap: wrap;
+  }
+}

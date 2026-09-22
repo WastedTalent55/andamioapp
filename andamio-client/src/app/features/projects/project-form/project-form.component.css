@@ -97,3 +97,28 @@ textarea.form-control {
   cursor: not-allowed;
   transform: none;
 }
+
+@media (max-width: 640px) {
+  :host {
+    padding: 1rem;
+  }
+
+  .form-container {
+    padding: 1.25rem 1.1rem;
+    border-radius: 12px;
+  }
+
+  .grid-row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .form-header {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+  }
+
+  .form-header h3 {
+    font-size: 1.25rem;
+  }
+}
