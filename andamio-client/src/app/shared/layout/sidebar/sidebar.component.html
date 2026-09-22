@@ -12,32 +12,37 @@
     </svg>
   </div>
 
-  <ul class="nav-links">
-    <li><a routerLink="/dashboard" routerLinkActive="active">
+  <ul class="nav-links" [class.mobile-open]="isMobileMenuOpen">
+    <li><a routerLink="/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">
       <lucide-icon [img]="LayoutDashboard" size="18"></lucide-icon>
       <span>DASHBOARD</span></a>
     </li>
 
-    <li><a routerLink="/board" routerLinkActive="active">
+    <li><a routerLink="/board" routerLinkActive="active" (click)="closeMobileMenu()">
       <lucide-icon [img]="Kanban" size="18"></lucide-icon>
       <span>TABLERO</span></a>
     </li>
 
-    <li><a routerLink="/customer" routerLinkActive="active">
+    <li><a routerLink="/customer" routerLinkActive="active" (click)="closeMobileMenu()">
       <lucide-icon [img]="Users" size="18"></lucide-icon>
       <span>CLIENTXS</span></a>
     </li>
 
-    <li><a routerLink="/quotes" routerLinkActive="active">
+    <li><a routerLink="/quotes" routerLinkActive="active" (click)="closeMobileMenu()">
       <lucide-icon [img]="FileText" size="18"></lucide-icon>
       <span>COTIZACIONES</span></a>
     </li>
 
-    <li><a routerLink="/projects" routerLinkActive="active">
+    <li><a routerLink="/projects" routerLinkActive="active" (click)="closeMobileMenu()">
       <lucide-icon [img]="HardHat" size="18"></lucide-icon>
       <span>PROYECTOS</span></a>
     </li>
   </ul>
+
+  <button type="button" class="mobile-menu-toggle" (click)="toggleMobileMenu($event)" title="Menú">
+    <lucide-icon [img]="isMobileMenuOpen ? X : Menu" size="22"></lucide-icon>
+  </button>
+
 
   <div class="topbar-tenant" [class.open]="isAccountMenuOpen">
     <button type="button" class="tenant-tag" (click)="toggleAccountMenu($event)">

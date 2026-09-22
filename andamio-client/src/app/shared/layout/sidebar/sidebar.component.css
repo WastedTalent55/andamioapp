@@ -15,8 +15,20 @@
   left: 0;
   top: 0;
   z-index: 1000;
+}
 
-  overflow-x: auto;
+.mobile-menu-toggle {
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  background: none;
+  border: none;
+  color: var(--andamio-tiza);
+  cursor: pointer;
+  padding: 8px;
+  flex-shrink: 0;
 }
 
 .brand {
@@ -173,10 +185,50 @@
   }
 }
 
-/* Móvil (prioridad #2): la topbar hace scroll horizontal en vez de romper el layout.
-   El menú de cuenta YA NO se oculta aquí — es la única vía a Configuración/Cerrar sesión. */
+/* Móvil (prioridad #2): menú hamburguesa real — el botón aparece aquí y
+   .nav-links se convierte en un panel desplegable, en vez de forzar scroll
+   horizontal. El menú de cuenta sigue siempre visible, sin cambios. */
 @media (max-width: 640px) {
   .andamio-topbar {
-    gap: 1rem;
+    gap: 0.75rem;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+    margin-left: auto;
+  }
+
+  .nav-links {
+    display: none;
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    flex-grow: 0;
+
+    background: var(--andamio-antracita);
+    border-bottom: var(--border-thin);
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+
+    padding: 10px;
+    max-height: calc(100vh - 72px);
+    overflow-y: auto;
+  }
+
+  .nav-links.mobile-open {
+    display: flex;
+  }
+
+  .nav-links li a {
+    padding: 12px 14px;
+  }
+
+  .nav-links li a span {
+    display: inline; /* en el panel vertical sí cabe el texto, se ve mejor que solo ícono */
   }
 }

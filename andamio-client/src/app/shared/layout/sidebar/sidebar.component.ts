@@ -12,7 +12,9 @@ import {
   HardHat,
   Settings,
   ChevronDown,
-  LogOut
+  LogOut,
+  Menu,
+  X
 } from 'lucide-angular';
 
 @Component({
@@ -31,9 +33,12 @@ export class SidebarComponent implements OnInit {
   Settings = Settings;
   ChevronDown = ChevronDown;
   LogOut = LogOut;
+  Menu = Menu;
+  X = X;
   
   tenantName: string = 'Andamio';
   isAccountMenuOpen = false;
+  isMobileMenuOpen = false;
 
   private tenantService = inject(TenantService);
   private authService = inject(AuthService);
@@ -69,11 +74,23 @@ export class SidebarComponent implements OnInit {
     this.isAccountMenuOpen = !this.isAccountMenuOpen;
   }
 
+  toggleMobileMenu(event: Event) {
+    event.stopPropagation();
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+  }
+
   // Cierra el menú si se hace clic en cualquier lugar fuera de él
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     if (this.isAccountMenuOpen && !this.elementRef.nativeElement.contains(event.target)) {
       this.isAccountMenuOpen = false;
+    }
+    if (this.isMobileMenuOpen && !this.elementRef.nativeElement.contains(event.target)) {
+      this.isMobileMenuOpen = false;
     }
   }
 
