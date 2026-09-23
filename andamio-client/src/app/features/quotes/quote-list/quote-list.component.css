@@ -147,3 +147,19 @@
     padding: var(--spacing-lg);
 
 }
+
+@media (max-width: 640px) {
+  :host {
+    padding: 1rem;
+  }
+
+  .quote-kpis {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .quote-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

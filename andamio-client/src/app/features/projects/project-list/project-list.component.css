@@ -77,3 +77,19 @@
   color: var(--andamio-concreto);
   font-size: .9rem;
 }
+
+@media (max-width: 640px) {
+  .client-kpis {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .search-box {
+    height: 48px;
+    padding: 0 14px;
+  }
+}
