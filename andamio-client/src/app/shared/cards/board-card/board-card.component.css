@@ -324,12 +324,6 @@ margin-bottom:18px;
 
 }
 
-.quote-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 
 .btn-icon {
 
@@ -340,29 +334,61 @@ margin-bottom:18px;
   align-items:center;
   justify-content:center;
 
-  border:1px solid #ddd;
-  background:white;
+  border: 1px solid var(--andamio-gris-oscuro);
+  background: var(--andamio-antracita);
+  color: var(--andamio-tiza);
 
   cursor:pointer;
 
   border-radius:8px;
+
+  transition: var(--transition-friendly);
 
 }
 
 
 .btn-icon:hover {
 
-  background:#f5f5f5;
+  background: var(--andamio-gris-oscuro);
+  border-color: var(--andamio-tiza);
 
 }
 .evaluation-actions {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 8px;
+}
+
+.evaluation-icon-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.evaluation-icon-actions .btn-icon {
+  flex: 1;
+}
+
+.quote-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quote-icon-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.quote-icon-actions .btn-icon {
+  flex: 1;
 }
 
 .evaluation-actions .btn-action {
   flex: 1;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btn-icon.delete:hover {
