@@ -132,6 +132,14 @@
     background-color 0.2s ease;
 }
 
+/* El ícono de calendario/reloj nativo sale negro por default — invisible
+   sobre nuestro fondo oscuro. Esto lo invierte a blanco (Chrome/Edge/Safari;
+   Firefox no soporta este pseudo-elemento, pero ahí ya se ve razonable solo). */
+.date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
 .form-control:focus {
   outline: none;
 

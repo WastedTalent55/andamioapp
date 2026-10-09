@@ -45,7 +45,8 @@ export class EvaluationFormComponent implements OnInit {
     this.evaluationForm = this.fb.group({
       customer_id: ['', [Validators.required]], 
       address_id: ['', Validators.required],
-      scheduled_date: ['', [Validators.required]],
+      scheduled_date_date: ['', [Validators.required]],
+      scheduled_date_time: ['', [Validators.required]],
       evaluation_cost: [null, [Validators.min(0)]], 
       requested_work: ['', [Validators.required, Validators.maxLength(255)]],
       requirements: ['']
@@ -96,15 +97,17 @@ export class EvaluationFormComponent implements OnInit {
           this.filteredAddresses = [{ id: evaluation.address_id, full_address: evaluation.address }];
         }
 
-        // datetime-local espera "YYYY-MM-DDTHH:mm" — recortamos el ISO que regresa el backend
-        const scheduledDate = evaluation.scheduled_date
-          ? String(evaluation.scheduled_date).slice(0, 16)
-          : '';
+        // <input type="date"> espera "YYYY-MM-DD" y <input type="time"> espera "HH:mm" —
+        // partimos el ISO que regresa el backend (ej. "2026-09-20T14:30:00.000Z") en dos.
+        const isoDate = evaluation.scheduled_date ? String(evaluation.scheduled_date) : '';
+        const scheduledDateDate = isoDate ? isoDate.slice(0, 10) : '';
+        const scheduledDateTime = isoDate ? isoDate.slice(11, 16) : '';
 
         this.evaluationForm.patchValue({
           customer_id: evaluation.customer_id,
           address_id: evaluation.address_id,
-          scheduled_date: scheduledDate,
+          scheduled_date_date: scheduledDateDate,
+          scheduled_date_time: scheduledDateTime,
           evaluation_cost: evaluation.evaluation_cost,
           requested_work: evaluation.requested_work,
           requirements: evaluation.requirements
@@ -118,11 +121,23 @@ export class EvaluationFormComponent implements OnInit {
     });
   }
   
+  // El backend sigue esperando un solo campo scheduled_date — aquí recombinamos
+  // los dos campos del formulario (fecha + hora) justo antes de enviar.
+  private buildPayload() {
+    const { scheduled_date_date, scheduled_date_time, ...rest } = this.evaluationForm.value;
+    return {
+      ...rest,
+      scheduled_date: `${scheduled_date_date}T${scheduled_date_time}`
+    };
+  }
+
   onSubmit(): void {
     if (!this.evaluationForm.valid) return;
 
+    const payload = this.buildPayload();
+
     if (this.isEditMode && this.evaluationId) {
-      this.evaluationService.updateEvaluationDetails(this.evaluationId, this.evaluationForm.value).subscribe({
+      this.evaluationService.updateEvaluationDetails(this.evaluationId, payload).subscribe({
         next: () => {
           alert('✅ Evaluación actualizada con éxito');
           this.router.navigate(['/board']);
@@ -135,7 +150,7 @@ export class EvaluationFormComponent implements OnInit {
       return;
     }
 
-    this.evaluationService.createEvaluation(this.evaluationForm.value).subscribe({
+    this.evaluationService.createEvaluation(payload).subscribe({
       next: (res) => {
         alert('✅ Visita técnica agendada con éxito');
         this.router.navigate(['/board']);
