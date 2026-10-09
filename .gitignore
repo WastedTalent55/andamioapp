@@ -28,4 +28,6 @@ dist/
 # --- Base de Datos ---
 # Si se exportan dumps de MySQL para pruebas locales
 *.sql
+# Permitir el esquema de la base de datos
+!database/andamio_schema.sql
 !/src/models/*.sql # 
