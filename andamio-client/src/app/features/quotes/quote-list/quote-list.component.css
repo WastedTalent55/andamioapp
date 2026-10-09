@@ -150,7 +150,7 @@
 
 @media (max-width: 640px) {
   :host {
-    padding: 1rem;
+    padding: 1rem 0;
   }
 
   .quote-kpis {

@@ -573,3 +573,9 @@ main {
   }
 
 }
+
+@media (max-width: 640px) {
+  .quote-container {
+    padding-inline: 0;
+  }
+}

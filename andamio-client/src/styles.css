@@ -165,6 +165,12 @@ h1, h2, h3, h4, .brand-heading {
   max-width: 1400px;
   margin: 0 auto;
 }
+
+@media (max-width: 640px) {
+  .content-container:has(> :is(app-quote-form, app-quote-list, app-customer-list, app-project-form)) {
+    padding-inline: 16px;
+  }
+}
 /* Botón de cerrar formulario — único estilo global, usado por todos
    los formularios (antes había 3 versiones distintas: .btn-close sin
    estilo, .btn-close-quote, y .close-btn) */
