@@ -31,17 +31,36 @@
         <span>CANT.</span>
         <span>UNID.</span>
         <span>TOTAL</span>
+        <span>ELIMINAR</span>
       </div>
 
       <div formArrayName="laborItems" class="items-list">
         @for (item of laborItems.controls; track $index) {
           <div [formGroupName]="$index" class="grid-row item-row">
-            <input formControlName="description" placeholder="Ej: Pintura de cocina" class="input-desc">
-            <input type="number" formControlName="unit_price" class="data-number input-num" placeholder="0.00">
-            <input type="number" formControlName="quantity" class="data-number input-num" placeholder="1">
-            <input formControlName="unit" placeholder="Servicio" class="input-unit">
-            <span class="row-total data-number">{{ calculateRowTotal('labor', $index) | currency }}</span>
-            <button type="button" class="btn-remove" (click)="removeRow('labor', $index)">×</button>
+            <label class="item-field description-field">
+              <span class="field-label">Descripción del trabajo</span>
+              <input aria-label="Descripción" formControlName="description" placeholder="Ej: Pintura de cocina" class="input-desc">
+            </label>
+            <label class="item-field">
+              <span class="field-label">Precio unitario</span>
+              <input aria-label="Precio unitario" type="number" formControlName="unit_price" class="data-number input-num" placeholder="0.00">
+            </label>
+            <label class="item-field">
+              <span class="field-label">Cantidad</span>
+              <input aria-label="Cantidad" type="number" formControlName="quantity" class="data-number input-num" placeholder="1">
+            </label>
+            <label class="item-field">
+              <span class="field-label">Unidad</span>
+              <input aria-label="Unidad" formControlName="unit" placeholder="Servicio" class="input-unit">
+            </label>
+            <div class="item-field total-field">
+              <span class="field-label">Total</span>
+              <span class="row-total data-number">{{ calculateRowTotal('labor', $index) | currency }}</span>
+            </div>
+            <div class="item-field remove-field">
+              <span class="field-label">Eliminar</span>
+              <button type="button" class="btn-remove" aria-label="Eliminar concepto de mano de obra" (click)="removeRow('labor', $index)">×</button>
+            </div>
           </div>
         } @empty {
           <div class="empty-item-msg">NO HAY SERVICIOS REGISTRADOS EN ESTA COTIZACIÓN.</div>
@@ -68,17 +87,36 @@
         <span>CANT.</span>
         <span>UNID.</span>
         <span>TOTAL</span>
+        <span>ELIMINAR</span>
       </div>
 
       <div formArrayName="materialItems" class="items-list">
   @for (item of materialItems.controls; track $index) {
     <div [formGroupName]="$index" class="grid-row item-row">
-      <input formControlName="description" placeholder="Ej: Sellador Alkafin" class="input-desc">
-      <input type="number" formControlName="unit_price" class="data-number input-num" placeholder="0.00">
-      <input type="number" formControlName="quantity" class="data-number input-num" placeholder="1">
-      <input formControlName="unit" placeholder="Lt" class="input-unit">
-      <span class="row-total data-number">{{ calculateRowTotal('material', $index) | currency }}</span>
-      <button type="button" class="btn-remove" (click)="removeRow('material', $index)">×</button>
+      <label class="item-field description-field">
+              <span class="field-label">Descripción del material</span>
+              <input aria-label="Descripción" formControlName="description" placeholder="Ej: Sellador Alkafin" class="input-desc">
+            </label>
+            <label class="item-field">
+              <span class="field-label">Precio unitario</span>
+              <input aria-label="Precio unitario" type="number" formControlName="unit_price" class="data-number input-num" placeholder="0.00">
+            </label>
+            <label class="item-field">
+              <span class="field-label">Cantidad</span>
+              <input aria-label="Cantidad" type="number" formControlName="quantity" class="data-number input-num" placeholder="1">
+            </label>
+            <label class="item-field">
+              <span class="field-label">Unidad</span>
+              <input aria-label="Unidad" formControlName="unit" placeholder="Lt" class="input-unit">
+            </label>
+            <div class="item-field total-field">
+              <span class="field-label">Total</span>
+              <span class="row-total data-number">{{ calculateRowTotal('material', $index) | currency }}</span>
+            </div>
+            <div class="item-field remove-field">
+              <span class="field-label">Eliminar</span>
+              <button type="button" class="btn-remove" aria-label="Eliminar concepto de material" (click)="removeRow('material', $index)">×</button>
+            </div>
     </div>
   } @empty {
     <div class="empty-item-msg">AÑADE MATERIALES PARA CALCULAR LA UTILIDAD REAL.</div>

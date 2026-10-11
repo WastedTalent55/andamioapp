@@ -383,7 +383,7 @@ main {
 
 .row-total {
   text-align: right;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 
   color: var(--andamio-oro-activo);
 
@@ -507,7 +507,7 @@ main {
 @media (max-width: 1000px) {
 
   .quote-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
 
     padding: 24px;
   }
@@ -542,22 +542,6 @@ main {
     justify-content: center;
   }
 
-  .table-header {
-    display: none;
-  }
-
-  .grid-row {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .input-desc {
-    grid-column: 1 / -1;
-  }
-
-  .item-row {
-    gap: 8px;
-  }
-
   .delivery-container {
     align-items: flex-start;
     flex-direction: column;
@@ -577,5 +561,96 @@ main {
 @media (max-width: 640px) {
   .quote-container {
     padding-inline: 0;
+  }
+}
+
+.quote-main-container {
+  min-width: 0;
+  container: quote-editor / inline-size;
+}
+
+.quote-header {
+  gap: 12px;
+}
+
+.title-group,
+.item-field {
+  min-width: 0;
+}
+
+.quote-header .btn-close {
+  flex-shrink: 0;
+}
+
+.notes-content,
+.subtitle,
+.section-header h4,
+.section-subtotal,
+.summary-line,
+.final-total {
+  overflow-wrap: anywhere;
+}
+
+.item-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  display: none;
+  color: var(--andamio-concreto);
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+@container quote-editor (max-width: 740px) {
+  .table-header {
+    display: none;
+  }
+
+  .grid-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 12px;
+  }
+
+  .description-field,
+  .total-field {
+    grid-column: 1 / -1;
+  }
+
+  .field-label {
+    display: block;
+  }
+
+  .remove-field {
+    align-items: flex-end;
+    grid-column: 2;
+  }
+
+  .btn-remove {
+    width: 44px;
+    height: 44px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-add-industrial {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .section-subtotal,
+  .summary-line,
+  .final-total {
+    flex-wrap: wrap;
+    gap: 8px 16px;
   }
 }
