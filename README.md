@@ -136,6 +136,25 @@ andamioapp/
 * Tenant-scoped database queries enforced on the backend
 * Database credentials and the JWT secret kept in environment variables, never in the repository
 
+### Technical debt: evaluation time zones
+
+Evaluation Form keeps native date and time inputs and sends `scheduled_date` as
+`YYYY-MM-DDTHH:mm`, without a time-zone offset. MySQL stores a `DATETIME`; the
+connection does not configure a time-zone policy. Editing currently extracts the
+date and time directly from the API string, while other views use Angular's date
+formatting. Depending on the server and browser time zones, these interpretations
+may differ. A separate task must define whether visits represent local job-site
+time or an absolute instant, then review serialization and existing data. The
+evaluation/customer UX changes deliberately do not change this behavior.
+
+The evaluation's new-customer dialog reuses Customer Form with manual address
+entry. It preserves the evaluation draft and only selects the customer after its
+address has been retrieved. A failed retrieval can be retried without repeating
+creation. An unconfirmed creation (network/server error or missing returned ID)
+blocks resubmission in that dialog: check the customer list before creating again.
+The existing API has no idempotency key, so the frontend cannot guarantee the
+outcome of a request whose response was lost.
+
 ---
 
 ## Getting Started

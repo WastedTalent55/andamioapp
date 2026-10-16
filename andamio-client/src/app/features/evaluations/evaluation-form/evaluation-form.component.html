@@ -9,36 +9,38 @@
     </button>
   </div>
   
-  <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()" class="andamio-form">
+  <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()" class="andamio-form" [attr.aria-busy]="submitting">
     
     <div class="form-row">
       <div class="form-group search-container">
-        <label>CLIENTE</label>
-        <input 
-    type="text" 
-    class="form-control" 
-    placeholder="Escribe el nombre del cliente..."
-    [value]="searchTerm"
-    (input)="onSearch($event)"
-    (focus)="showResults = true">
-
-  <!-- Lista de resultados (Autocomplete) -->
-  <div class="search-results" *ngIf="showResults && filteredCustomers.length > 0">
-    <div 
-      class="result-item" 
-      *ngFor="let customer of filteredCustomers"
-      (click)="selectCustomer(customer)">
-      {{ customer.first_name }} {{ customer.last_name }}
-    </div>
-  </div>
-  
-  <!-- Campo oculto para mantener la validación del customer_id -->
-  <input type="hidden" formControlName="customer_id">
+        <label for="evaluation-customer">CLIENTE</label>
+        <input id="evaluation-customer" type="search" class="form-control"
+          placeholder="Escribe el nombre del cliente…" [value]="searchTerm"
+          aria-describedby="customer-search-help"
+          (input)="onSearch($event)" (focus)="showResults = true"
+          (keydown.escape)="showResults = false">
+        <p id="customer-search-help" class="field-hint">Busca y selecciona un cliente, o registra uno nuevo.</p>
+        <p *ngIf="loadingCustomers" role="status">Cargando clientes…</p>
+        <div *ngIf="customerLoadError" role="alert" class="alert-text">
+          {{ customerLoadError }}
+          <button type="button" class="customer-action" (click)="loadCustomers()">Reintentar</button>
+        </div>
+        <ul class="search-results" aria-label="Clientes encontrados"
+            *ngIf="showResults && filteredCustomers.length > 0">
+          <li *ngFor="let customer of filteredCustomers">
+            <button type="button" class="result-item" (click)="selectCustomer(customer)">
+              {{ customer.first_name }} {{ customer.last_name }}
+            </button>
+          </li>
+        </ul>
+        <p *ngIf="showResults && !loadingCustomers && !customerLoadError && filteredCustomers.length === 0" class="field-hint">No hay clientes que coincidan.</p>
+        <button #newCustomerButton type="button" class="customer-action" (click)="openCustomerModal()">Nuevo cliente</button>
+        <input type="hidden" formControlName="customer_id">
       </div>
 
       <div class="form-group">
-        <label>UBICACIÓN DE OBRA</label>
-        <select formControlName="address_id" class="form-control">
+        <label for="evaluation-address">UBICACIÓN DE OBRA</label>
+        <select id="evaluation-address" formControlName="address_id" class="form-control">
           <option value="" disabled>-- Selecciona ubicación --</option>
           <option *ngFor="let addr of filteredAddresses" [value]="addr.id">
             {{ addr.full_address || 'Dirección Principal' }}
@@ -50,38 +52,55 @@
       </div>
     </div>
 
+    <fieldset class="visit-schedule">
+      <legend>Fecha y hora de la visita</legend>
+      <p id="schedule-help" class="field-hint">Selecciona el día y la hora con los controles de tu dispositivo.</p>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="evaluation-date">FECHA DE VISITA</label>
+          <input id="evaluation-date" type="date" required formControlName="scheduled_date_date"
+            class="form-control date-input" aria-describedby="schedule-help date-error"
+            [attr.aria-invalid]="evaluationForm.get('scheduled_date_date')?.touched && evaluationForm.get('scheduled_date_date')?.invalid">
+          <small id="date-error" class="alert-text" *ngIf="evaluationForm.get('scheduled_date_date')?.touched && evaluationForm.get('scheduled_date_date')?.invalid">Selecciona una fecha válida.</small>
+        </div>
+        <div class="form-group">
+          <label for="evaluation-time">HORA</label>
+          <input id="evaluation-time" type="time" required step="60" formControlName="scheduled_date_time"
+            class="form-control date-input" aria-describedby="schedule-help time-error"
+            [attr.aria-invalid]="evaluationForm.get('scheduled_date_time')?.touched && evaluationForm.get('scheduled_date_time')?.invalid">
+          <small id="time-error" class="alert-text" *ngIf="evaluationForm.get('scheduled_date_time')?.touched && evaluationForm.get('scheduled_date_time')?.invalid">Selecciona una hora válida.</small>
+        </div>
+      </div>
+    </fieldset>
+
     <div class="form-row">
       <div class="form-group">
-        <label>FECHA DE VISITA</label>
-        <input type="date" formControlName="scheduled_date_date" class="form-control date-input">
-      </div>
-
-      <div class="form-group">
-        <label>HORA</label>
-        <input type="time" formControlName="scheduled_date_time" class="form-control date-input">
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label>COSTO DE EVALUACIÓN (MXN)</label>
-        <input type="number" formControlName="evaluation_cost" class="form-control data-number" placeholder="Ej: 1500">
+        <label for="evaluation-cost">COSTO DE EVALUACIÓN (MXN)</label>
+        <input id="evaluation-cost" type="number" formControlName="evaluation_cost" class="form-control data-number" placeholder="Ej: 1500">
       </div>
     </div>
 
     <div class="form-group">
-      <label>TÍTULO DEL TRABAJO SOLICITADO</label>
+      <label for="evaluation-work">TÍTULO DEL TRABAJO SOLICITADO</label>
       <input 
         type="text" 
-        formControlName="requested_work"
+        id="evaluation-work" formControlName="requested_work"
         class="form-control highlight-input"
         placeholder="Ej: Tratamiento de humedad en techo de baño"
       >
       <p class="field-hint">Este título aparecerá en la descripción de la cotización final.</p>
     </div>
 
-    <button type="submit" class="btn-andamio full-width" [disabled]="evaluationForm.invalid">
-      {{ isEditMode ? 'GUARDAR CAMBIOS' : 'CONFIRMAR Y AGENDAR VISITA' }}
+    <p *ngIf="submitError" role="alert" class="alert-text">{{ submitError }}</p>
+    <button type="submit" class="btn-andamio full-width" [disabled]="evaluationForm.invalid || submitting">
+      {{ submitting ? 'GUARDANDO…' : (isEditMode ? 'GUARDAR CAMBIOS' : 'CONFIRMAR Y AGENDAR VISITA') }}
     </button>
   </form>
 </div>
+
+<dialog #customerDialog class="customer-dialog" aria-labelledby="customer-form-title"
+        (keydown.tab)="trapCustomerFocus($event)" (cancel)="onCustomerDialogCancel($event)" (close)="onCustomerDialogClosed()">
+  <app-customer-form *ngIf="customerModalOpen" #modalCustomerForm [embedded]="true"
+    (customerCreated)="onCustomerCreated($event)" (cancelled)="closeCustomerModal()">
+  </app-customer-form>
+</dialog>

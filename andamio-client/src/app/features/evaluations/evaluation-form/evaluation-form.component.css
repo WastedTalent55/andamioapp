@@ -39,7 +39,7 @@
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
   margin-bottom: 1rem;
 }
@@ -233,4 +233,76 @@ select.form-control option {
     margin-bottom: 2rem;
   }
 
+}
+
+.form-group, .form-control {
+  min-width: 0;
+}
+
+.customer-action {
+  margin-top: 10px;
+  padding: 10px 14px;
+  min-height: 44px;
+  border: 1px solid var(--andamio-oro-activo);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--andamio-oro-activo);
+  cursor: pointer;
+  font: inherit;
+}
+
+.search-results {
+  list-style: none;
+  padding: 0;
+}
+
+.result-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  overflow-wrap: anywhere;
+}
+
+.result-item:focus-visible, .customer-action:focus-visible {
+  outline: 2px solid var(--andamio-azul-plano);
+  outline-offset: -2px;
+}
+
+.visit-schedule {
+  min-width: 0;
+  border: 1px solid var(--andamio-concreto);
+  border-radius: 10px;
+  padding: 16px;
+  margin-block: 16px;
+}
+
+.visit-schedule legend {
+  padding-inline: 6px;
+  color: var(--andamio-tiza);
+  font-weight: 700;
+}
+
+.visit-schedule .field-hint {
+  margin-bottom: 16px;
+}
+
+.customer-dialog {
+  width: min(640px, calc(100% - 24px));
+  max-width: calc(100% - 24px);
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: var(--andamio-gris-oscuro);
+  color: var(--andamio-tiza);
+  overflow-y: auto;
+}
+
+.customer-dialog::backdrop {
+  background: rgba(0, 0, 0, .65);
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ViewChild, ElementRef, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router'; 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,11 +9,13 @@ import { EvaluationService } from '../../../core/services/evaluation.service';
 import { Customer } from '../../../core/models/customer.model';
 import { ActivatedRoute } from '@angular/router';
 import { LucideAngularModule, X, ClipboardList, TriangleAlert, Pencil } from 'lucide-angular';
+import { CustomerFormComponent } from '../../customers/customer-form/customer-form.component';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-evaluation-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule], 
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, CustomerFormComponent],
   templateUrl: './evaluation-form.component.html',
   styleUrl: './evaluation-form.component.css'
 })
@@ -29,6 +32,17 @@ export class EvaluationFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private customerService = inject(CustomerService);
   private evaluationService = inject(EvaluationService);
+  private changeDetector = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
+
+  @ViewChild('customerDialog', { static: true }) customerDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('newCustomerButton') newCustomerButton!: ElementRef<HTMLButtonElement>;
+  @ViewChild('modalCustomerForm') modalCustomerForm?: CustomerFormComponent;
+  customerModalOpen = false;
+  loadingCustomers = false;
+  customerLoadError = '';
+  submitting = false;
+  submitError = '';
 
   customers: Customer[] = []; 
   filteredAddresses: any[] = [];
@@ -54,10 +68,18 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadCustomers();
+  }
+
+  loadCustomers(): void {
+    if (this.loadingCustomers) return;
+    this.loadingCustomers = true;
+    this.customerLoadError = '';
     const idParam = this.route.snapshot.paramMap.get('id');
 
     this.customerService.getCustomers().subscribe({
       next: (res) => { 
+        this.loadingCustomers = false;
         this.customers = res.data || [];
         this.filteredCustomers = res.data || [];
 
@@ -68,17 +90,20 @@ export class EvaluationFormComponent implements OnInit {
           return;
         }
 
-        this.route.queryParams.subscribe(params => {
+        this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
           const clientId = params['clientId'];
           if (clientId) {
-            const customer = this.customers.find(c => c.id == clientId);
+            const customer = this.customers.find(c => c.id === Number(clientId));
             if (customer) {
               this.selectCustomer(customer);
             }
           }
         });
       },
-      error: (err) => console.error('Error cargando infraestructura de clientes', err)
+      error: () => {
+        this.loadingCustomers = false;
+        this.customerLoadError = 'No se pudieron cargar los clientes. Puedes reintentar o crear uno nuevo.';
+      }
     });
   }
 
@@ -132,30 +157,33 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (this.submitting) return;
+    this.evaluationForm.markAllAsTouched();
     if (!this.evaluationForm.valid) return;
+    this.submitting = true;
+    this.submitError = '';
 
     const payload = this.buildPayload();
 
     if (this.isEditMode && this.evaluationId) {
-      this.evaluationService.updateEvaluationDetails(this.evaluationId, payload).subscribe({
+      this.evaluationService.updateEvaluationDetails(this.evaluationId, payload).pipe(finalize(() => this.submitting = false)).subscribe({
         next: () => {
           alert('✅ Evaluación actualizada con éxito');
           this.router.navigate(['/board']);
         },
         error: (err) => {
-          console.error('Error al actualizar la evaluación', err);
-          alert('❌ No se pudo actualizar la evaluación.');
+          this.submitError = 'No se pudo actualizar la evaluación. Tus datos se conservan; inténtalo de nuevo.';
         }
       });
       return;
     }
 
-    this.evaluationService.createEvaluation(payload).subscribe({
+    this.evaluationService.createEvaluation(payload).pipe(finalize(() => this.submitting = false)).subscribe({
       next: (res) => {
         alert('✅ Visita técnica agendada con éxito');
         this.router.navigate(['/board']);
       },
-      error: (err) => console.error('Error al agendar visita técnica', err)
+      error: () => this.submitError = 'No se pudo agendar la visita. Tus datos se conservan; inténtalo de nuevo.'
     });
   }
 
@@ -187,6 +215,8 @@ export class EvaluationFormComponent implements OnInit {
     const term = event.target.value.toLowerCase();
     this.searchTerm = term;
     this.showResults = true;
+    this.filteredAddresses = [];
+    this.evaluationForm.patchValue({ customer_id: '', address_id: '' });
 
     this.filteredCustomers = this.customers.filter(c => 
       `${c.first_name} ${c.last_name}`.toLowerCase().includes(term)
@@ -197,11 +227,55 @@ export class EvaluationFormComponent implements OnInit {
     this.searchTerm = `${customer.first_name} ${customer.last_name}`;
     this.evaluationForm.patchValue({ customer_id: customer.id });
     this.showResults = false;
+    this.filteredAddresses = [];
+    this.evaluationForm.patchValue({ address_id: '' });
 
     // Cargamos la dirección automáticamente (reutilizando tu lógica)
     if (customer.address_id) {
       this.filteredAddresses = [{ id: customer.address_id, full_address: customer.full_address }];
       this.evaluationForm.patchValue({ address_id: customer.address_id });
     }
+  }
+
+  openCustomerModal() {
+    this.showResults = false;
+    this.customerModalOpen = true;
+    this.changeDetector.detectChanges();
+    this.customerDialog.nativeElement.showModal();
+    this.customerDialog.nativeElement.querySelector<HTMLInputElement>('input')?.focus();
+  }
+
+  closeCustomerModal() {
+    if (!this.modalCustomerForm?.submitting) this.customerDialog.nativeElement.close();
+  }
+
+  onCustomerDialogCancel(event: Event) {
+    // A request already sent cannot be undone by closing the dialog.
+    if (this.modalCustomerForm?.submitting) event.preventDefault();
+  }
+
+  onCustomerDialogClosed() {
+    this.customerModalOpen = false;
+    this.newCustomerButton.nativeElement.focus();
+  }
+
+  trapCustomerFocus(event: Event) {
+    if (!(event instanceof KeyboardEvent) || event.key !== 'Tab') return;
+    const controls = Array.from(this.customerDialog.nativeElement.querySelectorAll<HTMLElement>(
+      'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href]'
+    )).filter(control => control.getClientRects().length > 0);
+    const target = event.shiftKey ? controls[controls.length - 1] : controls[0];
+    const boundary = event.shiftKey ? controls[0] : controls[controls.length - 1];
+    if (!controls.length || document.activeElement === boundary) {
+      event.preventDefault();
+      target?.focus();
+    }
+  }
+
+  onCustomerCreated(customer: Customer) {
+    this.customers = [...this.customers.filter(c => c.id !== customer.id), customer];
+    this.filteredCustomers = [...this.customers];
+    this.selectCustomer(customer);
+    this.customerDialog.nativeElement.close();
   }
 }
