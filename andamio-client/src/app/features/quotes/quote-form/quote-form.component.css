@@ -289,12 +289,12 @@ main {
   display: grid;
 
   grid-template-columns:
-    minmax(180px, 2fr)
+    minmax(0, 2fr)
     110px
     75px
     90px
     120px
-    40px;
+    64px;
 
   gap: 10px;
 
