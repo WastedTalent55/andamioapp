@@ -349,6 +349,10 @@
 
 @media (max-width: 1024px) {
 
+    .feature-list {
+        margin-top: 24px;
+    }
+
     .welcome-container {
         display: flex;
         flex-direction: column;

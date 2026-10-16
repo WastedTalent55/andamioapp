@@ -8,7 +8,7 @@
 
     display: grid;
 
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 
     gap: 20px;
 
@@ -79,6 +79,7 @@
 .search-box {
 
     flex: 1;
+    min-width: 0;
 
     display: flex;
 
@@ -101,6 +102,7 @@
 .search-input {
 
     flex: 1;
+    min-width: 0;
 
     background: transparent;
 
@@ -132,7 +134,7 @@
 
     display: grid;
 
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
 
     gap: 24px;
 
@@ -150,16 +152,31 @@
 
 @media (max-width: 640px) {
   :host {
-    padding: 1rem;
+    padding: 1rem 0;
   }
 
   .quote-kpis {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
 
   .quote-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+}
+
+.kpi-card {
+  min-width: 0;
+}
+
+.kpi-value,
+.kpi-label {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .kpi-value {
+    font-size: clamp(1.4rem, 6vw, 2.3rem);
   }
 }

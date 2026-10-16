@@ -18,7 +18,7 @@
 
     position: relative;
 
-    overflow: hidden;
+    overflow: visible;
 
     cursor: pointer;
 
@@ -154,4 +154,34 @@
 
     font-size: .75rem;
 
+}
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.quote-card::before {
+  border-radius: 18px 0 0 18px;
+}
+
+.card-header {
+  flex-wrap: wrap;
+}
+
+.header-info {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+app-status-badge,
+.info-icon {
+  flex-shrink: 0;
+}
+
+.quote-folio,
+.quote-customer,
+.info-value,
+.version-tag {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }

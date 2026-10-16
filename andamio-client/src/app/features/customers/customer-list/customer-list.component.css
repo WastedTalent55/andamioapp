@@ -8,7 +8,7 @@
 
     display:grid;
 
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(4,minmax(0,1fr));
 
     gap:20px;
 
@@ -73,6 +73,7 @@
 .search-box{
 
     flex:1;
+    min-width: 0;
 
     display:flex;
 
@@ -95,6 +96,7 @@
 .search-input{
 
     flex:1;
+    min-width: 0;
 
     background:transparent;
 
@@ -150,7 +152,7 @@
 
 .client-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: 24px;
 }
 
@@ -358,16 +360,62 @@
 
 @media (max-width: 640px) {
   :host {
-    padding: 1rem;
+    padding: 1rem 0;
+  }
+
+  /* Reach the shared header while keeping these overrides inside Customer List. */
+  :host ::ng-deep app-page-header .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  :host ::ng-deep app-page-header .page-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  :host ::ng-deep app-page-header .btn-andamio {
+    width: 100%;
+  }
+
+  .search-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .search-box {
+    flex: none;
+    width: 100%;
+  }
+
+  .toolbar-filter {
+    width: 100%;
   }
 
   .client-kpis {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
 
   .client-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+}
+
+.kpi-card {
+  min-width: 0;
+}
+
+.kpi-value,
+.kpi-label {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .kpi-value {
+    font-size: clamp(1.4rem, 6vw, 2.3rem);
   }
 }

@@ -18,7 +18,7 @@
 
     position:relative;
 
-    overflow:hidden;
+    overflow: visible;
 
     cursor:pointer;
 }
@@ -179,11 +179,9 @@
     color:#CBD5E1;
 
     line-height:1.4;
-    overflow:hidden;
 
-    text-overflow:ellipsis;
-
-    white-space:nowrap;
+    overflow-wrap: anywhere;
+    min-width: 0;
 
 
 }
@@ -192,7 +190,7 @@
 
     display:grid;
 
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(3,minmax(0,1fr));
 
     gap:14px;
 
@@ -258,9 +256,8 @@
 
 }
 .card-actions {
-    position: absolute;
-    top: 14px;
-    right: 42px;
+    align-self: flex-end;
+    margin-right: 24px;
     display: flex;
     gap: 6px;
     z-index: 2;
@@ -293,4 +290,36 @@
 .card-action-btn:disabled {
     opacity: .5;
     cursor: not-allowed;
+}
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.customer-card::before {
+  border-radius: 18px 0 0 18px;
+}
+
+.header-info,
+.whatsapp-link,
+.stat {
+  min-width: 0;
+}
+
+.customer-name,
+.customer-since,
+.stat-number,
+.stat-label {
+  overflow-wrap: anywhere;
+}
+
+.info-icon {
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .card-action-btn {
+    width: 44px;
+    height: 44px;
+  }
 }
