@@ -142,6 +142,17 @@
       </div>
     </section>
 
+    <section class="form-section special-conditions">
+      <label for="quote-special-conditions">Condiciones particulares de esta cotización</label>
+      <p id="special-conditions-help">Opcional. No modifica las condiciones generales del estudio ni los importes o el anticipo calculado del 50 %.</p>
+      <textarea id="quote-special-conditions" rows="5" formControlName="special_conditions"
+        aria-describedby="special-conditions-help special-conditions-count"
+        [attr.aria-invalid]="quoteForm.get('special_conditions')?.invalid"
+        [attr.aria-errormessage]="quoteForm.get('special_conditions')?.invalid ? 'special-conditions-error' : null"></textarea>
+      <small id="special-conditions-count">{{ specialConditionsLength }} / 5.000 caracteres</small>
+      <p id="special-conditions-error" role="alert" *ngIf="quoteForm.get('special_conditions')?.hasError('maxlength')">El texto no puede superar los 5.000 caracteres.</p>
+    </section>
+
     <footer class="quote-summary">
       <div class="summary-grid">
         <div class="summary-line">

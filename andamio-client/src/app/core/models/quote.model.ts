@@ -5,6 +5,7 @@ export interface Quote {
   evaluation_id: number | null;
   customer_id: number;
   version_number: number;
+  special_conditions?: string | null;
   delivery_time: number; 
   status: 'borrador' | 'enviada' | 'aceptada' | 'rechazada';
   evaluation_discount: number; 

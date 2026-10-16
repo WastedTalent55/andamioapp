@@ -30,4 +30,6 @@ dist/
 *.sql
 # Permitir el esquema de la base de datos
 !database/andamio_schema.sql
-!/src/models/*.sql # 
+!/src/models/*.sql #
+# Versioned additive migrations (not database dumps)
+!database/migrations/*.sql

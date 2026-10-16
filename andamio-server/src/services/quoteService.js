@@ -1,5 +1,17 @@
 const Quote = require('../models/quoteModel');
 
+// Count Unicode code points, matching the frontend (including emoji).
+function specialConditions(body, previous = null) {
+    if (!Object.prototype.hasOwnProperty.call(body, 'special_conditions')) return previous ?? null;
+    const value = body.special_conditions;
+    if (value !== null && (typeof value !== 'string' || Array.from(value).length > 5000)) {
+        const error = new Error('Las condiciones particulares deben ser texto de hasta 5.000 caracteres o null.');
+        error.code = 'INVALID_SPECIAL_CONDITIONS';
+        throw error;
+    }
+    return value === null || !value.trim() ? null : value;
+}
+
 const VALID_STATUSES = ['borrador', 'enviada', 'aceptada', 'rechazada'];
 
 
@@ -8,12 +20,14 @@ const QuoteService = {
     // Crea una cotización nueva, calculando su folio y guardando sus items
     createQuote: async (tenantId, body) => {
 
+        const conditions = specialConditions(body);
         const nextFolio = await Quote.getNextFolio(tenantId);
 
         const quoteData = {
             ...body,
             tenant_id: tenantId,
-            quote_folio: nextFolio
+            quote_folio: nextFolio,
+            special_conditions: conditions
         };
 
         const quoteId = await Quote.create(quoteData);
@@ -50,17 +64,20 @@ const QuoteService = {
     // si ya fue enviada/aceptada/rechazada, se crea una versión nueva sin tocar la anterior.
     updateQuote: async (id, tenantId, body) => {
 
+        // Validate before any writes, including when the field is omitted.
+        specialConditions(body);
         const currentQuote = await Quote.getById(id, tenantId);
 
         if (!currentQuote) {
             return null;
         }
 
+        const data = { ...body, special_conditions: specialConditions(body, currentQuote.special_conditions) };
         const { items } = body;
 
         if (currentQuote.status === 'borrador') {
 
-            await Quote.update(id, tenantId, body);
+            await Quote.update(id, tenantId, data);
             await Quote.deleteItems(id);
 
             if (items && items.length > 0) {
@@ -73,7 +90,7 @@ const QuoteService = {
             };
         }
 
-        const newQuoteId = await Quote.createVersion(currentQuote, tenantId, body);
+        const newQuoteId = await Quote.createVersion(currentQuote, tenantId, data);
 
         await Quote.markNotCurrent(id, tenantId);
 

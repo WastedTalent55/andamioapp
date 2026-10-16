@@ -654,3 +654,19 @@ main {
     gap: 8px 16px;
   }
 }
+
+.special-conditions textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 12px;
+  font: inherit;
+  color: inherit;
+  background: var(--andamio-fondo);
+  border: 1px solid var(--andamio-concreto);
+  border-radius: 8px;
+}
+.special-conditions p { font-size: .85rem; overflow-wrap: anywhere; }
+.special-conditions [role="alert"] { color: var(--andamio-rojo-alerta); }

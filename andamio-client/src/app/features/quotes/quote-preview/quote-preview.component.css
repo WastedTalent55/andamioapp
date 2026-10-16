@@ -1256,6 +1256,7 @@
   line-height: 1.65;
   color: #64748B;
   white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 
 /* 📇 Franja de contacto del tenant al pie de la cotización */

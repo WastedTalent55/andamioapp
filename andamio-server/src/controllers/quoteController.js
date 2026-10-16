@@ -17,6 +17,10 @@ const createQuote = async (req, res) => {
 
     } catch (error) {
 
+        if (error.code === 'INVALID_SPECIAL_CONDITIONS') {
+            return res.status(400).json({ success: false, message: error.message });
+        }
+
         console.error('Error creando cotización:', error);
 
         res.status(500).json({
@@ -113,6 +117,10 @@ const updateQuote = async (req, res) => {
         });
 
     } catch (error) {
+
+        if (error.code === 'INVALID_SPECIAL_CONDITIONS') {
+            return res.status(400).json({ success: false, message: error.message });
+        }
 
         console.error('Error actualizando cotización:', error);
 

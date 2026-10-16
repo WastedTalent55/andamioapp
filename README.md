@@ -245,3 +245,30 @@ I built Andamio to understand what it takes to create an application around a re
 ## License
 
 Personal learning and portfolio project. All rights reserved unless a license file states otherwise.
+
+## Quote special conditions
+
+Quotes may contain optional plain-text `special_conditions` (at most 5,000 Unicode
+code points). General conditions remain in `tenants.terms_conditions` and are never
+changed by quote saves. See [migration 001](database/migrations/README.md) before
+using the new backend against an existing database; no migration runs on startup.
+Older quotes have NULL conditions and display no particular-conditions section.
+POST omission means NULL; PUT omission preserves the source version's value;
+null, empty or whitespace-only strings clear it. Invalid types or over-limit text
+return HTTP 400 without truncation. Nonempty text retains its original line breaks.
+
+Drafts are updated in place (including their existing version counter behavior).
+Editing a sent/accepted/rejected quote creates a new row with independent conditions;
+omitted conditions inherit from the source. The evaluation lookup still resolves
+the current quote. General conditions continue to be read from the **current**
+study profile even when regenerating an old version's PDF; historical snapshots
+are not implemented. The fixed 50% advance and all existing calculations remain
+unchanged by particular conditions. Preview/download/WhatsApp use the same preview
+PDF generator; the unused legacy generator in Quote Form is not extended.
+
+Backend checks: `cd andamio-server && npm test` (Node's built-in test runner;
+unit tests mock MySQL, no credentials required). Integration tests require the
+explicit isolated-test configuration documented in the test helper; they skip
+unless enabled. Frontend checks use Angular/Karma and the production build:
+`npm run build -- --base-href /andamioapp/`. Publishing and database changes in an
+existing environment require a separate review.
