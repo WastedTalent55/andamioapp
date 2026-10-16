@@ -12,29 +12,42 @@
   <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()" class="andamio-form" [attr.aria-busy]="submitting">
     
     <div class="form-row">
-      <div class="form-group search-container">
+      <div class="form-group search-container" (focusout)="onCustomerSearchFocusOut($event)">
         <label for="evaluation-customer">CLIENTE</label>
-        <input id="evaluation-customer" type="search" class="form-control"
+        <input #customerSearch id="evaluation-customer" type="search" class="form-control"
+          role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
+          aria-controls="evaluation-customer-options"
+          [attr.aria-expanded]="customerSuggestionsOpen"
+          [attr.aria-activedescendant]="activeCustomerOptionId"
+          [attr.aria-busy]="loadingCustomers"
           placeholder="Escribe el nombre del cliente…" [value]="searchTerm"
           aria-describedby="customer-search-help"
-          (input)="onSearch($event)" (focus)="showResults = true"
-          (keydown.escape)="showResults = false">
-        <p id="customer-search-help" class="field-hint">Busca y selecciona un cliente, o registra uno nuevo.</p>
+          (input)="onSearch($event)" (focus)="onCustomerSearchFocus()"
+          (keydown)="onCustomerSearchKeydown($event)">
+        <p id="customer-search-help" class="field-hint">Escribe un nombre. Usa las flechas y Enter para seleccionar; Escape cierra las sugerencias.</p>
         <p *ngIf="loadingCustomers" role="status">Cargando clientes…</p>
         <div *ngIf="customerLoadError" role="alert" class="alert-text">
           {{ customerLoadError }}
           <button type="button" class="customer-action" (click)="loadCustomers()">Reintentar</button>
         </div>
-        <ul class="search-results" aria-label="Clientes encontrados"
-            *ngIf="showResults && filteredCustomers.length > 0">
-          <li *ngFor="let customer of filteredCustomers">
-            <button type="button" class="result-item" (click)="selectCustomer(customer)">
-              {{ customer.first_name }} {{ customer.last_name }}
-            </button>
-          </li>
-        </ul>
-        <p *ngIf="showResults && !loadingCustomers && !customerLoadError && filteredCustomers.length === 0" class="field-hint">No hay clientes que coincidan.</p>
-        <button #newCustomerButton type="button" class="customer-action" (click)="openCustomerModal()">Nuevo cliente</button>
+        <div class="search-results" *ngIf="customerSuggestionsOpen">
+          <ul id="evaluation-customer-options" role="listbox" aria-label="Clientes encontrados">
+            <li *ngFor="let customer of filteredCustomers; let index = index" role="presentation">
+              <button type="button" role="option" tabindex="-1" class="result-item"
+                [id]="'evaluation-customer-option-' + customer.id"
+                [attr.aria-selected]="activeCustomerIndex === index"
+                [class.active]="activeCustomerIndex === index"
+                (mousedown)="$event.preventDefault()" (click)="selectCustomer(customer)">
+                <span>{{ customerName(customer) }}</span>
+                <small *ngIf="customer.phone">{{ customer.phone }}</small>
+              </button>
+            </li>
+          </ul>
+          <div class="no-match-box" *ngIf="filteredCustomers.length === 0">
+            <p role="status">No encontramos clientes que coincidan con «{{ searchTerm }}».</p>
+            <button type="button" class="customer-action" (click)="openCustomerModal()">Agregar nuevo cliente</button>
+          </div>
+        </div>
         <input type="hidden" formControlName="customer_id">
       </div>
 

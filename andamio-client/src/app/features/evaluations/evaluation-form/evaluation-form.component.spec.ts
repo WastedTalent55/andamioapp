@@ -136,4 +136,83 @@ describe('EvaluationFormComponent', () => {
     component.loadCustomers(); expect(component.customers).toEqual([customer]);
     expect(component.customerLoadError).toBe('');
   });
+
+  it('starts without suggestions and filters cached customers without new requests', () => {
+    start();
+    expect(component.filteredCustomers).toEqual([]);
+    for (const term of ['C', 'cli', '  CLIENTE  ', '   ']) {
+      component.onSearch({target: {value: term}});
+      expect(component.filteredCustomers.length).toBe(term.trim() ? 1 : 0);
+    }
+    expect(component.customerSuggestionsOpen).toBeFalse();
+    expect(customers.getCustomers).toHaveBeenCalledTimes(1);
+  });
+
+  it('deduplicates suggestions while retaining every available address', () => {
+    customers.getCustomers.and.returnValue(of({success: true, data: [
+      customer, {...customer, address_id: 12, full_address: 'Segunda dirección'}, customer
+    ]}));
+    start(); component.onSearch({target: {value: 'prueba'}});
+    expect(component.filteredCustomers.length).toBe(1);
+    component.selectCustomer(component.filteredCustomers[0]);
+    expect(component.filteredAddresses.map(address => address.id)).toEqual([11, 12]);
+    expect(component.evaluationForm.value.customer_id).toBe(1);
+    expect(component.evaluationForm.value.address_id).toBe(11);
+  });
+
+  it('supports arrows, Enter and Escape with an accessible active option', () => {
+    customers.getCustomers.and.returnValue(of({success: true, data: [customer, {...customer, id: 2, address_id: 22}]}));
+    start(); component.onSearch({target: {value: 'Cliente'}}); fixture.detectChanges();
+    expect(component.activeCustomerOptionId).toBe('evaluation-customer-option-1');
+    component.onCustomerSearchKeydown(new KeyboardEvent('keydown', {key: 'ArrowDown'}));
+    expect(component.activeCustomerOptionId).toBe('evaluation-customer-option-2');
+    component.onCustomerSearchKeydown(new KeyboardEvent('keydown', {key: 'ArrowUp'}));
+    expect(component.activeCustomerOptionId).toBe('evaluation-customer-option-1');
+    const enter = new KeyboardEvent('keydown', {key: 'Enter', cancelable: true});
+    component.onCustomerSearchKeydown(enter); fixture.detectChanges();
+    expect(enter.defaultPrevented).toBeTrue();
+    expect(component.evaluationForm.value.customer_id).toBe(1);
+    expect(component.customerSuggestionsOpen).toBeFalse();
+    expect(evaluations.createEvaluation).not.toHaveBeenCalled();
+    component.onSearch({target: {value: 'Cliente'}});
+    component.onCustomerSearchKeydown(new KeyboardEvent('keydown', {key: 'Escape'}));
+    expect(component.customerSuggestionsOpen).toBeFalse();
+    expect(component.activeCustomerOptionId).toBeNull();
+    component.onCustomerSearchKeydown(new KeyboardEvent('keydown', {key: 'ArrowUp'}));
+    expect(component.activeCustomerOptionId).toBe('evaluation-customer-option-2');
+  });
+
+  it('offers creation only for a nonempty search with no matches', () => {
+    start(); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.no-match-box')).toBeNull();
+    component.onSearch({target: {value: 'Cliente'}}); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.no-match-box')).toBeNull();
+    component.onSearch({target: {value: 'Persona nueva'}}); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.no-match-box button').textContent).toContain('Agregar nuevo cliente');
+    const open = spyOn(component, 'openCustomerModal');
+    const enter = new KeyboardEvent('keydown', {key: 'Enter', cancelable: true});
+    component.onCustomerSearchKeydown(enter);
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(enter.defaultPrevented).toBeTrue();
+  });
+
+  it('does not offer creation while loading and uses the typed term after loading', () => {
+    const pending = new Subject<any>(); customers.getCustomers.and.returnValue(pending);
+    start(); component.onSearch({target: {value: 'Persona nueva'}}); fixture.detectChanges();
+    expect(component.customerSuggestionsOpen).toBeFalse();
+    expect(fixture.nativeElement.querySelector('.no-match-box')).toBeNull();
+    component.openCustomerModal(); expect(component.customerModalOpen).toBeFalse();
+    pending.next({success: true, data: [customer]}); pending.complete(); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.no-match-box')).not.toBeNull();
+    expect(customers.getCustomers).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps API failure distinct from an empty search result', () => {
+    customers.getCustomers.and.returnValue(throwError(() => ({status: 500})));
+    start(); component.onSearch({target: {value: 'Persona nueva'}}); fixture.detectChanges();
+    expect(component.customerLoadError).not.toBe('');
+    expect(fixture.nativeElement.querySelector('.no-match-box')).toBeNull();
+    component.openCustomerModal(); expect(component.customerModalOpen).toBeFalse();
+  });
+
 });

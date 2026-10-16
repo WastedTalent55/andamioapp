@@ -36,7 +36,7 @@ export class EvaluationFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   @ViewChild('customerDialog', { static: true }) customerDialog!: ElementRef<HTMLDialogElement>;
-  @ViewChild('newCustomerButton') newCustomerButton!: ElementRef<HTMLButtonElement>;
+  @ViewChild('customerSearch', { static: true }) customerSearch!: ElementRef<HTMLInputElement>;
   @ViewChild('modalCustomerForm') modalCustomerForm?: CustomerFormComponent;
   customerModalOpen = false;
   loadingCustomers = false;
@@ -45,12 +45,22 @@ export class EvaluationFormComponent implements OnInit {
   submitError = '';
 
   customers: Customer[] = []; 
-  filteredAddresses: any[] = [];
+  filteredAddresses: Array<{ id: number; full_address?: string }> = [];
   evaluationForm: FormGroup;
 
   searchTerm: string = '';
   showResults: boolean = false;
   filteredCustomers: Customer[] = [];
+  activeCustomerIndex = -1;
+
+  get customerSuggestionsOpen(): boolean {
+    return this.showResults && !!this.searchTerm.trim() && !this.loadingCustomers && !this.customerLoadError;
+  }
+
+  get activeCustomerOptionId(): string | null {
+    const customer = this.filteredCustomers[this.activeCustomerIndex];
+    return this.customerSuggestionsOpen && customer ? `evaluation-customer-option-${customer.id}` : null;
+  }
 
   isEditMode = false;
   evaluationId?: number;
@@ -75,13 +85,15 @@ export class EvaluationFormComponent implements OnInit {
     if (this.loadingCustomers) return;
     this.loadingCustomers = true;
     this.customerLoadError = '';
+    this.filteredCustomers = [];
+    this.activeCustomerIndex = -1;
     const idParam = this.route.snapshot.paramMap.get('id');
 
     this.customerService.getCustomers().subscribe({
       next: (res) => { 
         this.loadingCustomers = false;
         this.customers = res.data || [];
-        this.filteredCustomers = res.data || [];
+        this.filterCustomerSuggestions();
 
         if (idParam) {
           this.isEditMode = true;
@@ -102,7 +114,7 @@ export class EvaluationFormComponent implements OnInit {
       },
       error: () => {
         this.loadingCustomers = false;
-        this.customerLoadError = 'No se pudieron cargar los clientes. Puedes reintentar o crear uno nuevo.';
+        this.customerLoadError = 'No se pudieron cargar los clientes. Reintenta para buscar o agregar un cliente.';
       }
     });
   }
@@ -115,11 +127,12 @@ export class EvaluationFormComponent implements OnInit {
 
         const customer = this.customers.find(c => c.id == evaluation.customer_id);
         if (customer) {
-          this.searchTerm = `${customer.first_name} ${customer.last_name}`;
+          this.searchTerm = this.customerName(customer);
+          this.filteredAddresses = this.addressesForCustomer(customer);
         }
 
-        if (evaluation.address_id) {
-          this.filteredAddresses = [{ id: evaluation.address_id, full_address: evaluation.address }];
+        if (evaluation.address_id && !this.filteredAddresses.some(address => address.id === evaluation.address_id)) {
+          this.filteredAddresses.push({ id: evaluation.address_id, full_address: evaluation.address });
         }
 
         // <input type="date"> espera "YYYY-MM-DD" y <input type="time"> espera "HH:mm" —
@@ -212,32 +225,90 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   onSearch(event: any) {
-    const term = event.target.value.toLowerCase();
-    this.searchTerm = term;
+    this.searchTerm = event.target.value;
     this.showResults = true;
     this.filteredAddresses = [];
     this.evaluationForm.patchValue({ customer_id: '', address_id: '' });
 
-    this.filteredCustomers = this.customers.filter(c => 
-      `${c.first_name} ${c.last_name}`.toLowerCase().includes(term)
-    );
+    this.filterCustomerSuggestions();
   }
 
-  selectCustomer(customer: Customer) {
-    this.searchTerm = `${customer.first_name} ${customer.last_name}`;
-    this.evaluationForm.patchValue({ customer_id: customer.id });
-    this.showResults = false;
-    this.filteredAddresses = [];
-    this.evaluationForm.patchValue({ address_id: '' });
+  customerName(customer: Customer): string {
+    return `${customer.first_name} ${customer.last_name || ''}`.trim();
+  }
 
-    // Cargamos la dirección automáticamente (reutilizando tu lógica)
-    if (customer.address_id) {
-      this.filteredAddresses = [{ id: customer.address_id, full_address: customer.full_address }];
-      this.evaluationForm.patchValue({ address_id: customer.address_id });
+  private filterCustomerSuggestions() {
+    const term = this.searchTerm.trim().toLowerCase();
+    const unique = new Map<number, Customer>();
+    if (term && !this.loadingCustomers && !this.customerLoadError) {
+      for (const customer of this.customers) {
+        if (customer.id && this.customerName(customer).toLowerCase().includes(term)) {
+          unique.set(customer.id, customer);
+        }
+      }
+    }
+    this.filteredCustomers = [...unique.values()];
+    this.activeCustomerIndex = this.filteredCustomers.length ? 0 : -1;
+  }
+
+  private addressesForCustomer(customer: Customer) {
+    const addresses = new Map<number, { id: number; full_address?: string }>();
+    for (const row of [...this.customers.filter(c => c.id === customer.id), customer]) {
+      if (row.address_id) addresses.set(row.address_id, { id: row.address_id, full_address: row.full_address });
+    }
+    return [...addresses.values()];
+  }
+
+  onCustomerSearchFocus() {
+    this.showResults = !this.evaluationForm.get('customer_id')?.value;
+  }
+
+  onCustomerSearchFocusOut(event: FocusEvent) {
+    const container = event.currentTarget as HTMLElement;
+    if (!container.contains(event.relatedTarget as Node | null)) this.showResults = false;
+  }
+
+  onCustomerSearchKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.showResults = false;
+      this.activeCustomerIndex = -1;
+      return;
+    }
+    if (event.key === 'Enter') event.preventDefault();
+    if (this.loadingCustomers || this.customerLoadError || !this.searchTerm.trim()) return;
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.showResults = true;
+      const count = this.filteredCustomers.length;
+      if (count) {
+        const direction = event.key === 'ArrowDown' ? 1 : -1;
+        this.activeCustomerIndex = this.activeCustomerIndex < 0
+          ? (direction > 0 ? 0 : count - 1)
+          : (this.activeCustomerIndex + direction + count) % count;
+        this.changeDetector.detectChanges();
+        document.getElementById(this.activeCustomerOptionId!)?.scrollIntoView({ block: 'nearest' });
+      }
+    } else if (event.key === 'Enter' && this.customerSuggestionsOpen) {
+      event.preventDefault();
+      const customer = this.filteredCustomers[this.activeCustomerIndex];
+      if (customer) this.selectCustomer(customer);
+      else if (!this.filteredCustomers.length) this.openCustomerModal();
     }
   }
 
+  selectCustomer(customer: Customer) {
+    if (!customer.id) return;
+    this.searchTerm = this.customerName(customer);
+    this.evaluationForm.patchValue({ customer_id: customer.id });
+    this.showResults = false;
+    this.activeCustomerIndex = -1;
+    this.filteredAddresses = this.addressesForCustomer(customer);
+    this.evaluationForm.patchValue({ address_id: this.filteredAddresses[0]?.id || '' });
+  }
+
   openCustomerModal() {
+    if (this.customerModalOpen || this.loadingCustomers || this.customerLoadError) return;
     this.showResults = false;
     this.customerModalOpen = true;
     this.changeDetector.detectChanges();
@@ -256,7 +327,7 @@ export class EvaluationFormComponent implements OnInit {
 
   onCustomerDialogClosed() {
     this.customerModalOpen = false;
-    this.newCustomerButton.nativeElement.focus();
+    this.customerSearch.nativeElement.focus();
   }
 
   trapCustomerFocus(event: Event) {
@@ -274,7 +345,6 @@ export class EvaluationFormComponent implements OnInit {
 
   onCustomerCreated(customer: Customer) {
     this.customers = [...this.customers.filter(c => c.id !== customer.id), customer];
-    this.filteredCustomers = [...this.customers];
     this.selectCustomer(customer);
     this.customerDialog.nativeElement.close();
   }

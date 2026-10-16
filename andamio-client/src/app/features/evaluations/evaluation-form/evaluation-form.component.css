@@ -106,7 +106,7 @@
 
 .result-item:hover {
   background-color: var(--andamio-antracita);
-  color: var(--andam);
+  color: var(--andamio-oro-activo);
 }
 
 .form-control {
@@ -251,7 +251,8 @@ select.form-control option {
   font: inherit;
 }
 
-.search-results {
+.search-results ul {
+  margin: 0;
   list-style: none;
   padding: 0;
 }
@@ -305,4 +306,32 @@ select.form-control option {
 
 .customer-dialog::backdrop {
   background: rgba(0, 0, 0, .65);
+}
+
+
+.result-item.active {
+  background: var(--andamio-antracita);
+  color: var(--andamio-oro-activo);
+}
+
+.result-item span, .result-item small {
+  display: block;
+}
+
+.result-item small {
+  margin-top: 4px;
+  color: var(--andamio-concreto);
+}
+
+.no-match-box {
+  padding: 14px;
+  overflow-wrap: anywhere;
+}
+
+.no-match-box p {
+  margin: 0;
+}
+
+.no-match-box .customer-action {
+  width: 100%;
 }
