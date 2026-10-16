@@ -14,7 +14,10 @@
         <div class="grid-row">
       <div class="form-group">
         <label for="customer-first_name">NOMBRE(S)</label>
-        <input id="customer-first_name" type="text" formControlName="first_name" class="form-control" placeholder="Ej: Paquita">
+        <input id="customer-first_name" type="text" formControlName="first_name" class="form-control"
+          [attr.aria-required]="embedded ? 'true' : null"
+          [attr.aria-invalid]="embedded ? customerForm.get('first_name')?.touched && customerForm.get('first_name')?.invalid : null"
+          [attr.aria-describedby]="embedded && customerForm.get('first_name')?.touched && customerForm.get('first_name')?.hasError('required') ? 'customer-name-error' : null" placeholder="Ej: Paquita">
       </div>
       <div class="form-group">
         <label for="customer-last_name">APELLIDO(S)</label>
@@ -36,7 +39,10 @@
       </app-address-autocomplete>
 
       <div class="manual-address-block" *ngIf="manualAddressMode">
-        <input id="customer-address" type="text" formControlName="address" class="form-control" placeholder="Dirección completa: calle, número, colonia, ciudad, CP">
+        <input id="customer-address" type="text" formControlName="address" class="form-control"
+          [attr.aria-required]="embedded ? 'true' : null"
+          [attr.aria-invalid]="embedded ? customerForm.get('address')?.touched && customerForm.get('address')?.invalid : null"
+          [attr.aria-describedby]="embedded && customerForm.get('address')?.touched && customerForm.get('address')?.hasError('required') ? 'customer-address-error' : null" placeholder="Dirección completa: calle, número, colonia, ciudad, CP">
       </div>
 
       <button *ngIf="!embedded" type="button" class="btn-link-toggle" (click)="toggleManualAddress()">
@@ -47,8 +53,8 @@
       </button>
     </div>
 
-    <p *ngIf="embedded && customerForm.get('first_name')?.touched && customerForm.get('first_name')?.hasError('required')" class="form-error">Introduce el nombre del cliente.</p>
-    <p *ngIf="embedded && customerForm.get('address')?.touched && customerForm.get('address')?.hasError('required')" class="form-error">Introduce la dirección del cliente.</p>
+    <p id="customer-name-error" role="alert" *ngIf="embedded && customerForm.get('first_name')?.touched && customerForm.get('first_name')?.hasError('required')" class="form-error">Introduce el nombre del cliente.</p>
+    <p id="customer-address-error" role="alert" *ngIf="embedded && customerForm.get('address')?.touched && customerForm.get('address')?.hasError('required')" class="form-error">Introduce la dirección del cliente.</p>
     </fieldset>
 
     <p *ngIf="embedded && submitting" role="status">{{ createdCustomerId ? 'Recuperando cliente y dirección…' : 'Guardando cliente…' }}</p>

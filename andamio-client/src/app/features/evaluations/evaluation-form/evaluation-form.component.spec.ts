@@ -1,5 +1,9 @@
+import { Component } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, Router, provideRouter } from '@angular/router';
 import { Location } from '@angular/common';
 import { of, Subject, throwError } from 'rxjs';
 import { EvaluationFormComponent } from './evaluation-form.component';
@@ -215,4 +219,100 @@ describe('EvaluationFormComponent', () => {
     component.openCustomerModal(); expect(component.customerModalOpen).toBeFalse();
   });
 
+  it('unsubscribes from delayed customers before they can register a destroyed route subscription', () => {
+    const pending = new Subject<any>(), params = new Subject<any>();
+    customers.getCustomers.and.returnValue(pending); route.queryParams = params;
+    start(); expect(pending.observed).toBeTrue(); fixture.destroy();
+    expect(pending.observed).toBeFalse();
+    pending.next({success: true, data: [customer]}); pending.complete();
+    expect(component.customers).toEqual([]); expect(params.observed).toBeFalse();
+  });
+
+  it('unsubscribes from query parameters after a normal customer response', () => {
+    const params = new Subject<any>(); route.queryParams = params;
+    start(); expect(params.observed).toBeTrue(); fixture.destroy(); expect(params.observed).toBeFalse();
+    params.next({clientId: 1}); expect(component.evaluationForm.getRawValue().customer_id).toBe('');
+  });
+
+  it('locks editing through both delayed requests, then preserves the new draft and created customer', () => {
+    const customerResponse = new Subject<any>(), evaluationResponse = new Subject<any>();
+    customers.getCustomers.and.returnValue(customerResponse);
+    evaluations.getEvaluationById.and.returnValue(evaluationResponse);
+    route.snapshot.paramMap = convertToParamMap({id: 44}); start();
+    const search: HTMLInputElement = fixture.nativeElement.querySelector('#evaluation-customer');
+    const work: HTMLInputElement = fixture.nativeElement.querySelector('#evaluation-work');
+    expect(component.loadingEvaluation).toBeTrue(); expect(component.evaluationForm.disabled).toBeTrue();
+    expect(search.disabled).toBeTrue(); expect(work.disabled).toBeTrue();
+    expect(fixture.nativeElement.querySelector('form [role=status]').textContent).toContain('Cargando evaluación');
+    search.focus(); work.focus(); expect(document.activeElement).not.toBe(search); expect(document.activeElement).not.toBe(work);
+    customerResponse.next({success: true, data: [customer]}); customerResponse.complete(); fixture.detectChanges();
+    expect(component.loadingCustomers).toBeFalse(); expect(component.evaluationForm.disabled).toBeTrue();
+    component.onSearch({target: {value: 'Nuevo'}}); component.selectCustomer({...customer, id: 9});
+    component.openCustomerModal(); component.onSubmit();
+    expect(component.searchTerm).toBe(''); expect(component.customerModalOpen).toBeFalse();
+    expect(component.evaluationForm.getRawValue().customer_id).toBe('');
+    expect(evaluations.updateEvaluationDetails).not.toHaveBeenCalled();
+    evaluationResponse.next({success: true, data: {id: 44, customer_id: 1, address_id: 11,
+      scheduled_date: '2026-11-20T14:35:00.000Z', requested_work: 'Trabajo original'}});
+    evaluationResponse.complete(); fixture.detectChanges();
+    expect(component.loadingEvaluation).toBeFalse(); expect(work.disabled).toBeFalse(); expect(search.disabled).toBeFalse();
+    expect(component.evaluationForm.value.requested_work).toBe('Trabajo original');
+    component.evaluationForm.patchValue({requested_work: 'Borrador nuevo'}); component.openCustomerModal();
+    component.modalCustomerForm!.customerForm.patchValue({first_name: 'Nuevo', address: 'Calle nueva'});
+    component.modalCustomerForm!.onSubmit();
+    expect(component.evaluationForm.value).toEqual(jasmine.objectContaining({customer_id: 9, address_id: 19, requested_work: 'Borrador nuevo'}));
+  });
+
+  it('keeps editing locked on customer load errors while allowing retry', () => {
+    route.snapshot.paramMap = convertToParamMap({id: 44});
+    customers.getCustomers.and.returnValues(throwError(() => ({status: 500})), of({success: true, data: [customer]}));
+    const pending = new Subject<any>(); evaluations.getEvaluationById.and.returnValue(pending); start();
+    const retry: HTMLButtonElement = fixture.nativeElement.querySelector('.search-container [role=alert] button');
+    expect(retry.disabled).toBeFalse(); expect(component.evaluationForm.disabled).toBeTrue();
+    retry.click(); fixture.detectChanges();
+    expect(component.customerLoadError).toBe(''); expect(component.loadingEvaluation).toBeTrue();
+    pending.next({success: true, data: {customer_id: 1, address_id: 11, scheduled_date: '2026-11-20T14:35:00.000Z', requested_work: 'Original'}});
+    pending.complete(); fixture.detectChanges(); expect(component.evaluationForm.enabled).toBeTrue();
+  });
+
+  it('ignores a delayed evaluation response and error after leaving the form', () => {
+    route.snapshot.paramMap = convertToParamMap({id: 44});
+    const pending = new Subject<any>(); evaluations.getEvaluationById.and.returnValue(pending);
+    start(); const before = component.evaluationForm.getRawValue(); fixture.destroy(); expect(pending.observed).toBeFalse();
+    pending.next({success: true, data: {customer_id: 1, requested_work: 'Respuesta tardía'}}); pending.error({status: 500});
+    expect(component.evaluationForm.getRawValue()).toEqual(before); expect(window.alert).not.toHaveBeenCalled();
+  });
+
+  for (const editing of [false, true]) {
+    it(`cancels a pending evaluation ${editing ? 'update' : 'creation'} without late navigation`, () => {
+      const pending = new Subject<any>();
+      if (editing) {
+        route.snapshot.paramMap = convertToParamMap({id: 44});
+        evaluations.getEvaluationById.and.returnValue(of({success: true, data: {customer_id: 1}} as any));
+        evaluations.updateEvaluationDetails.and.returnValue(pending);
+      } else evaluations.createEvaluation.and.returnValue(pending);
+      start(); fillDraft(); component.onSubmit(); expect(pending.observed).toBeTrue(); fixture.destroy(); expect(pending.observed).toBeFalse();
+      const busy = component.submitting; pending.next({success: true, data: {id: 44}}); pending.complete();
+      expect(router.navigate).not.toHaveBeenCalled(); expect(window.alert).not.toHaveBeenCalled(); expect(component.submitting).toBe(busy);
+    });
+  }
+
+});
+
+
+@Component({standalone: true, template: '<p>Otra pantalla</p>'})
+class AwayComponent {}
+
+describe('EvaluationForm navigation during HTTP loading', () => {
+  it('cancels the HttpClient request when navigating away before customers arrive', async () => {
+    await TestBed.configureTestingModule({providers: [
+      provideRouter([{path: 'evaluations/new', component: EvaluationFormComponent}, {path: 'away', component: AwayComponent}]),
+      provideHttpClient(), provideHttpClientTesting()
+    ]}).compileComponents();
+    const http = TestBed.inject(HttpTestingController);
+    const harness = await RouterTestingHarness.create('/evaluations/new');
+    const component = harness.routeDebugElement!.componentInstance as EvaluationFormComponent;
+    const request = http.expectOne(req => req.url.endsWith('/customers'));
+    await harness.navigateByUrl('/away'); expect(request.cancelled).toBeTrue(); expect(component.customers).toEqual([]); http.verify();
+  });
 });

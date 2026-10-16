@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, ElementRef, AfterViewInit, NgZone, Input, Output, EventEmitter, HostBinding } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, inject, ElementRef, AfterViewInit, NgZone, DestroyRef, Input, Output, EventEmitter, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomerService } from '../../../core/services/customer.service';
@@ -35,6 +36,7 @@ export class CustomerFormComponent implements OnInit {
   creationUncertain = false;
   formError = '';
   private ngZone = inject(NgZone);
+  private destroyRef = inject(DestroyRef);
  
   private location = inject(Location);
   private fb = inject(FormBuilder);
@@ -92,7 +94,7 @@ export class CustomerFormComponent implements OnInit {
   }
 
   private loadCustomer(id: number) {
-    this.customerService.getCustomerById(id).subscribe({
+    this.customerService.getCustomerById(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         const customer = res.data;
         if (!customer) return;
@@ -147,7 +149,7 @@ export class CustomerFormComponent implements OnInit {
     this.submitting = true;
 
     if (this.isEditMode && this.customerId) {
-      this.customerService.updateCustomer(this.customerId, this.customerForm.value).subscribe({
+      this.customerService.updateCustomer(this.customerId, this.customerForm.value).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.submitting = false;
           alert('✅ Cliente actualizado correctamente.');
@@ -162,7 +164,7 @@ export class CustomerFormComponent implements OnInit {
       return;
     }
 
-    this.customerService.createCustomer(this.customerForm.value).subscribe({
+    this.customerService.createCustomer(this.customerForm.value).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         this.submitting = false;
         const newCustomerId = response.data?.id;
@@ -219,7 +221,7 @@ export class CustomerFormComponent implements OnInit {
   private recoverCreatedCustomer() {
     this.submitting = true;
     this.formError = '';
-    this.customerService.getCustomerById(this.createdCustomerId!).subscribe({
+    this.customerService.getCustomerById(this.createdCustomerId!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         this.submitting = false;
         const customer = response.data;

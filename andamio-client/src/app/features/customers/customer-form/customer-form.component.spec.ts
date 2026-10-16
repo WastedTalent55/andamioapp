@@ -152,4 +152,59 @@ describe('CustomerFormComponent', () => {
     expect(location.back).toHaveBeenCalled();
     expect(customers.createCustomer).not.toHaveBeenCalled();
   });
+  it('associates embedded validation errors with fields and clears them after correction', () => {
+    start(); component.customerForm.patchValue({first_name: '', address: ''}); component.onSubmit(); fixture.detectChanges();
+    for (const [field, id] of [['first_name', 'customer-name-error'], ['address', 'customer-address-error']]) {
+      const input: HTMLInputElement = fixture.nativeElement.querySelector(`[formcontrolname=${field}]`);
+      expect(input.getAttribute('aria-required')).toBe('true'); expect(input.getAttribute('aria-invalid')).toBe('true');
+      expect(input.getAttribute('aria-describedby')).toBe(id);
+      expect(fixture.nativeElement.querySelector(`#${id}`).getAttribute('role')).toBe('alert');
+    }
+    component.customerForm.patchValue({first_name: 'Corregido', address: 'Calle ficticia'}); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#customer-name-error')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#customer-address-error')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#customer-first_name').getAttribute('aria-invalid')).toBe('false');
+    expect(fixture.nativeElement.querySelector('#customer-address').hasAttribute('aria-describedby')).toBeFalse();
+  });
+
+  it('keeps embedded validation messages and ARIA changes out of the regular form', () => {
+    start(false); component.toggleManualAddress();
+    component.customerForm.patchValue({first_name: '', address: ''}); component.onSubmit(); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#customer-name-error')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#customer-address-error')).toBeNull();
+    for (const field of ['first_name', 'address']) {
+      const input: HTMLInputElement = fixture.nativeElement.querySelector(`[formcontrolname=${field}]`);
+      expect(input.hasAttribute('aria-invalid')).toBeFalse(); expect(input.hasAttribute('aria-required')).toBeFalse();
+      expect(input.hasAttribute('aria-describedby')).toBeFalse();
+    }
+  });
+
+  it('cancels embedded creation on destruction and never starts late recovery', () => {
+    const pending = new Subject<any>(); customers.createCustomer.and.returnValue(pending);
+    start(); component.onSubmit(); fixture.destroy(); expect(pending.observed).toBeFalse();
+    pending.next({success: true, data: {id: 9}}); pending.complete();
+    expect(customers.getCustomerById).not.toHaveBeenCalled(); expect(component.createdCustomerId).toBeUndefined();
+  });
+
+  it('cancels delayed recovery without emitting to the destroyed parent', () => {
+    const pending = new Subject<any>(); customers.getCustomerById.and.returnValue(pending);
+    start(); const emit = spyOn(component.customerCreated, 'emit'); component.onSubmit(); fixture.destroy();
+    expect(pending.observed).toBeFalse(); pending.next({success: true, data: saved}); pending.complete(); expect(emit).not.toHaveBeenCalled();
+  });
+
+  it('cancels regular customer loading and ignores errors after leaving', () => {
+    route.snapshot.paramMap = convertToParamMap({id: 9});
+    const pending = new Subject<any>(); customers.getCustomerById.and.returnValue(pending);
+    start(false); const before = component.customerForm.value; fixture.destroy(); expect(pending.observed).toBeFalse();
+    pending.next({success: true, data: saved}); pending.error({status: 500});
+    expect(component.customerForm.value).toEqual(before); expect(location.back).not.toHaveBeenCalled(); expect(window.alert).not.toHaveBeenCalled();
+  });
+
+  it('cancels regular customer updates without navigating after destruction', () => {
+    route.snapshot.paramMap = convertToParamMap({id: 9});
+    const pending = new Subject<any>(); customers.updateCustomer.and.returnValue(pending);
+    start(false); component.onSubmit(); fixture.destroy(); expect(pending.observed).toBeFalse();
+    pending.next({success: true}); pending.complete(); expect(location.back).not.toHaveBeenCalled(); expect(window.alert).not.toHaveBeenCalled();
+  });
+
 });

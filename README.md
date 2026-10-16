@@ -75,7 +75,7 @@ Phase 1 ends when a quote is accepted. Phase 2 covers what happens next: running
 
 | Layer | Technologies |
 |---|---|
-| Frontend | Angular 17, TypeScript, standalone components, reactive forms, Angular Router, HTTP interceptors and guards, jsPDF + jspdf-autotable, Google Maps JS API loader, Lucide icons, responsive CSS |
+| Frontend | Angular 17, TypeScript, standalone components, reactive forms, Angular Router, HTTP interceptors, jsPDF + jspdf-autotable, Google Maps JS API loader, Lucide icons, responsive CSS |
 | Backend | Node.js, Express 5, REST API, JWT, Google OAuth (google-auth-library), mysql2, dotenv |
 | Database | MySQL: tenants, users, customers, customer addresses, evaluations, quotes, quote items, projects |
 | Tooling | Git, GitHub, VS Code, npm |
@@ -88,7 +88,7 @@ Phase 1 ends when a quote is accepted. Phase 2 covers what happens next: running
 ┌─────────────────────────────┐
 │        Angular Client       │
 │  Components · Services      │
-│  Guards · Interceptors      │
+│  Router · Interceptors      │
 └──────────────┬──────────────┘
                │ HTTP / REST + JWT
                ▼
@@ -132,7 +132,7 @@ andamioapp/
 
 * JWT-protected API routes (auth middleware)
 * Google sign-in; the backend verifies the Google token and issues its own JWT
-* Route guards and an HTTP interceptor on the client
+* An HTTP interceptor attaches the JWT on the client; the current routes do not register route guards. Access control is enforced by the backend.
 * Tenant-scoped database queries enforced on the backend
 * Database credentials and the JWT secret kept in environment variables, never in the repository
 
@@ -146,6 +146,11 @@ formatting. Depending on the server and browser time zones, these interpretation
 may differ. A separate task must define whether visits represent local job-site
 time or an absolute instant, then review serialization and existing data. The
 evaluation/customer UX changes deliberately do not change this behavior.
+
+When editing an evaluation, the form stays disabled until customers and the
+evaluation have loaded. A loading message explains the wait; leaving the screen
+cancels frontend subscriptions, preventing late responses from updating it.
+Cancelling an HTTP subscription does not undo a write already received by the server.
 
 The evaluation's new-customer dialog reuses Customer Form with manual address
 entry. It preserves the evaluation draft and only selects the customer after its

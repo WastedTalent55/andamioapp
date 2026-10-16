@@ -9,13 +9,14 @@
     </button>
   </div>
   
-  <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()" class="andamio-form" [attr.aria-busy]="submitting">
-    
+  <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()" class="andamio-form" [attr.aria-busy]="submitting || loadingEvaluation">
+    <p *ngIf="loadingEvaluation" role="status">Cargando evaluación… Podrás editarla cuando termine la carga.</p>
+
     <div class="form-row">
       <div class="form-group search-container" (focusout)="onCustomerSearchFocusOut($event)">
         <label for="evaluation-customer">CLIENTE</label>
         <input #customerSearch id="evaluation-customer" type="search" class="form-control"
-          role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
+          [disabled]="loadingEvaluation" role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
           aria-controls="evaluation-customer-options"
           [attr.aria-expanded]="customerSuggestionsOpen"
           [attr.aria-activedescendant]="activeCustomerOptionId"
@@ -105,7 +106,7 @@
     </div>
 
     <p *ngIf="submitError" role="alert" class="alert-text">{{ submitError }}</p>
-    <button type="submit" class="btn-andamio full-width" [disabled]="evaluationForm.invalid || submitting">
+    <button type="submit" class="btn-andamio full-width" [disabled]="loadingEvaluation || evaluationForm.invalid || submitting">
       {{ submitting ? 'GUARDANDO…' : (isEditMode ? 'GUARDAR CAMBIOS' : 'CONFIRMAR Y AGENDAR VISITA') }}
     </button>
   </form>

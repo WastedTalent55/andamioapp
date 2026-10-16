@@ -10,7 +10,6 @@ import { Customer } from '../../../core/models/customer.model';
 import { ActivatedRoute } from '@angular/router';
 import { LucideAngularModule, X, ClipboardList, TriangleAlert, Pencil } from 'lucide-angular';
 import { CustomerFormComponent } from '../../customers/customer-form/customer-form.component';
-import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-evaluation-form',
@@ -40,6 +39,7 @@ export class EvaluationFormComponent implements OnInit {
   @ViewChild('modalCustomerForm') modalCustomerForm?: CustomerFormComponent;
   customerModalOpen = false;
   loadingCustomers = false;
+  loadingEvaluation = false;
   customerLoadError = '';
   submitting = false;
   submitError = '';
@@ -54,7 +54,7 @@ export class EvaluationFormComponent implements OnInit {
   activeCustomerIndex = -1;
 
   get customerSuggestionsOpen(): boolean {
-    return this.showResults && !!this.searchTerm.trim() && !this.loadingCustomers && !this.customerLoadError;
+    return this.showResults && !!this.searchTerm.trim() && !this.loadingCustomers && !this.loadingEvaluation && !this.customerLoadError;
   }
 
   get activeCustomerOptionId(): string | null {
@@ -78,6 +78,14 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.isEditMode = true;
+      this.evaluationId = Number(idParam);
+      this.loadingEvaluation = true;
+      // Keep the initial response from overwriting edits made during loading.
+      this.evaluationForm.disable({ emitEvent: false });
+    }
     this.loadCustomers();
   }
 
@@ -87,17 +95,13 @@ export class EvaluationFormComponent implements OnInit {
     this.customerLoadError = '';
     this.filteredCustomers = [];
     this.activeCustomerIndex = -1;
-    const idParam = this.route.snapshot.paramMap.get('id');
-
-    this.customerService.getCustomers().subscribe({
+    this.customerService.getCustomers().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => { 
         this.loadingCustomers = false;
         this.customers = res.data || [];
         this.filterCustomerSuggestions();
 
-        if (idParam) {
-          this.isEditMode = true;
-          this.evaluationId = Number(idParam);
+        if (this.isEditMode && this.evaluationId !== undefined) {
           this.loadEvaluation(this.evaluationId);
           return;
         }
@@ -120,7 +124,7 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   private loadEvaluation(id: number) {
-    this.evaluationService.getEvaluationById(id).subscribe({
+    this.evaluationService.getEvaluationById(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         const evaluation: any = res.data;
         if (!evaluation) return;
@@ -150,6 +154,8 @@ export class EvaluationFormComponent implements OnInit {
           requested_work: evaluation.requested_work,
           requirements: evaluation.requirements
         });
+        this.evaluationForm.enable({ emitEvent: false });
+        this.loadingEvaluation = false;
       },
       error: (err) => {
         console.error('Error cargando la evaluación:', err);
@@ -170,7 +176,7 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.submitting) return;
+    if (this.loadingEvaluation || this.submitting) return;
     this.evaluationForm.markAllAsTouched();
     if (!this.evaluationForm.valid) return;
     this.submitting = true;
@@ -179,24 +185,30 @@ export class EvaluationFormComponent implements OnInit {
     const payload = this.buildPayload();
 
     if (this.isEditMode && this.evaluationId) {
-      this.evaluationService.updateEvaluationDetails(this.evaluationId, payload).pipe(finalize(() => this.submitting = false)).subscribe({
+      this.evaluationService.updateEvaluationDetails(this.evaluationId, payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
+          this.submitting = false;
           alert('✅ Evaluación actualizada con éxito');
           this.router.navigate(['/board']);
         },
         error: (err) => {
+          this.submitting = false;
           this.submitError = 'No se pudo actualizar la evaluación. Tus datos se conservan; inténtalo de nuevo.';
         }
       });
       return;
     }
 
-    this.evaluationService.createEvaluation(payload).pipe(finalize(() => this.submitting = false)).subscribe({
+    this.evaluationService.createEvaluation(payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
+        this.submitting = false;
         alert('✅ Visita técnica agendada con éxito');
         this.router.navigate(['/board']);
       },
-      error: () => this.submitError = 'No se pudo agendar la visita. Tus datos se conservan; inténtalo de nuevo.'
+      error: () => {
+        this.submitting = false;
+        this.submitError = 'No se pudo agendar la visita. Tus datos se conservan; inténtalo de nuevo.';
+      }
     });
   }
 
@@ -225,6 +237,7 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   onSearch(event: any) {
+    if (this.loadingEvaluation) return;
     this.searchTerm = event.target.value;
     this.showResults = true;
     this.filteredAddresses = [];
@@ -276,7 +289,7 @@ export class EvaluationFormComponent implements OnInit {
       return;
     }
     if (event.key === 'Enter') event.preventDefault();
-    if (this.loadingCustomers || this.customerLoadError || !this.searchTerm.trim()) return;
+    if (this.loadingEvaluation || this.loadingCustomers || this.customerLoadError || !this.searchTerm.trim()) return;
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
       this.showResults = true;
@@ -298,7 +311,7 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   selectCustomer(customer: Customer) {
-    if (!customer.id) return;
+    if (this.loadingEvaluation || !customer.id) return;
     this.searchTerm = this.customerName(customer);
     this.evaluationForm.patchValue({ customer_id: customer.id });
     this.showResults = false;
@@ -308,7 +321,7 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   openCustomerModal() {
-    if (this.customerModalOpen || this.loadingCustomers || this.customerLoadError) return;
+    if (this.loadingEvaluation || this.customerModalOpen || this.loadingCustomers || this.customerLoadError) return;
     this.showResults = false;
     this.customerModalOpen = true;
     this.changeDetector.detectChanges();
