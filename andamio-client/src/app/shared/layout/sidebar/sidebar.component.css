@@ -17,6 +17,10 @@
   z-index: 1000;
 }
 
+.mobile-only {
+  display: none;
+}
+
 .mobile-menu-toggle {
   display: none;
 
@@ -187,10 +191,40 @@
 
 /* Móvil (prioridad #2): menú hamburguesa real — el botón aparece aquí y
    .nav-links se convierte en un panel desplegable, en vez de forzar scroll
-   horizontal. El menú de cuenta sigue siempre visible, sin cambios. */
+   horizontal. Las opciones de cuenta se integran en el mismo panel móvil. */
 @media (max-width: 640px) {
   .andamio-topbar {
     gap: 0.75rem;
+  }
+
+  .topbar-tenant {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+
+  .mobile-tenant-name {
+    min-width: 0;
+    padding: 12px 14px;
+    color: var(--andamio-oro-activo);
+    font-family: var(--font-technical);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    border-bottom: var(--border-thin);
+  }
+
+  .mobile-account-section {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: var(--border-thin);
+  }
+
+  .mobile-logout {
+    width: 100%;
+    min-height: 44px;
+    padding: 12px 14px;
   }
 
   .mobile-menu-toggle {
@@ -217,6 +251,8 @@
 
     padding: 10px;
     max-height: calc(100vh - 72px);
+    max-height: calc(100dvh - 72px);
+    overscroll-behavior-y: contain;
     overflow-y: auto;
   }
 

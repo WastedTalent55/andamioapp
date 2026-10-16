@@ -1,6 +1,7 @@
-import { Component, OnInit, inject, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, HostListener, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TenantService } from '../../../core/services/tenant.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { 
@@ -44,6 +45,8 @@ export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private elementRef = inject(ElementRef);
+  private destroyRef = inject(DestroyRef);
+  private isMobileViewport = window.matchMedia('(max-width: 640px)').matches;
 
   ngOnInit() {
       this.tenantService.tenantName$.subscribe(name => {
@@ -51,6 +54,12 @@ export class SidebarComponent implements OnInit {
     });
     
     this.loadTenantBrand();
+    this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.closeMobileMenu();
+        this.isAccountMenuOpen = false;
+      }
+    });
   } 
   
 
@@ -76,6 +85,7 @@ export class SidebarComponent implements OnInit {
 
   toggleMobileMenu(event: Event) {
     event.stopPropagation();
+    this.isAccountMenuOpen = false;
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
@@ -94,7 +104,28 @@ export class SidebarComponent implements OnInit {
     }
   }
 
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscape(event: KeyboardEvent) {
+    if (!this.isMobileMenuOpen && !this.isAccountMenuOpen) return;
+    const trigger = this.isMobileMenuOpen ? '.mobile-menu-toggle' : '.tenant-tag';
+    this.closeMobileMenu();
+    this.isAccountMenuOpen = false;
+    event.preventDefault();
+    this.elementRef.nativeElement.querySelector(trigger)?.focus();
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    const isMobile = window.matchMedia('(max-width: 640px)').matches;
+    if (isMobile !== this.isMobileViewport) {
+      this.closeMobileMenu();
+      this.isAccountMenuOpen = false;
+      this.isMobileViewport = isMobile;
+    }
+  }
+
   logout() {
+    this.closeMobileMenu();
     this.isAccountMenuOpen = false;
     this.authService.logout();
     this.router.navigate(['/']);

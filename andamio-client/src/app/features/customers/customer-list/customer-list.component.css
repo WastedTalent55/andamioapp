@@ -363,6 +363,22 @@
     padding: 1rem 0;
   }
 
+  /* Reach the shared header while keeping these overrides inside Customer List. */
+  :host ::ng-deep app-page-header .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  :host ::ng-deep app-page-header .page-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  :host ::ng-deep app-page-header .btn-andamio {
+    width: 100%;
+  }
+
   .search-toolbar {
     flex-direction: column;
     align-items: stretch;

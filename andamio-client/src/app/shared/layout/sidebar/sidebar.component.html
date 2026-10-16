@@ -1,4 +1,4 @@
-<nav class="andamio-topbar">
+<nav class="andamio-topbar" aria-label="Navegación principal">
   <div class="brand">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="180" height="45" fill="none">
       <g transform="translate(15, 15)">
@@ -12,7 +12,14 @@
     </svg>
   </div>
 
-  <ul class="nav-links" [class.mobile-open]="isMobileMenuOpen">
+  <button type="button" class="mobile-menu-toggle" (click)="toggleMobileMenu($event)"
+          aria-label="Menú de navegación" aria-controls="navbar-links"
+          [attr.aria-expanded]="isMobileMenuOpen">
+    <lucide-icon [img]="isMobileMenuOpen ? X : Menu" size="22"></lucide-icon>
+  </button>
+
+  <ul id="navbar-links" class="nav-links" [class.mobile-open]="isMobileMenuOpen">
+    <li class="mobile-only mobile-tenant-name">{{ tenantName || 'Andamio' }}</li>
     <li><a routerLink="/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">
       <lucide-icon [img]="LayoutDashboard" size="18"></lucide-icon>
       <span>DASHBOARD</span></a>
@@ -37,20 +44,28 @@
       <lucide-icon [img]="HardHat" size="18"></lucide-icon>
       <span>PROYECTOS</span></a>
     </li>
+    <li class="mobile-only mobile-account-section">
+      <a routerLink="/settings" routerLinkActive="active" (click)="closeMobileMenu()">
+        <lucide-icon [img]="Settings" size="18"></lucide-icon>
+        <span>Configuración</span>
+      </a>
+    </li>
+    <li class="mobile-only">
+      <button type="button" class="account-dropdown-item danger mobile-logout" (click)="logout()">
+        <lucide-icon [img]="LogOut" size="18"></lucide-icon>
+        Cerrar sesión
+      </button>
+    </li>
   </ul>
 
-  <button type="button" class="mobile-menu-toggle" (click)="toggleMobileMenu($event)" title="Menú">
-    <lucide-icon [img]="isMobileMenuOpen ? X : Menu" size="22"></lucide-icon>
-  </button>
-
-
   <div class="topbar-tenant" [class.open]="isAccountMenuOpen">
-    <button type="button" class="tenant-tag" (click)="toggleAccountMenu($event)">
+    <button type="button" class="tenant-tag" (click)="toggleAccountMenu($event)"
+            aria-controls="account-menu" [attr.aria-expanded]="isAccountMenuOpen">
       {{ tenantName || 'ANDAMIO' | uppercase }}
       <lucide-icon [img]="ChevronDown" size="14"></lucide-icon>
     </button>
 
-    <div class="account-dropdown" *ngIf="isAccountMenuOpen">
+    <div id="account-menu" class="account-dropdown" *ngIf="isAccountMenuOpen">
       <a routerLink="/settings" class="account-dropdown-item" (click)="isAccountMenuOpen = false">
         <lucide-icon [img]="Settings" size="16"></lucide-icon>
         Configuración
