@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, ElementRef, AfterViewInit, NgZone } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, inject, ElementRef, AfterViewInit, NgZone, DestroyRef, Input, Output, EventEmitter, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomerService } from '../../../core/services/customer.service';
@@ -6,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { AddressAutocompleteComponent } from '../../../shared/components/address-autocomplete/address-autocomplete.component';
 import { AddressData } from '../../../core/models/address.model';
+import { Customer } from '../../../core/models/customer.model';
 import { EvaluationPromptModalComponent } from '../evaluation-prompt-modal/evaluation-prompt-modal.component';
 import { LucideAngularModule, User, X, MapPin, Pencil } from 'lucide-angular';
 
@@ -25,7 +27,16 @@ declare var google: any;
   styleUrl: './customer-form.component.css'
 })
 export class CustomerFormComponent implements OnInit {
+  @Input() embedded = false;
+  @Output() customerCreated = new EventEmitter<Customer>();
+  @Output() cancelled = new EventEmitter<void>();
+  @HostBinding('class.embedded') get isEmbedded() { return this.embedded; }
+
+  createdCustomerId?: number;
+  creationUncertain = false;
+  formError = '';
   private ngZone = inject(NgZone);
+  private destroyRef = inject(DestroyRef);
  
   private location = inject(Location);
   private fb = inject(FormBuilder);
@@ -68,6 +79,10 @@ export class CustomerFormComponent implements OnInit {
   manualAddressMode = false;
 
   ngOnInit(): void {
+    if (this.embedded) {
+      this.manualAddressMode = true;
+      return;
+    }
     const idParam = this.route.snapshot.paramMap.get('id');
 
     if (idParam) {
@@ -79,7 +94,7 @@ export class CustomerFormComponent implements OnInit {
   }
 
   private loadCustomer(id: number) {
-    this.customerService.getCustomerById(id).subscribe({
+    this.customerService.getCustomerById(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         const customer = res.data;
         if (!customer) return;
@@ -114,16 +129,27 @@ export class CustomerFormComponent implements OnInit {
 
 
   closeForm() {
+    if (this.embedded) {
+      if (!this.submitting) this.cancelled.emit();
+      return;
+    }
     this.location.back();
   }
 
   onSubmit() {
+    if (this.submitting || this.creationUncertain) return;
+    if (this.embedded && this.createdCustomerId) {
+      this.recoverCreatedCustomer();
+      return;
+    }
+    this.customerForm.markAllAsTouched();
     if (!this.customerForm.valid || this.submitting) return;
 
+    this.formError = '';
     this.submitting = true;
 
     if (this.isEditMode && this.customerId) {
-      this.customerService.updateCustomer(this.customerId, this.customerForm.value).subscribe({
+      this.customerService.updateCustomer(this.customerId, this.customerForm.value).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.submitting = false;
           alert('✅ Cliente actualizado correctamente.');
@@ -138,10 +164,21 @@ export class CustomerFormComponent implements OnInit {
       return;
     }
 
-    this.customerService.createCustomer(this.customerForm.value).subscribe({
+    this.customerService.createCustomer(this.customerForm.value).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         this.submitting = false;
         const newCustomerId = response.data?.id;
+
+        if (this.embedded) {
+          if (!response.success || !newCustomerId) {
+            this.creationUncertain = true;
+            this.formError = 'No se pudo confirmar el alta. Revisa la lista de clientes antes de volver a crearlo.';
+            return;
+          }
+          this.createdCustomerId = newCustomerId;
+          this.recoverCreatedCustomer();
+          return;
+        }
 
         if (!newCustomerId) {
           // No debería pasar nunca con el backend actual — si aparece, es señal
@@ -168,8 +205,35 @@ export class CustomerFormComponent implements OnInit {
       },
       error: (err) => {
         this.submitting = false;
+        if (this.embedded) {
+          this.creationUncertain = err.status === 0 || err.status >= 500;
+          this.formError = this.creationUncertain
+            ? 'No se pudo confirmar el alta. Revisa la lista de clientes antes de volver a crearlo.'
+            : 'No se pudo guardar el cliente. Revisa los datos e inténtalo de nuevo.';
+          return;
+        }
         console.error("Error en la infraestructura de datos:", err);
         alert("Hubo un error al guardar. Revisa la consola.");
+      }
+    });
+  }
+
+  private recoverCreatedCustomer() {
+    this.submitting = true;
+    this.formError = '';
+    this.customerService.getCustomerById(this.createdCustomerId!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (response) => {
+        this.submitting = false;
+        const customer = response.data;
+        if (response.success && customer && customer.id === this.createdCustomerId && customer.address_id) {
+          this.customerCreated.emit(customer);
+        } else {
+          this.formError = 'El cliente ya se creó, pero no se recuperó su dirección. Reintenta la selección; no se creará otro cliente.';
+        }
+      },
+      error: () => {
+        this.submitting = false;
+        this.formError = 'El cliente ya se creó. Reintenta la selección para recuperar sus datos; no se creará otro cliente.';
       }
     });
   }

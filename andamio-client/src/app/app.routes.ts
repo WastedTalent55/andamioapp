@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { EvaluationDetailComponent } from './features/evaluations/evaluation-detail/evaluation-detail.component';
-import { EvaluationFormComponent } from './features/evaluations/evaluation-form/evaluation-form.component';
 import { QuoteFormComponent } from './features/quotes/quote-form/quote-form.component';
 import { QuoteListComponent } from './features/quotes/quote-list/quote-list.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component'; 
@@ -36,8 +35,16 @@ export const routes: Routes = [
             { path: 'board', component: ProjectBoardComponent }, 
 
             // Formulario de evaluacion
-            { path: 'evaluations/new', component: EvaluationFormComponent },
-            { path: 'evaluations/:id/edit', component: EvaluationFormComponent },
+            {
+                path: 'evaluations/new',
+                loadComponent: () => import('./features/evaluations/evaluation-form/evaluation-form.component')
+                    .then(module => module.EvaluationFormComponent)
+            },
+            {
+                path: 'evaluations/:id/edit',
+                loadComponent: () => import('./features/evaluations/evaluation-form/evaluation-form.component')
+                    .then(module => module.EvaluationFormComponent)
+            },
             
             // Formulario de detalles de Evaluación
             { path: 'evaluations/:id/details', component: EvaluationDetailComponent },

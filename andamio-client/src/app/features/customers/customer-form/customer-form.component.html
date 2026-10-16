@@ -1,33 +1,37 @@
 <div class="form-container">
   <div class="form-header">
-    <h3>
+    <h3 id="customer-form-title">
       <lucide-icon [img]="isEditMode ? Pencil : User" size="20"></lucide-icon>
       {{ isEditMode ? 'EDITAR CLIENT&#64;' : 'NUEVO CLIENT&#64;' }}
     </h3>
-    <button type="button" class="btn-close" (click)="closeForm()">
+    <button type="button" class="btn-close" (click)="closeForm()" aria-label="Cerrar formulario de cliente" [disabled]="embedded && submitting">
       <lucide-icon [img]="X" size="20"></lucide-icon>
     </button>
   </div>
 
-  <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="andamio-form">
+  <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="andamio-form" [attr.aria-busy]="submitting">
+    <fieldset class="customer-fields" [disabled]="embedded && (submitting || !!createdCustomerId || creationUncertain)">
         <div class="grid-row">
       <div class="form-group">
-        <label>NOMBRE(S)</label>
-        <input type="text" formControlName="first_name" class="form-control" placeholder="Ej: Paquita">
+        <label for="customer-first_name">NOMBRE(S)</label>
+        <input id="customer-first_name" type="text" formControlName="first_name" class="form-control"
+          [attr.aria-required]="embedded ? 'true' : null"
+          [attr.aria-invalid]="embedded ? customerForm.get('first_name')?.touched && customerForm.get('first_name')?.invalid : null"
+          [attr.aria-describedby]="embedded && customerForm.get('first_name')?.touched && customerForm.get('first_name')?.hasError('required') ? 'customer-name-error' : null" placeholder="Ej: Paquita">
       </div>
       <div class="form-group">
-        <label>APELLIDO(S)</label>
-        <input type="text" formControlName="last_name" class="form-control" placeholder="Ej: Salas">
+        <label for="customer-last_name">APELLIDO(S)</label>
+        <input id="customer-last_name" type="text" formControlName="last_name" class="form-control" placeholder="Ej: Salas">
       </div>
     </div>
 
     <div class="form-group">
-      <label>TELÉFONO DE CONTACTO</label>
-      <input type="text" formControlName="phone" class="form-control" placeholder="55 1234 5678">
+      <label for="customer-phone">TELÉFONO DE CONTACTO</label>
+      <input id="customer-phone" type="text" formControlName="phone" class="form-control" placeholder="55 1234 5678">
     </div>
 
     <div class="form-group">
-      <label>DIRECCIÓN PRINCIPAL (OBRA/CASA)</label>
+      <label [attr.for]="manualAddressMode ? 'customer-address' : null">DIRECCIÓN PRINCIPAL (OBRA/CASA)</label>
 
       <app-address-autocomplete
         *ngIf="!manualAddressMode"
@@ -35,10 +39,13 @@
       </app-address-autocomplete>
 
       <div class="manual-address-block" *ngIf="manualAddressMode">
-        <input type="text" formControlName="address" class="form-control" placeholder="Dirección completa: calle, número, colonia, ciudad, CP">
+        <input id="customer-address" type="text" formControlName="address" class="form-control"
+          [attr.aria-required]="embedded ? 'true' : null"
+          [attr.aria-invalid]="embedded ? customerForm.get('address')?.touched && customerForm.get('address')?.invalid : null"
+          [attr.aria-describedby]="embedded && customerForm.get('address')?.touched && customerForm.get('address')?.hasError('required') ? 'customer-address-error' : null" placeholder="Dirección completa: calle, número, colonia, ciudad, CP">
       </div>
 
-      <button type="button" class="btn-link-toggle" (click)="toggleManualAddress()">
+      <button *ngIf="!embedded" type="button" class="btn-link-toggle" (click)="toggleManualAddress()">
         <lucide-icon [img]="manualAddressMode ? MapPin : Pencil" size="14"></lucide-icon>
         {{ manualAddressMode
           ? 'Usar buscador de Google Maps'
@@ -46,8 +53,17 @@
       </button>
     </div>
 
-    <button type="submit" class="btn-andamio full-width" [disabled]="customerForm.invalid || submitting">
-      {{ submitting ? 'GUARDANDO...' : (isEditMode ? 'GUARDAR CAMBIOS' : 'GUARDAR Y DAR DE ALTA') }}
+    <p id="customer-name-error" role="alert" *ngIf="embedded && customerForm.get('first_name')?.touched && customerForm.get('first_name')?.hasError('required')" class="form-error">Introduce el nombre del cliente.</p>
+    <p id="customer-address-error" role="alert" *ngIf="embedded && customerForm.get('address')?.touched && customerForm.get('address')?.hasError('required')" class="form-error">Introduce la dirección del cliente.</p>
+    </fieldset>
+
+    <p *ngIf="embedded && submitting" role="status">{{ createdCustomerId ? 'Recuperando cliente y dirección…' : 'Guardando cliente…' }}</p>
+    <p *ngIf="formError" class="form-error" role="alert">{{ formError }}</p>
+    <button type="submit" class="btn-andamio full-width" [disabled]="customerForm.invalid || submitting || creationUncertain">
+      {{ submitting ? 'GUARDANDO...' : (createdCustomerId ? 'REINTENTAR SELECCIÓN' : (isEditMode ? 'GUARDAR CAMBIOS' : 'GUARDAR Y DAR DE ALTA')) }}
+    </button>
+    <button *ngIf="embedded" type="button" class="btn-link-toggle" (click)="closeForm()" [disabled]="submitting">
+      {{ createdCustomerId || creationUncertain ? 'Volver a la evaluación' : 'Cancelar' }}
     </button>
   </form>
 </div>
