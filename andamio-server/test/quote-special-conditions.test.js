@@ -2,7 +2,11 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 // Prevent config/db from loading .env or contacting any real server.
 const dbPath = require.resolve('../src/config/db');
-const db = {query: async () => {throw new Error('Unexpected database query');}};
+const db = {
+  query: async () => {throw new Error('Unexpected database query');},
+  getConnection: async () => ({beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release() {},
+    query: async () => [[]]})
+};
 require.cache[dbPath] = {id: dbPath, filename: dbPath, loaded: true, exports: db};
 const Quote = require('../src/models/quoteModel');
 const service = require('../src/services/quoteService');
@@ -27,7 +31,7 @@ for (const status of ['borrador', 'enviada', 'aceptada', 'rechazada']) {
   for (const body of [{}, {special_conditions: 'Otro\nacuerdo ñ'}, {special_conditions: null}, {special_conditions: ''}]) {
     test(`${status}: omitted/replaced/cleared conditions stay independent per version`, async t => {
       const original = {quote_id: 4, status, version_number: 2, special_conditions: 'Original', is_current: 1};
-      t.mock.method(Quote, 'getById', async (id, tenant) => {assert.equal(id, 4); assert.equal(tenant, 1); return original;});
+      t.mock.method(Quote, 'getForUpdate', async (id, tenant) => {assert.equal(id, 4); assert.equal(tenant, 1); return original;});
       let saved;
       t.mock.method(Quote, 'update', async (id, tenant, data) => {saved = data;});
       t.mock.method(Quote, 'createVersion', async (old, tenant, data) => {assert.equal(old, original); saved = data; return 5;});
@@ -39,7 +43,7 @@ for (const status of ['borrador', 'enviada', 'aceptada', 'rechazada']) {
   }
 }
 test('foreign tenant cannot update a quote', async t => {
-  t.mock.method(Quote, 'getById', async () => null); const update = t.mock.method(Quote, 'update');
+  t.mock.method(Quote, 'getForUpdate', async () => null); const update = t.mock.method(Quote, 'update');
   assert.equal(await service.updateQuote(4, 2, {}), null); assert.equal(update.mock.callCount(), 0);
 });
 test('write controllers return HTTP 400 for invalid conditions', async () => {

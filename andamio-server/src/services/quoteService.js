@@ -1,4 +1,5 @@
 const Quote = require('../models/quoteModel');
+const db = require('../config/db');
 
 // Count Unicode code points, matching the frontend (including emoji).
 function specialConditions(body, previous = null) {
@@ -12,6 +13,28 @@ function specialConditions(body, previous = null) {
     return value === null || !value.trim() ? null : value;
 }
 
+// One pooled connection owns all reads and writes of a save operation.
+async function inTransaction(save) {
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+        const result = await save(connection);
+        await connection.commit();
+        return result;
+    } catch (error) {
+        try {
+            await connection.rollback();
+        } catch (rollbackError) {
+            // Do not put an uncertain session back into the pool.
+            error.cause = rollbackError;
+            connection.destroy();
+        }
+        throw error;
+    } finally {
+        connection.release();
+    }
+}
+
 const VALID_STATUSES = ['borrador', 'enviada', 'aceptada', 'rechazada'];
 
 
@@ -21,22 +44,21 @@ const QuoteService = {
     createQuote: async (tenantId, body) => {
 
         const conditions = specialConditions(body);
-        const nextFolio = await Quote.getNextFolio(tenantId);
-
-        const quoteData = {
-            ...body,
-            tenant_id: tenantId,
-            quote_folio: nextFolio,
-            special_conditions: conditions
-        };
-
-        const quoteId = await Quote.create(quoteData);
-
-        if (body.items && body.items.length > 0) {
-            await Quote.createItems(quoteId, body.items);
-        }
-
-        return quoteId;
+        return inTransaction(async connection => {
+            await Quote.lockTenant(tenantId, connection);
+            const nextFolio = await Quote.getNextFolio(tenantId, connection);
+            const quoteData = {
+                ...body,
+                tenant_id: tenantId,
+                quote_folio: nextFolio,
+                special_conditions: conditions
+            };
+            const quoteId = await Quote.create(quoteData, connection);
+            if (body.items && body.items.length > 0) {
+                await Quote.createItems(quoteId, body.items, connection);
+            }
+            return quoteId;
+        });
     },
 
 
@@ -66,43 +88,32 @@ const QuoteService = {
 
         // Validate before any writes, including when the field is omitted.
         specialConditions(body);
-        const currentQuote = await Quote.getById(id, tenantId);
+        return inTransaction(async connection => {
+            const currentQuote = await Quote.getForUpdate(id, tenantId, connection);
+            if (!currentQuote) return null;
 
-        if (!currentQuote) {
-            return null;
-        }
-
-        const data = { ...body, special_conditions: specialConditions(body, currentQuote.special_conditions) };
-        const { items } = body;
-
-        if (currentQuote.status === 'borrador') {
-
-            await Quote.update(id, tenantId, data);
-            await Quote.deleteItems(id);
-
-            if (items && items.length > 0) {
-                await Quote.createItems(id, items);
+            const data = { ...body, special_conditions: specialConditions(body, currentQuote.special_conditions) };
+            const { items } = body;
+            if (currentQuote.status === 'borrador') {
+                await Quote.update(id, tenantId, data, connection);
+                await Quote.deleteItems(id, connection);
+                if (items && items.length > 0) {
+                    await Quote.createItems(id, items, connection);
+                }
+                return { versioned: false, quoteId: Number(id) };
             }
 
+            const newQuoteId = await Quote.createVersion(currentQuote, tenantId, data, connection);
+            await Quote.markNotCurrent(id, tenantId, connection);
+            if (items && items.length > 0) {
+                await Quote.createItems(newQuoteId, items, connection);
+            }
             return {
-                versioned: false,
-                quoteId: Number(id)
+                versioned: true,
+                quoteId: newQuoteId,
+                newVersionNumber: currentQuote.version_number + 1
             };
-        }
-
-        const newQuoteId = await Quote.createVersion(currentQuote, tenantId, data);
-
-        await Quote.markNotCurrent(id, tenantId);
-
-        if (items && items.length > 0) {
-            await Quote.createItems(newQuoteId, items);
-        }
-
-        return {
-            versioned: true,
-            quoteId: newQuoteId,
-            newVersionNumber: currentQuote.version_number + 1
-        };
+        });
     },
 
 

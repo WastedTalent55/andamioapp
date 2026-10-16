@@ -23,3 +23,11 @@ The integration suite exercises real mysql2 queries and real Express routes with
 short-lived JWTs signed using an ephemeral test-only secret. Google sign-in,
 Railway, production accounts and WhatsApp sending are not used. Never add test
 JSON/config files or tokens to Git.
+
+Transaction tests verify the same connection is used for every save query, cleanup
+on commit/begin/rollback errors, and tenant-scoped locking. Integration failures use
+real SQL errors; one test injects an exception after a real vigency UPDATE. Before
+and after snapshots must match after rollback. Integration files use separate tenant
+fixtures so Node can run them concurrently. The stale-source version test reports
+existing branching behavior; it does not claim single-current-version concurrency
+has been fixed. See the project's README for the required product/API decision.
