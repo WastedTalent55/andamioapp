@@ -24,7 +24,7 @@ function setup(status = 'borrador', failure = '') {
       else if (sql.includes('UPDATE quotes')) name = 'updateDraft';
       else throw new Error('Unexpected SQL');
       await action(name);
-      if (name === 'lockQuote') {assert.deepEqual(args, [4, 1]); return [[{quote_id: 4, tenant_id: 1, status, version_number: 1, special_conditions: 'Original', customer_id: 1}]];}
+      if (name === 'lockQuote') {assert.deepEqual(args, [4, 1]); return [[{quote_id: 4, tenant_id: 1, status, version_number: 1, special_conditions: 'Original', customer_id: 1, is_current: 1}]];}
       if (name === 'lockTenant') {assert.deepEqual(args, [1]); return [[{id: 1}]];}
       if (name === 'folio') return [[{lastFolio: 3}]];
       return [{insertId: 9, affectedRows: 1}];

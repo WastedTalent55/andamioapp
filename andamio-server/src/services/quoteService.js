@@ -91,6 +91,11 @@ const QuoteService = {
         return inTransaction(async connection => {
             const currentQuote = await Quote.getForUpdate(id, tenantId, connection);
             if (!currentQuote) return null;
+            if (Number(currentQuote.is_current) !== 1) {
+                const error = new Error('La versión de origen ya no está vigente.');
+                error.code = 'STALE_QUOTE_VERSION';
+                throw error;
+            }
 
             const data = { ...body, special_conditions: specialConditions(body, currentQuote.special_conditions) };
             const { items } = body;

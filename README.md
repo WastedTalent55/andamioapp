@@ -282,22 +282,9 @@ vigency writes use that connection. Creation locks the tenant row before allocat
 MAX(folio)+1, serializing concurrent folio allocations through this service. A failed
 rollback discards the uncertain connection rather than returning it for reuse.
 
-**Unchanged versioning limitation:** two concurrent requests editing the same sent
-source can each create a complete successor, leaving two current rows (and repeated
-version numbers). Serialization/atomicity alone does not resolve stale user intent.
-This was reproduced in the isolated integration suite. Resolving it requires an
-explicit decision: reject stale-source edits with HTTP 409 and ask the user to reload,
-or define a rule for editing historical versions. A database uniqueness constraint
-for one current row per chain would also require reviewing existing data and a new
-migration. None of those API/rule/schema changes is included here. The evaluation
-lookup still selects the latest current ID, as before. No versioning redesign or
-idempotency guarantee is claimed.
+**Concurrent version edits:** source rows are locked with tenant-scoped `FOR UPDATE` and checked for `is_current` while holding the lock. If another request has already created a successor, the stale request rolls back and returns HTTP 409. This uses the existing schema and preserves earlier versions. It does not provide an idempotency guarantee.
 
-Integration fault tests compare actual MySQL data before/after errors. Item NOT NULL
-and invalid integer errors are real database failures; the vigency failure is injected
-after the real UPDATE to verify rollback. Concurrent create tests cover distinct
-folios; concurrent stale-source tests report the remaining branch risk. See
-[backend test instructions](andamio-server/test/README.md).
+Integration fault tests compare actual MySQL data before/after errors. Item NOT NULL and invalid integer errors are real database failures; the vigency failure is injected after the real UPDATE to verify rollback. Concurrent stale-source requests verify one 200, one 409 and a single current successor. See [backend test instructions](andamio-server/test/README.md).
 
 The PDF retains standard Helvetica: Spanish accents/ñ and line breaks are tested;
 emoji and arbitrary non-Latin glyphs need an embedded Unicode font and are not

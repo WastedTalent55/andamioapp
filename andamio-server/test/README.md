@@ -28,6 +28,4 @@ Transaction tests verify the same connection is used for every save query, clean
 on commit/begin/rollback errors, and tenant-scoped locking. Integration failures use
 real SQL errors; one test injects an exception after a real vigency UPDATE. Before
 and after snapshots must match after rollback. Integration files use separate tenant
-fixtures so Node can run them concurrently. The stale-source version test reports
-existing branching behavior; it does not claim single-current-version concurrency
-has been fixed. See the project's README for the required product/API decision.
+fixtures so Node can run them concurrently. The stale-source integration test sends two concurrent authenticated PUT requests to the same sent version and checks for one HTTP 200, one HTTP 409, and a single current successor.

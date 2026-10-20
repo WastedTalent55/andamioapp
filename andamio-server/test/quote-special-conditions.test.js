@@ -59,3 +59,17 @@ test('read queries expose conditions, NULL and tenant predicates', async t => {
   assert.equal((await Quote.getByEvaluationId(3, 1)).special_conditions, null);
   for (const call of calls) {assert.match(call.sql, /q\.special_conditions/); assert.match(call.sql, /tenant_id = \?/); assert.equal(call.args[1], 1);}
 });
+
+test('stale source version rolls back before any quote writes', async t => {
+  t.mock.method(Quote, 'getForUpdate', async () => ({quote_id: 4, status: 'enviada', is_current: 0}));
+  for (const name of ['update', 'createVersion', 'markNotCurrent', 'createItems']) t.mock.method(Quote, name);
+  await assert.rejects(service.updateQuote(4, 1, {}), {code: 'STALE_QUOTE_VERSION'});
+  for (const name of ['update', 'createVersion', 'markNotCurrent', 'createItems']) assert.equal(Quote[name].mock.callCount(), 0);
+});
+
+test('stale source versions return HTTP 409', async t => {
+  t.mock.method(service, 'updateQuote', async () => {throw Object.assign(new Error('Stale'), {code: 'STALE_QUOTE_VERSION'});});
+  const res = {statusCode: 200, status(code) {this.statusCode = code; return this;}, json(body) {this.body = body; return this;}};
+  await controller.updateQuote({user: {tenantId: 1}, params: {id: 4}, body: {}}, res);
+  assert.equal(res.statusCode, 409); assert.equal(res.body.success, false);
+});

@@ -56,13 +56,32 @@ test('MySQL isolated transaction/rollback checks', {skip: !process.env.ANDAMIO_T
       assert.equal(new Set(rows.map(q => q.quote_folio)).size, 4);
       for (const row of rows) assert.equal(row.items.length, 1);
     });
-    await t.test('concurrent stale-source edits stay atomic; unresolved branching is reported', async sub => {
+    await t.test('concurrent requests on one sent version yield one successor and one 409', async () => {
       const id = await service.createQuote(202, data); await service.updateQuoteStatus(id, 202, 'enviada');
-      const versions = await Promise.all([service.updateQuote(id, 202, data), service.updateQuote(id, 202, {...data, special_conditions: 'Concurrente'})]);
-      for (const version of versions) assert.equal((await service.getQuoteById(version.quoteId, 202)).items.length, 1);
-      assert.equal((await service.getQuoteById(id, 202)).special_conditions, 'Original');
-      const [[count]] = await pool.query('SELECT COUNT(*) AS total FROM quotes WHERE root_quote_id=? AND is_current=1', [id]);
-      sub.diagnostic(`Known unchanged versioning limitation: ${count.total} current successors from the same stale source. See README before publication.`);
+      process.env.JWT_SECRET = require('node:crypto').randomBytes(32).toString('hex');
+      const express = require('express'), jwt = require('jsonwebtoken');
+      const app = express(); app.use(express.json()); app.use('/api/quotes', require('../src/routes/quoteRoutes'));
+      const server = await new Promise(resolve => {const s = app.listen(0, '127.0.0.1', () => resolve(s));});
+      try {
+        const base = `http://127.0.0.1:${server.address().port}/api/quotes/${id}`;
+        const headers = {'Content-Type': 'application/json', Authorization: `Bearer ${jwt.sign({userId: 202, tenantId: 202}, process.env.JWT_SECRET)}`};
+        const before = await snapshot();
+        const responses = await Promise.all([
+          fetch(base, {method: 'PUT', headers, body: JSON.stringify(data)}),
+          fetch(base, {method: 'PUT', headers, body: JSON.stringify({...data, special_conditions: 'Concurrente'})})
+        ]);
+        assert.deepEqual(responses.map(response => response.status).sort(), [200, 409]);
+        const result = await responses.find(response => response.status === 200).json();
+        assert.equal(result.versioned, true);
+        const after = await snapshot();
+        assert.equal(after.quotes.length, before.quotes.length + 1);
+        assert.equal(after.items.length, before.items.length + data.items.length);
+        assert.deepEqual(after.quotes.find(q => q.id === id), before.quotes.find(q => q.id === id));
+        const [[count]] = await pool.query('SELECT COUNT(*) AS total FROM quotes WHERE root_quote_id=? AND is_current=1', [id]);
+        assert.equal(Number(count.total), 1);
+        const current = after.quotes.find(q => q.is_current === 1 && (q.root_quote_id === id || q.id === id));
+        assert.ok(current); assert.equal(current.version_number, 2);
+      } finally {await new Promise(resolve => server.close(resolve));}
     });
   } finally {await pool.end();}
 });

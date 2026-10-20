@@ -122,6 +122,10 @@ const updateQuote = async (req, res) => {
             return res.status(400).json({ success: false, message: error.message });
         }
 
+        if (error.code === 'STALE_QUOTE_VERSION') {
+            return res.status(409).json({ success: false, message: error.message });
+        }
+
         console.error('Error actualizando cotización:', error);
 
         res.status(500).json({
