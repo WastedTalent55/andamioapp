@@ -76,11 +76,15 @@ test('MySQL isolated transaction/rollback checks', {skip: !process.env.ANDAMIO_T
         const after = await snapshot();
         assert.equal(after.quotes.length, before.quotes.length + 1);
         assert.equal(after.items.length, before.items.length + data.items.length);
-        assert.deepEqual(after.quotes.find(q => q.id === id), before.quotes.find(q => q.id === id));
+        const originalBefore = before.quotes.find(q => q.id === id);
+        const originalAfter = after.quotes.find(q => q.id === id);
+        assert.ok(originalBefore); assert.ok(originalAfter);
+        assert.equal(originalAfter.is_current, 0);
+        assert.deepEqual({...originalAfter, is_current: originalBefore.is_current}, originalBefore);
         const [[count]] = await pool.query('SELECT COUNT(*) AS total FROM quotes WHERE root_quote_id=? AND is_current=1', [id]);
         assert.equal(Number(count.total), 1);
         const current = after.quotes.find(q => q.is_current === 1 && (q.root_quote_id === id || q.id === id));
-        assert.ok(current); assert.equal(current.version_number, 2);
+        assert.ok(current); assert.equal(current.id, Number(result.quoteId)); assert.equal(current.version_number, 2);
       } finally {await new Promise(resolve => server.close(resolve));}
     });
   } finally {await pool.end();}
