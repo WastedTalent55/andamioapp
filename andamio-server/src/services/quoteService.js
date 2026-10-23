@@ -1,4 +1,39 @@
 const Quote = require('../models/quoteModel');
+const db = require('../config/db');
+
+// Count Unicode code points, matching the frontend (including emoji).
+function specialConditions(body, previous = null) {
+    if (!Object.prototype.hasOwnProperty.call(body, 'special_conditions')) return previous ?? null;
+    const value = body.special_conditions;
+    if (value !== null && (typeof value !== 'string' || Array.from(value).length > 5000)) {
+        const error = new Error('Las condiciones particulares deben ser texto de hasta 5.000 caracteres o null.');
+        error.code = 'INVALID_SPECIAL_CONDITIONS';
+        throw error;
+    }
+    return value === null || !value.trim() ? null : value;
+}
+
+// One pooled connection owns all reads and writes of a save operation.
+async function inTransaction(save) {
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+        const result = await save(connection);
+        await connection.commit();
+        return result;
+    } catch (error) {
+        try {
+            await connection.rollback();
+        } catch (rollbackError) {
+            // Do not put an uncertain session back into the pool.
+            error.cause = rollbackError;
+            connection.destroy();
+        }
+        throw error;
+    } finally {
+        connection.release();
+    }
+}
 
 const VALID_STATUSES = ['borrador', 'enviada', 'aceptada', 'rechazada'];
 
@@ -8,21 +43,22 @@ const QuoteService = {
     // Crea una cotización nueva, calculando su folio y guardando sus items
     createQuote: async (tenantId, body) => {
 
-        const nextFolio = await Quote.getNextFolio(tenantId);
-
-        const quoteData = {
-            ...body,
-            tenant_id: tenantId,
-            quote_folio: nextFolio
-        };
-
-        const quoteId = await Quote.create(quoteData);
-
-        if (body.items && body.items.length > 0) {
-            await Quote.createItems(quoteId, body.items);
-        }
-
-        return quoteId;
+        const conditions = specialConditions(body);
+        return inTransaction(async connection => {
+            await Quote.lockTenant(tenantId, connection);
+            const nextFolio = await Quote.getNextFolio(tenantId, connection);
+            const quoteData = {
+                ...body,
+                tenant_id: tenantId,
+                quote_folio: nextFolio,
+                special_conditions: conditions
+            };
+            const quoteId = await Quote.create(quoteData, connection);
+            if (body.items && body.items.length > 0) {
+                await Quote.createItems(quoteId, body.items, connection);
+            }
+            return quoteId;
+        });
     },
 
 
@@ -50,42 +86,39 @@ const QuoteService = {
     // si ya fue enviada/aceptada/rechazada, se crea una versión nueva sin tocar la anterior.
     updateQuote: async (id, tenantId, body) => {
 
-        const currentQuote = await Quote.getById(id, tenantId);
-
-        if (!currentQuote) {
-            return null;
-        }
-
-        const { items } = body;
-
-        if (currentQuote.status === 'borrador') {
-
-            await Quote.update(id, tenantId, body);
-            await Quote.deleteItems(id);
-
-            if (items && items.length > 0) {
-                await Quote.createItems(id, items);
+        // Validate before any writes, including when the field is omitted.
+        specialConditions(body);
+        return inTransaction(async connection => {
+            const currentQuote = await Quote.getForUpdate(id, tenantId, connection);
+            if (!currentQuote) return null;
+            if (Number(currentQuote.is_current) !== 1) {
+                const error = new Error('La versión de origen ya no está vigente.');
+                error.code = 'STALE_QUOTE_VERSION';
+                throw error;
             }
 
+            const data = { ...body, special_conditions: specialConditions(body, currentQuote.special_conditions) };
+            const { items } = body;
+            if (currentQuote.status === 'borrador') {
+                await Quote.update(id, tenantId, data, connection);
+                await Quote.deleteItems(id, connection);
+                if (items && items.length > 0) {
+                    await Quote.createItems(id, items, connection);
+                }
+                return { versioned: false, quoteId: Number(id) };
+            }
+
+            const newQuoteId = await Quote.createVersion(currentQuote, tenantId, data, connection);
+            await Quote.markNotCurrent(id, tenantId, connection);
+            if (items && items.length > 0) {
+                await Quote.createItems(newQuoteId, items, connection);
+            }
             return {
-                versioned: false,
-                quoteId: Number(id)
+                versioned: true,
+                quoteId: newQuoteId,
+                newVersionNumber: currentQuote.version_number + 1
             };
-        }
-
-        const newQuoteId = await Quote.createVersion(currentQuote, tenantId, body);
-
-        await Quote.markNotCurrent(id, tenantId);
-
-        if (items && items.length > 0) {
-            await Quote.createItems(newQuoteId, items);
-        }
-
-        return {
-            versioned: true,
-            quoteId: newQuoteId,
-            newVersionNumber: currentQuote.version_number + 1
-        };
+        });
     },
 
 

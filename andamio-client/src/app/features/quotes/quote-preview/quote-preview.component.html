@@ -344,8 +344,12 @@
 </section>
 <!-- 📄 TÉRMINOS Y CONDICIONES -->
 <section class="terms-section" *ngIf="tenantConfig?.terms_conditions">
-  <h4>Términos y condiciones</h4>
+  <h4>Condiciones generales del estudio</h4>
   <p>{{ tenantConfig.terms_conditions }}</p>
+</section>
+<section class="terms-section" *ngIf="quoteData?.special_conditions?.trim()">
+  <h4>Condiciones particulares de esta cotización</h4>
+  <p>{{ quoteData?.special_conditions }}</p>
 </section>
 <div class="final-thanks">Gracias por la confianza</div>
     </div>

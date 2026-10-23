@@ -185,6 +185,7 @@ Create a `.env` file in `andamio-server/`:
 ```env
 PORT=3000
 DB_HOST=your_database_host
+DB_PORT=3306
 DB_USER=your_database_user
 DB_PASSWORD=your_database_password
 DB_NAME=your_database_name
@@ -194,6 +195,17 @@ GOOGLE_CLIENT_ID=your_google_client_id
 ```
 
 > Never commit `.env` files or production credentials to Git.
+
+For local MySQL, `DB_PORT` defaults to `3306` and TLS remains off unless
+`DB_SSL=true` is set. For the Render service connected to Aiven, configure
+`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` from Aiven's
+connection details. Add Aiven's CA certificate in Render as a secret file (for
+example, `aiven-ca.pem`), then set `DB_SSL=true` and
+`DB_SSL_CA_PATH=/etc/secrets/aiven-ca.pem`. The app verifies the certificate
+chain and hostname; it refuses to start the MySQL pool if TLS is enabled but
+the CA file is missing or invalid. Do not add the CA file or database
+credentials to the repository. Render supplies `PORT` to the web service, and
+the backend binds that numeric port on `0.0.0.0`.
 
 ```bash
 cd andamio-server
@@ -245,3 +257,47 @@ I built Andamio to understand what it takes to create an application around a re
 ## License
 
 Personal learning and portfolio project. All rights reserved unless a license file states otherwise.
+
+## Quote special conditions
+
+Quotes may contain optional plain-text `special_conditions` (at most 5,000 Unicode
+code points). General conditions remain in `tenants.terms_conditions` and are never
+changed by quote saves. See [migration 001](database/migrations/README.md) before
+using the new backend against an existing database; no migration runs on startup.
+Older quotes have NULL conditions and display no particular-conditions section.
+POST omission means NULL; PUT omission preserves the source version's value;
+null, empty or whitespace-only strings clear it. Invalid types or over-limit text
+return HTTP 400 without truncation. Nonempty text retains its original line breaks.
+
+Drafts are updated in place (including their existing version counter behavior).
+Editing a sent/accepted/rejected quote creates a new row with independent conditions;
+omitted conditions inherit from the source. The evaluation lookup still resolves
+the current quote. General conditions continue to be read from the **current**
+study profile even when regenerating an old version's PDF; historical snapshots
+are not implemented. The fixed 50% advance and all existing calculations remain
+unchanged by particular conditions. Preview/download/WhatsApp use the same preview
+PDF generator; the unused legacy generator in Quote Form is not extended.
+
+Backend checks: `cd andamio-server && npm test` (Node's built-in test runner;
+unit tests mock MySQL, no credentials required). Integration tests require the
+explicit isolated-test configuration documented in the test helper; they skip
+unless enabled. Frontend checks use Angular/Karma and the production build:
+`npm run build -- --base-href /andamioapp/`. Publishing and database changes in an
+existing environment require a separate review.
+
+### Atomic quote saves and remaining concurrency limits
+
+Creation, draft replacement and version creation now use one mysql2 pooled
+connection with beginTransaction/commit/rollback and release in finally. The source
+quote is locked with a tenant-scoped FOR UPDATE before editing; all header/item and
+vigency writes use that connection. Creation locks the tenant row before allocating
+MAX(folio)+1, serializing concurrent folio allocations through this service. A failed
+rollback discards the uncertain connection rather than returning it for reuse.
+
+**Concurrent version edits:** source rows are locked with tenant-scoped `FOR UPDATE` and checked for `is_current` while holding the lock. If another request has already created a successor, the stale request rolls back and returns HTTP 409. This uses the existing schema and preserves earlier versions. It does not provide an idempotency guarantee.
+
+Integration fault tests compare actual MySQL data before/after errors. Item NOT NULL and invalid integer errors are real database failures; the vigency failure is injected after the real UPDATE to verify rollback. Concurrent stale-source requests verify one 200, one 409 and a single current successor. See [backend test instructions](andamio-server/test/README.md).
+
+The PDF retains standard Helvetica: Spanish accents/ñ and line breaks are tested;
+emoji and arbitrary non-Latin glyphs need an embedded Unicode font and are not
+claimed to render correctly. utf8mb4 storage and the form support those characters.

@@ -3,7 +3,21 @@ const db = require('../config/db');
 
 const Quote = {
 
-    create: async (data) => {
+    // Serialize folio allocation for one existing tenant, inside the same transaction.
+    lockTenant: async (tenantId, connection) => {
+        await connection.query('SELECT id FROM tenants WHERE id = ? FOR UPDATE', [tenantId]);
+    },
+
+    // Lock only the source quote; customer/address joins are unnecessary for saving.
+    getForUpdate: async (id, tenantId, connection) => {
+        const [rows] = await connection.query(
+            'SELECT *, id AS quote_id FROM quotes WHERE id = ? AND tenant_id = ? FOR UPDATE',
+            [id, tenantId]
+        );
+        return rows[0];
+    },
+
+    create: async (data, connection = db) => {
 
         const {
             tenant_id,
@@ -13,11 +27,12 @@ const Quote = {
             delivery_time,
             evaluation_discount,
             total_amount,
-            version_number
+            version_number,
+            special_conditions
         } = data;
 
 
-        const [result] = await db.query(
+        const [result] = await connection.query(
             `
             INSERT INTO quotes
             (
@@ -29,9 +44,10 @@ const Quote = {
                 evaluation_discount,
                 total_amount,
                 version_number,
+                special_conditions,
                 status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'borrador')
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'borrador')
             `,
             [
                 tenant_id,
@@ -41,7 +57,8 @@ const Quote = {
                 delivery_time,
                 evaluation_discount || 0,
                 total_amount || 0,
-                version_number || 1
+                version_number || 1,
+                special_conditions ?? null
             ]
         );
 
@@ -50,7 +67,7 @@ const Quote = {
     },
 
 
-    createItems: async (quoteId, items) => {
+    createItems: async (quoteId, items, connection = db) => {
 
         if (!items || items.length === 0) {
             return;
@@ -68,7 +85,7 @@ const Quote = {
         ]);
 
 
-        await db.query(
+        await connection.query(
             `
             INSERT INTO quote_items
             (
@@ -112,6 +129,7 @@ const Quote = {
             q.tenant_id,
             q.customer_id,
             q.delivery_time,
+            q.special_conditions,
             q.total_amount,
             q.evaluation_discount,
             q.status,
@@ -162,22 +180,24 @@ const Quote = {
         return rows;
     },
 
-    update: async (id, tenantId, data) => {
+    update: async (id, tenantId, data, connection = db) => {
 
         const {
             delivery_time,
             evaluation_discount,
-            total_amount
+            total_amount,
+            special_conditions
         } = data;
 
 
-        const [result] = await db.query(
+        const [result] = await connection.query(
             `
             UPDATE quotes
             SET 
                 delivery_time = ?,
                 evaluation_discount = ?,
                 total_amount = ?,
+                special_conditions = ?,
                 version_number = version_number + 1
             WHERE id = ?
             AND tenant_id = ?
@@ -186,6 +206,7 @@ const Quote = {
                 delivery_time,
                 evaluation_discount || 0,
                 total_amount || 0,
+                special_conditions ?? null,
                 id,
                 tenantId
             ]
@@ -194,9 +215,9 @@ const Quote = {
     },
 
     // 🆕 Marca una versión como no vigente (se usa al crear la siguiente versión)
-    markNotCurrent: async (id, tenantId) => {
+    markNotCurrent: async (id, tenantId, connection = db) => {
 
-        await db.query(
+        await connection.query(
             `
             UPDATE quotes
             SET is_current = 0
@@ -210,17 +231,18 @@ const Quote = {
 
     // 🆕 Crea una fila NUEVA como siguiente versión de una cotización ya enviada/aceptada,
     // en vez de sobreescribir la existente. Preserva el folio y encadena root_quote_id.
-    createVersion: async (previousQuote, tenantId, data) => {
+    createVersion: async (previousQuote, tenantId, data, connection = db) => {
 
         const {
             delivery_time,
             evaluation_discount,
-            total_amount
+            total_amount,
+            special_conditions
         } = data;
 
         const rootQuoteId = previousQuote.root_quote_id || previousQuote.quote_id;
 
-        const [result] = await db.query(
+        const [result] = await connection.query(
             `
             INSERT INTO quotes
             (
@@ -233,10 +255,11 @@ const Quote = {
                 total_amount,
                 version_number,
                 root_quote_id,
+                special_conditions,
                 is_current,
                 status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'borrador')
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'borrador')
             `,
             [
                 tenantId,
@@ -247,7 +270,8 @@ const Quote = {
                 evaluation_discount || 0,
                 total_amount || 0,
                 previousQuote.version_number + 1,
-                rootQuoteId
+                rootQuoteId,
+                special_conditions ?? null
             ]
         );
 
@@ -286,9 +310,9 @@ const Quote = {
     },
 
 
-    deleteItems: async (quoteId) => {
+    deleteItems: async (quoteId, connection = db) => {
 
-        await db.query(
+        await connection.query(
             `
             DELETE FROM quote_items
             WHERE quote_id = ?
@@ -324,6 +348,7 @@ const Quote = {
                 q.quote_folio,       
                 q.version_number, 
                 q.delivery_time,
+                q.special_conditions,
                 q.status,
                 q.total_amount,
                 q.evaluation_discount,
@@ -344,9 +369,9 @@ const Quote = {
     },
 
     // 🆕 Devuelve el siguiente folio disponible para el tenant (pura consulta, sin lógica de negocio)
-    getNextFolio: async (tenantId) => {
+    getNextFolio: async (tenantId, connection = db) => {
 
-        const [rows] = await db.query(
+        const [rows] = await connection.query(
             'SELECT MAX(quote_folio) as lastFolio FROM quotes WHERE tenant_id = ?',
             [tenantId]
         );

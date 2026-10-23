@@ -160,6 +160,7 @@ CREATE TABLE `quotes` (
   `customer_id` int NOT NULL,
   `version_number` int DEFAULT '1',
   `delivery_time` int DEFAULT NULL,
+  `special_conditions` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` enum('borrador','enviada','aceptada','rechazada') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'borrador',
   `evaluation_discount` decimal(10,2) DEFAULT '0.00',
   `total_amount` decimal(10,2) DEFAULT '0.00',

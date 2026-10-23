@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EvaluationService } from '../../../core/services/evaluation.service'; 
 import { QuoteService } from '../../../core/services/quote.service'; 
@@ -116,6 +116,7 @@ export class QuoteFormComponent implements OnInit {
         this.loadItemsIntoForm(quote.items);
 
         this.quoteForm.patchValue({
+          special_conditions: quote.special_conditions ?? '',
           delivery_time: parseInt(String(quote.delivery_time)),
           evaluation_discount: Number(quote.evaluation_discount) || 0,
         });
@@ -130,6 +131,8 @@ export class QuoteFormComponent implements OnInit {
       laborItems: this.fb.array([]),
       materialItems: this.fb.array([]),
       delivery_time: [null, [Validators.required, Validators.min(1)]],
+      special_conditions: ['', (control: AbstractControl) =>
+        Array.from(control.value || '').length > 5000 ? { maxlength: true } : null],
       evaluation_discount: 0,
       grandTotal: 0,
       finalAmount: 0 
@@ -137,6 +140,8 @@ export class QuoteFormComponent implements OnInit {
 
     this.updateTotals();
   }
+
+  get specialConditionsLength() { return Array.from(this.quoteForm.get('special_conditions')?.value || '').length; }
 
   get laborItems() { return this.quoteForm.get('laborItems') as FormArray; }
   get materialItems() { return this.quoteForm.get('materialItems') as FormArray; }
@@ -172,6 +177,7 @@ export class QuoteFormComponent implements OnInit {
         this.loadItemsIntoForm(quote.items);
 
         this.quoteForm.patchValue({
+          special_conditions: quote.special_conditions ?? '',
           delivery_time: parseInt(String(quote.delivery_time)),
           evaluation_discount: quote.evaluation_discount > 0
             ? Number(quote.evaluation_discount)
@@ -220,6 +226,7 @@ export class QuoteFormComponent implements OnInit {
   }
 
   onSubmit() {
+    this.quoteForm.markAllAsTouched();
     if (this.quoteForm.invalid) {
       alert('❌ Por favor, completa todos los campos antes de finalizar.');
       return;
@@ -251,6 +258,7 @@ export class QuoteFormComponent implements OnInit {
       status: 'borrador',
       evaluation_discount: this.grandTotal - this.finalAmount, 
       total_amount: this.finalAmount,
+      special_conditions: this.quoteForm.value.special_conditions || null,
       items: allItems 
     };
 

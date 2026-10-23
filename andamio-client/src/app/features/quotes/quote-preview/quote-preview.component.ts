@@ -186,7 +186,7 @@ export class QuotePreviewComponent implements OnInit {
 
   downloadPDF() {
     if (!this.quoteData) return;
-    this.generatePDF();
+    this.generatePDF()?.save(`Cotizacion_${this.quoteData.quote_folio || this.quoteData.quote_id}.pdf`);
   }
 
   // Convierte un color hex (#RRGGBB) a [r,g,b], formato que pide jsPDF/autoTable
@@ -372,6 +372,11 @@ export class QuotePreviewComponent implements OnInit {
 
     // RESUMEN FINANCIERO (mismo cálculo que usa el HTML del preview)
     let finalY = (doc as any).lastAutoTable.finalY + 10;
+    const closingHeight = this.tenantConfig?.bank_account ? 60 : 40;
+    if (finalY + closingHeight > doc.internal.pageSize.getHeight() - 20) {
+      doc.addPage();
+      finalY = 20;
+    }
     const subtotal = this.laborSubtotal + this.materialsSubtotal;
     const total = subtotal - this.evaluationDiscount;
     const downPayment = total / 2;
@@ -410,20 +415,39 @@ export class QuotePreviewComponent implements OnInit {
       finalY += 20;
     }
 
-    // TÉRMINOS Y CONDICIONES
-    if (this.tenantConfig?.terms_conditions) {
-      doc.setFontSize(9);
-      doc.setTextColor(100);
-      const termsLines = doc.splitTextToSize(this.tenantConfig.terms_conditions, 180);
-      doc.text(termsLines, 14, finalY);
-      finalY += termsLines.length * 4.5 + 10;
+    // AutoTable paginates long text, keeps the heading with its first line,
+    // and accounts for the last page used by preceding tables/summary.
+    const pageHeight = doc.internal.pageSize.getHeight();
+    if (finalY > pageHeight - 24) {
+      doc.addPage();
+      finalY = 20;
     }
-
+    for (const [title, text] of [
+      ['Condiciones generales del estudio', this.tenantConfig?.terms_conditions],
+      ['Condiciones particulares de esta cotización', this.quoteData.special_conditions]
+    ]) {
+      if (typeof text !== 'string' || !text.trim()) continue;
+      autoTable(doc, {
+        startY: finalY,
+        margin: { top: 20, bottom: 20, left: 14, right: 14 },
+        theme: 'plain',
+        head: [[title]],
+        body: [[text]],
+        styles: { font: 'helvetica', fontSize: 9, cellPadding: 2, overflow: 'linebreak' },
+        headStyles: { fontStyle: 'bold', textColor: [71, 85, 105] },
+        showHead: 'everyPage'
+      });
+      finalY = (doc as any).lastAutoTable.finalY + 8;
+    }
+    if (finalY + 10 > pageHeight - 14) {
+      doc.addPage();
+      finalY = 20;
+    }
     doc.setTextColor(148, 163, 184);
     doc.setFontSize(8);
     doc.text('GRACIAS POR LA CONFIANZA', 105, finalY + 10, { align: 'center' });
 
-    doc.save(`Cotizacion_${folio}.pdf`);
+    return doc;
   }
 
   setLogoShape(shape: 'square' | 'circle') {
@@ -463,7 +487,7 @@ export class QuotePreviewComponent implements OnInit {
   sendWhatsApp() {
     if (!this.quoteData) return;
 
-    this.generatePDF();
+    this.downloadPDF();
 
     const folio = this.quoteData.quote_folio || this.quoteData.quote_id;
     const companyName = this.tenantConfig?.company_name || 'Andamio';
