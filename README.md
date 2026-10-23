@@ -185,6 +185,7 @@ Create a `.env` file in `andamio-server/`:
 ```env
 PORT=3000
 DB_HOST=your_database_host
+DB_PORT=3306
 DB_USER=your_database_user
 DB_PASSWORD=your_database_password
 DB_NAME=your_database_name
@@ -194,6 +195,17 @@ GOOGLE_CLIENT_ID=your_google_client_id
 ```
 
 > Never commit `.env` files or production credentials to Git.
+
+For local MySQL, `DB_PORT` defaults to `3306` and TLS remains off unless
+`DB_SSL=true` is set. For the Render service connected to Aiven, configure
+`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` from Aiven's
+connection details. Add Aiven's CA certificate in Render as a secret file (for
+example, `aiven-ca.pem`), then set `DB_SSL=true` and
+`DB_SSL_CA_PATH=/etc/secrets/aiven-ca.pem`. The app verifies the certificate
+chain and hostname; it refuses to start the MySQL pool if TLS is enabled but
+the CA file is missing or invalid. Do not add the CA file or database
+credentials to the repository. Render supplies `PORT` to the web service, and
+the backend binds that numeric port on `0.0.0.0`.
 
 ```bash
 cd andamio-server

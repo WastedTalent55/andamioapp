@@ -35,10 +35,15 @@ app.use('/api/test-auth', require('./src/routes/testRoutes'));
 // SERVER
 // ================================
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+if (!Number.isInteger(PORT) || PORT < 0 || PORT > 65535) {
+    throw new Error('PORT must be an integer between 0 and 65535.');
+}
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(
         `🚀 Servidor de Andamio corriendo en http://localhost:${PORT}`
     );
 });
+
+module.exports = server;
