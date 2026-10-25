@@ -11,6 +11,7 @@ import { Quote, QuoteItem, QuoteVersionHistoryEntry } from '../../../core/models
 import { LucideAngularModule, Send, CircleCheck, CircleX, Pencil, FileDown, X, MessageCircle } from 'lucide-angular';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { calculateQuotePaymentSplit } from '../quote-payment';
 
 @Component({
   selector: 'app-quote-preview',
@@ -42,6 +43,7 @@ export class QuotePreviewComponent implements OnInit {
   evaluationDiscount: number = 300; // Valor del ejemplo de Charly [2]
   netTotal: number = 0;
   downPayment: number = 0;
+  balanceDue: number = 0;
 
   // 🆕 Manejo de status y versionamiento
   versionHistory: QuoteVersionHistoryEntry[] = [];
@@ -112,11 +114,13 @@ export class QuotePreviewComponent implements OnInit {
               this.laborSubtotal = this.laborItems.reduce((acc, curr) => acc + (curr.unit_price * curr.quantity), 0);
               this.materialsSubtotal = this.materialItems.reduce((acc, curr) => acc + (curr.unit_price * curr.quantity), 0);
               
-              // 🛠️ 4. LÓGICA DE CIERRE (Total Neto y Anticipo 50%) [2, 7]
-              const rawTotal = this.laborSubtotal + this.materialsSubtotal;
+              // 🛠️ 4. LÓGICA DE CIERRE (Total final, anticipo configurable y saldo)
               this.evaluationDiscount = Number(this.quoteData.evaluation_discount) || 0;
-              this.netTotal = Number(this.quoteData.total_amount) - this.evaluationDiscount;
-              this.downPayment = this.netTotal / 2;
+              this.netTotal = Number(this.quoteData.total_amount) || 0;
+              this.quoteData.down_payment_percent = Number(this.quoteData.down_payment_percent ?? 50);
+              const paymentSplit = calculateQuotePaymentSplit(this.netTotal, this.quoteData.down_payment_percent);
+              this.downPayment = paymentSplit.deposit;
+              this.balanceDue = paymentSplit.balance;
             }
 
             this.loadVersionHistory();
@@ -378,8 +382,8 @@ export class QuotePreviewComponent implements OnInit {
       finalY = 20;
     }
     const subtotal = this.laborSubtotal + this.materialsSubtotal;
-    const total = subtotal - this.evaluationDiscount;
-    const downPayment = total / 2;
+    const total = this.netTotal;
+    const paymentSplit = calculateQuotePaymentSplit(total, this.quoteData.down_payment_percent ?? 50);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
@@ -395,8 +399,8 @@ export class QuotePreviewComponent implements OnInit {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(0);
-    doc.text(`Anticipo (50%): ${this.formatCurrency(downPayment)}`, 140, finalY + 23);
-    doc.text(`Contra entrega: ${this.formatCurrency(downPayment)}`, 140, finalY + 29);
+    doc.text(`Anticipo (${this.quoteData.down_payment_percent}%): ${this.formatCurrency(paymentSplit.deposit)}`, 140, finalY + 23);
+    doc.text(`Saldo contra entrega: ${this.formatCurrency(paymentSplit.balance)}`, 140, finalY + 29);
 
     // TIEMPO DE ENTREGA
     doc.text(`Tiempo de entrega: ${this.quoteData.delivery_time} días`, 14, finalY);

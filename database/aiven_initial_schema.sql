@@ -102,6 +102,8 @@ CREATE TABLE `quotes` (
   `status` enum('borrador','enviada','aceptada','rechazada') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'borrador',
   `evaluation_discount` decimal(10,2) DEFAULT '0.00',
   `total_amount` decimal(10,2) DEFAULT '0.00',
+  `down_payment_percent` tinyint unsigned NOT NULL DEFAULT '50',
+  CONSTRAINT `chk_quotes_down_payment_percent` CHECK (`down_payment_percent` BETWEEN 0 AND 100),
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `tenant_id` int NOT NULL,
   `quote_folio` int DEFAULT NULL,

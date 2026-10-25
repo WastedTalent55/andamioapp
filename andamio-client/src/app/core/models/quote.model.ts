@@ -10,6 +10,7 @@ export interface Quote {
   status: 'borrador' | 'enviada' | 'aceptada' | 'rechazada';
   evaluation_discount: number; 
   total_amount: number;
+  down_payment_percent: number;
   root_quote_id?: number | null;
   is_current?: boolean | number;
   created_at?: string;
@@ -23,6 +24,7 @@ export interface QuoteVersionHistoryEntry {
   version_number: number;
   status: 'borrador' | 'enviada' | 'aceptada' | 'rechazada';
   total_amount: number;
+  down_payment_percent: number;
   is_current: boolean | number;
   created_at: string;
 }

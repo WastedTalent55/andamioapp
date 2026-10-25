@@ -13,6 +13,17 @@ function specialConditions(body, previous = null) {
     return value === null || !value.trim() ? null : value;
 }
 
+function downPaymentPercent(body, previous = 50) {
+    if (!Object.prototype.hasOwnProperty.call(body, 'down_payment_percent')) return Number(previous ?? 50);
+    const value = body.down_payment_percent;
+    if (typeof value !== 'number' || !Number.isInteger(value) || value < 0 || value > 100) {
+        const error = new Error('El porcentaje de anticipo debe ser un número entero entre 0 y 100.');
+        error.code = 'INVALID_DOWN_PAYMENT_PERCENT';
+        throw error;
+    }
+    return value;
+}
+
 // One pooled connection owns all reads and writes of a save operation.
 async function inTransaction(save) {
     const connection = await db.getConnection();
@@ -44,6 +55,7 @@ const QuoteService = {
     createQuote: async (tenantId, body) => {
 
         const conditions = specialConditions(body);
+        const depositPercent = downPaymentPercent(body);
         return inTransaction(async connection => {
             await Quote.lockTenant(tenantId, connection);
             const nextFolio = await Quote.getNextFolio(tenantId, connection);
@@ -51,7 +63,8 @@ const QuoteService = {
                 ...body,
                 tenant_id: tenantId,
                 quote_folio: nextFolio,
-                special_conditions: conditions
+                special_conditions: conditions,
+                down_payment_percent: depositPercent
             };
             const quoteId = await Quote.create(quoteData, connection);
             if (body.items && body.items.length > 0) {
@@ -88,6 +101,7 @@ const QuoteService = {
 
         // Validate before any writes, including when the field is omitted.
         specialConditions(body);
+        downPaymentPercent(body);
         return inTransaction(async connection => {
             const currentQuote = await Quote.getForUpdate(id, tenantId, connection);
             if (!currentQuote) return null;
@@ -97,7 +111,11 @@ const QuoteService = {
                 throw error;
             }
 
-            const data = { ...body, special_conditions: specialConditions(body, currentQuote.special_conditions) };
+            const data = {
+                ...body,
+                special_conditions: specialConditions(body, currentQuote.special_conditions),
+                down_payment_percent: downPaymentPercent(body, currentQuote.down_payment_percent)
+            };
             const { items } = body;
             if (currentQuote.status === 'borrador') {
                 await Quote.update(id, tenantId, data, connection);

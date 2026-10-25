@@ -37,6 +37,24 @@ describe('QuotePreview special conditions and PDF', () => {
     component.downloadPDF(); expect(doc.save).toHaveBeenCalledWith('Cotizacion_9.pdf');
     expect(component.downPayment).toBe(50); expect(component.laborSubtotal + component.materialsSubtotal - component.evaluationDiscount).toBe(100);
   });
+  it('applies the selected percentage to the stored final total after discount in preview and PDF', () => {
+    const configuredQuote = {...quote, total_amount: 100, evaluation_discount: 25, down_payment_percent: 35,
+      items: [{type: 'material', description: 'Material', unit_price: 125, quantity: 1, unit: 'pza'}]};
+    spyOn(TestBed.inject(QuoteService) as any, 'getQuoteById')
+      .and.returnValue(of({success: true, data: configuredQuote}));
+    component.loadInitialData(); fixture.detectChanges();
+    expect(component.netTotal).toBe(100);
+    expect(component.downPayment).toBe(35);
+    expect(component.balanceDue).toBe(65);
+    expect(fixture.nativeElement.textContent).toContain('35%');
+    expect(fixture.nativeElement.textContent).toContain('$35.00');
+
+    const currencySpy = spyOn<any>(component, 'formatCurrency').and.callThrough();
+    const generatedPdf: jsPDF = (component as any).generatePDF();
+    expect(generatedPdf.getNumberOfPages()).toBeGreaterThan(0);
+    expect(currencySpy).toHaveBeenCalledWith(35);
+    expect(currencySpy).toHaveBeenCalledWith(65);
+  });
   it('paginates long general and particular conditions', () => {
     component.tenantConfig.terms_conditions = 'Generales de prueba ñ\n'.repeat(250);
     component.quoteData!.special_conditions = 'Particulares de prueba\n'.repeat(210);

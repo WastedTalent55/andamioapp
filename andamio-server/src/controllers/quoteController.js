@@ -20,6 +20,9 @@ const createQuote = async (req, res) => {
         if (error.code === 'INVALID_SPECIAL_CONDITIONS') {
             return res.status(400).json({ success: false, message: error.message });
         }
+        if (error.code === 'INVALID_DOWN_PAYMENT_PERCENT') {
+            return res.status(400).json({ success: false, message: error.message });
+        }
 
         console.error('Error creando cotización:', error);
 
@@ -119,6 +122,9 @@ const updateQuote = async (req, res) => {
     } catch (error) {
 
         if (error.code === 'INVALID_SPECIAL_CONDITIONS') {
+            return res.status(400).json({ success: false, message: error.message });
+        }
+        if (error.code === 'INVALID_DOWN_PAYMENT_PERCENT') {
             return res.status(400).json({ success: false, message: error.message });
         }
 
