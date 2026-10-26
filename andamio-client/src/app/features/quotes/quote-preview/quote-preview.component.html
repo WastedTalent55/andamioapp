@@ -113,7 +113,7 @@
         <h3 class="sidebar-section-title">HISTORIAL DE VERSIONES</h3>
         <div class="card-andamio">
           <div class="toolbar-actions" *ngFor="let v of versionHistory">
-            <span class="control-description">v{{ v.version_number }}{{ v.is_current ? ' (vigente)' : '' }}</span>
+            <span class="control-description">v{{ v.version_number }}{{ v.is_current ? ' (vigente)' : '' }} · Anticipo {{ v.down_payment_percent }}%</span>
             <app-status-badge [label]="v.status" [color]="statusBadgeColor(v.status)"></app-status-badge>
           </div>
         </div>
@@ -298,7 +298,7 @@
 
         <span>
 
-            {{ (laborSubtotal + materialsSubtotal - evaluationDiscount) | currency }}
+            {{ netTotal | currency }}
 
         </span>
 
@@ -310,7 +310,7 @@
 
         <span>
 
-            {{ ((laborSubtotal + materialsSubtotal - evaluationDiscount)/2) | currency }}
+            {{ downPayment | currency }} ({{ quoteData?.down_payment_percent }}%)
 
         </span>
 
@@ -322,7 +322,7 @@
 
         <span>
 
-            {{ ((laborSubtotal + materialsSubtotal - evaluationDiscount)/2) | currency }}
+            {{ balanceDue | currency }}
  
         </span>
 

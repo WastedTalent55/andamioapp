@@ -164,6 +164,7 @@ CREATE TABLE `quotes` (
   `status` enum('borrador','enviada','aceptada','rechazada') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'borrador',
   `evaluation_discount` decimal(10,2) DEFAULT '0.00',
   `total_amount` decimal(10,2) DEFAULT '0.00',
+  `down_payment_percent` tinyint unsigned NOT NULL DEFAULT '50',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `tenant_id` int NOT NULL,
   `quote_folio` int DEFAULT NULL,
@@ -173,6 +174,7 @@ CREATE TABLE `quotes` (
   KEY `customer_id` (`customer_id`),
   KEY `idx_quotes_evaluation_current` (`evaluation_id`,`is_current`),
   KEY `idx_quotes_root` (`root_quote_id`),
+  CONSTRAINT `chk_quotes_down_payment_percent` CHECK (`down_payment_percent` BETWEEN 0 AND 100),
   CONSTRAINT `fk_quotes_root_quote` FOREIGN KEY (`root_quote_id`) REFERENCES `quotes` (`id`),
   CONSTRAINT `quotes_ibfk_1` FOREIGN KEY (`evaluation_id`) REFERENCES `evaluations` (`id`),
   CONSTRAINT `quotes_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)

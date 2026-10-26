@@ -41,3 +41,12 @@ Deploy order (separate approval required): backup and approved migration, backen
 then frontend. Keep the added column if application code is rolled back; removing
 it would destroy newly captured conditions. No production migration runs as part
 of npm tests, startup or the GitHub Pages workflow.
+
+## Quote down payment percentage (002)
+
+Migration `002_quote_down_payment_percent.sql` adds a per-quote integer percent
+from 0 to 100. The non-null default of 50 applies to existing rows, preserving
+the current behavior. It also adds a MySQL CHECK constraint for the same range.
+Confirm the intended database and that neither the column nor constraint exists
+before running the migration once. MySQL DDL commits implicitly; do not rerun
+after an error without inspecting the resulting schema.

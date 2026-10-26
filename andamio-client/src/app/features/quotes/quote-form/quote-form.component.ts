@@ -9,6 +9,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Quote, QuoteItem } from '../../../core/models/quote.model';
 import { LucideAngularModule, X, ClipboardList } from 'lucide-angular';
+import { calculateQuotePaymentSplit } from '../quote-payment';
 
 @Component({
   selector: 'app-quote-form',
@@ -119,6 +120,7 @@ export class QuoteFormComponent implements OnInit {
           special_conditions: quote.special_conditions ?? '',
           delivery_time: parseInt(String(quote.delivery_time)),
           evaluation_discount: Number(quote.evaluation_discount) || 0,
+          down_payment_percent: quote.down_payment_percent ?? 50,
         });
 
         this.updateTotals();
@@ -133,6 +135,8 @@ export class QuoteFormComponent implements OnInit {
       delivery_time: [null, [Validators.required, Validators.min(1)]],
       special_conditions: ['', (control: AbstractControl) =>
         Array.from(control.value || '').length > 5000 ? { maxlength: true } : null],
+      down_payment_percent: [50, [Validators.required, Validators.min(0), Validators.max(100),
+        (control: AbstractControl) => Number.isInteger(control.value) ? null : {integer: true}]],
       evaluation_discount: 0,
       grandTotal: 0,
       finalAmount: 0 
@@ -182,6 +186,7 @@ export class QuoteFormComponent implements OnInit {
           evaluation_discount: quote.evaluation_discount > 0
             ? Number(quote.evaluation_discount)
             : this.evaluation_discount,
+          down_payment_percent: quote.down_payment_percent ?? 50,
         });
 
         this.updateTotals();
@@ -258,6 +263,7 @@ export class QuoteFormComponent implements OnInit {
       status: 'borrador',
       evaluation_discount: this.grandTotal - this.finalAmount, 
       total_amount: this.finalAmount,
+      down_payment_percent: this.quoteForm.value.down_payment_percent,
       special_conditions: this.quoteForm.value.special_conditions || null,
       items: allItems 
     };
@@ -311,6 +317,10 @@ export class QuoteFormComponent implements OnInit {
     grandTotal: this.grandTotal,
     finalAmount: this.finalAmount
   }, { emitEvent: false }); 
+  }
+
+  get paymentSplit() {
+    return calculateQuotePaymentSplit(this.finalAmount, Number(this.quoteForm.get('down_payment_percent')?.value ?? 50));
   }
   
   generatePDF() {
@@ -373,11 +383,11 @@ export class QuoteFormComponent implements OnInit {
     doc.setTextColor(...cianAndamio);
     doc.text(`TOTAL FINAL: $${this.finalAmount.toFixed(2)}`, 140, finalY + 15);
 
-    // 5. ANTICIPO Y FINIQUITO
+    // 5. ANTICIPO Y SALDO
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
-    doc.text(`ANTICIPO (50%): $${(this.finalAmount / 2).toFixed(2)}`, 140, finalY + 25);
-    doc.text(`FINIQUITO VS ENTREGA: $${(this.finalAmount / 2).toFixed(2)}`, 140, finalY + 32);
+    doc.text(`ANTICIPO (${this.quoteForm.value.down_payment_percent}%): $${this.paymentSplit.deposit.toFixed(2)}`, 140, finalY + 25);
+    doc.text(`SALDO CONTRA ENTREGA: $${this.paymentSplit.balance.toFixed(2)}`, 140, finalY + 32);
 
     // Guardar el PDF
     doc.save(`Cotizacion_Andamio_${this.evaluationId}.pdf`);

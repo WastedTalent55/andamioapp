@@ -37,7 +37,7 @@ Everything a professional generates at each stage lives in one place, without de
 **Quotes**
 * Labor and material line items with quantities and unit prices; subtotals and totals calculated automatically
 * Per-company sequential quote numbers (folio)
-* Evaluation-fee discount and 50% down payment calculated on the quote
+* Evaluation-fee discount and configurable quote down payment (50% by default)
 * **Edit quotes with version history:** a draft is edited in place; once a quote has been sent, accepted or rejected, editing creates a new version and keeps the previous ones
 * **Preview** before delivery
 * **PDF generation and download**, branded with the company's logo, logo shape and brand color (generated in the browser with jsPDF)
@@ -273,10 +273,11 @@ Drafts are updated in place (including their existing version counter behavior).
 Editing a sent/accepted/rejected quote creates a new row with independent conditions;
 omitted conditions inherit from the source. The evaluation lookup still resolves
 the current quote. General conditions continue to be read from the **current**
-study profile even when regenerating an old version's PDF; historical snapshots
-are not implemented. The fixed 50% advance and all existing calculations remain
-unchanged by particular conditions. Preview/download/WhatsApp use the same preview
-PDF generator; the unused legacy generator in Quote Form is not extended.
+study profile even when regenerating an old version's PDF; general-condition
+snapshots are not implemented. The down-payment percentage is stored per quote
+version and defaults to 50%; see [migration 002](database/migrations/002_quote_down_payment_percent.sql).
+Preview/download/WhatsApp use the same preview PDF generator, and the legacy
+form PDF generator uses the configured percentage as well.
 
 Backend checks: `cd andamio-server && npm test` (Node's built-in test runner;
 unit tests mock MySQL, no credentials required). Integration tests require the

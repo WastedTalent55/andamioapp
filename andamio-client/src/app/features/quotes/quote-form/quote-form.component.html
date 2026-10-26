@@ -142,9 +142,27 @@
       </div>
     </section>
 
+    <section class="form-section deposit-settings">
+      <div class="delivery-container">
+        <label for="quote-down-payment-percent">Porcentaje de anticipo</label>
+        <input id="quote-down-payment-percent" type="number" min="0" max="100" step="1"
+          formControlName="down_payment_percent" aria-describedby="quote-down-payment-help"
+          [attr.aria-invalid]="quoteForm.get('down_payment_percent')?.invalid">
+        <span>%</span>
+      </div>
+      <p id="quote-down-payment-help">El anticipo se calcula sobre el total final después del descuento.</p>
+      <p role="alert" *ngIf="quoteForm.get('down_payment_percent')?.invalid && quoteForm.get('down_payment_percent')?.touched">
+        Indica un porcentaje entero entre 0 y 100.
+      </p>
+      <div class="summary-grid">
+        <div class="summary-line"><span>Anticipo ({{ quoteForm.value.down_payment_percent }}%)</span><span>{{ paymentSplit.deposit | currency }}</span></div>
+        <div class="summary-line"><span>Saldo contra entrega</span><span>{{ paymentSplit.balance | currency }}</span></div>
+      </div>
+    </section>
+
     <section class="form-section special-conditions">
       <label for="quote-special-conditions">Condiciones particulares de esta cotización</label>
-      <p id="special-conditions-help">Opcional. No modifica las condiciones generales del estudio ni los importes o el anticipo calculado del 50 %.</p>
+      <p id="special-conditions-help">Opcional. No modifica las condiciones generales del estudio ni los importes calculados.</p>
       <textarea id="quote-special-conditions" rows="5" formControlName="special_conditions"
         aria-describedby="special-conditions-help special-conditions-count"
         [attr.aria-invalid]="quoteForm.get('special_conditions')?.invalid"

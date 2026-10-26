@@ -27,6 +27,7 @@ const Quote = {
             delivery_time,
             evaluation_discount,
             total_amount,
+            down_payment_percent,
             version_number,
             special_conditions
         } = data;
@@ -43,11 +44,12 @@ const Quote = {
                 delivery_time,
                 evaluation_discount,
                 total_amount,
+                down_payment_percent,
                 version_number,
                 special_conditions,
                 status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'borrador')
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'borrador')
             `,
             [
                 tenant_id,
@@ -57,6 +59,7 @@ const Quote = {
                 delivery_time,
                 evaluation_discount || 0,
                 total_amount || 0,
+                down_payment_percent ?? 50,
                 version_number || 1,
                 special_conditions ?? null
             ]
@@ -131,6 +134,7 @@ const Quote = {
             q.delivery_time,
             q.special_conditions,
             q.total_amount,
+            q.down_payment_percent,
             q.evaluation_discount,
             q.status,
             q.root_quote_id,
@@ -186,6 +190,7 @@ const Quote = {
             delivery_time,
             evaluation_discount,
             total_amount,
+            down_payment_percent,
             special_conditions
         } = data;
 
@@ -197,6 +202,7 @@ const Quote = {
                 delivery_time = ?,
                 evaluation_discount = ?,
                 total_amount = ?,
+                down_payment_percent = ?,
                 special_conditions = ?,
                 version_number = version_number + 1
             WHERE id = ?
@@ -206,6 +212,7 @@ const Quote = {
                 delivery_time,
                 evaluation_discount || 0,
                 total_amount || 0,
+                down_payment_percent ?? 50,
                 special_conditions ?? null,
                 id,
                 tenantId
@@ -237,6 +244,7 @@ const Quote = {
             delivery_time,
             evaluation_discount,
             total_amount,
+            down_payment_percent,
             special_conditions
         } = data;
 
@@ -253,13 +261,14 @@ const Quote = {
                 delivery_time,
                 evaluation_discount,
                 total_amount,
+                down_payment_percent,
                 version_number,
                 root_quote_id,
                 special_conditions,
                 is_current,
                 status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'borrador')
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'borrador')
             `,
             [
                 tenantId,
@@ -269,6 +278,7 @@ const Quote = {
                 delivery_time,
                 evaluation_discount || 0,
                 total_amount || 0,
+                down_payment_percent ?? 50,
                 previousQuote.version_number + 1,
                 rootQuoteId,
                 special_conditions ?? null
@@ -296,6 +306,7 @@ const Quote = {
                 version_number,
                 status,
                 total_amount,
+                down_payment_percent,
                 is_current,
                 created_at
             FROM quotes
@@ -348,6 +359,7 @@ const Quote = {
                 q.quote_folio,       
                 q.version_number, 
                 q.delivery_time,
+                q.down_payment_percent,
                 q.special_conditions,
                 q.status,
                 q.total_amount,
