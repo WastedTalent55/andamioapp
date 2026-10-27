@@ -46,13 +46,30 @@
 
   </div>
 
-  <div class="quote-grid" *ngIf="filteredQuotes.length > 0; else emptyState">
-    @for (quote of filteredQuotes; track quote.id) {
-      <app-quote-card [quote]="quote"></app-quote-card>
-    }
+  <div class="empty-state card-andamio search-empty-state" *ngIf="!hasSearchResults">
+    <p>No se encontraron cotizaciones con ese cliente o folio.</p>
   </div>
 
-  <ng-template #emptyState>
+  <ng-container *ngIf="quotes.length > 0; else noQuotesState">
+    <section class="status-section" *ngFor="let group of statusGroups; trackBy: trackByStatus">
+      <div class="status-section-header">
+        <h2>{{ group.title }}</h2>
+        <span class="section-count">{{ group.quotes.length }}</span>
+      </div>
+
+      <div class="quote-grid" *ngIf="group.quotes.length > 0; else sectionEmpty">
+        @for (quote of group.quotes; track quote.id) {
+          <app-quote-card [quote]="quote"></app-quote-card>
+        }
+      </div>
+
+      <ng-template #sectionEmpty>
+        <p class="section-empty-state">No hay cotizaciones en esta sección.</p>
+      </ng-template>
+    </section>
+  </ng-container>
+
+  <ng-template #noQuotesState>
     <div class="empty-state card-andamio">
       <p>Todavía no hay cotizaciones.</p>
     </div>
