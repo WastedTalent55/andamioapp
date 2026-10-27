@@ -7,6 +7,14 @@ import { NewQuoteModalComponent } from '../new-quote-modal/new-quote-modal.compo
 import { Quote } from '../../../core/models/quote.model';
 import { LucideAngularModule, Search } from 'lucide-angular';
 
+type QuoteStatus = Quote['status'];
+
+interface QuoteStatusGroup {
+  status: QuoteStatus;
+  title: string;
+  quotes: Quote[];
+}
+
 @Component({
   selector: 'app-quote-list',
   standalone: true,
@@ -27,6 +35,14 @@ export class QuoteListComponent implements OnInit {
 
   quotes: Quote[] = [];
   filteredQuotes: Quote[] = [];
+  private searchTerm = '';
+
+  private readonly statusSections: { status: QuoteStatus; title: string }[] = [
+    { status: 'borrador', title: 'Borradores' },
+    { status: 'enviada', title: 'Pendientes' },
+    { status: 'aceptada', title: 'Aceptadas' },
+    { status: 'rechazada', title: 'Rechazadas' }
+  ];
 
   // 🆕 Modal "¿cómo quieres cotizar?" que se abre al pulsar Nueva cotización
   showNewQuoteModal = false;
@@ -47,6 +63,7 @@ export class QuoteListComponent implements OnInit {
 
   onSearch(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.searchTerm = filterValue;
 
     if (!filterValue) {
       this.filteredQuotes = this.quotes;
@@ -57,6 +74,21 @@ export class QuoteListComponent implements OnInit {
       quote.customer_name?.toLowerCase().includes(filterValue) ||
       String(quote.quote_folio).includes(filterValue)
     );
+  }
+
+  get statusGroups(): QuoteStatusGroup[] {
+    return this.statusSections.map(section => ({
+      ...section,
+      quotes: this.filteredQuotes.filter(quote => quote.status === section.status)
+    }));
+  }
+
+  trackByStatus(_index: number, group: QuoteStatusGroup): QuoteStatus {
+    return group.status;
+  }
+
+  get hasSearchResults(): boolean {
+    return !this.searchTerm || this.filteredQuotes.length > 0;
   }
 
   // KPIs rápidos para el encabezado, calculados sobre lo ya cargado (sin llamadas extra al backend)
