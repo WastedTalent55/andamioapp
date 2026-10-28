@@ -21,6 +21,12 @@
     overflow: visible;
 
     cursor:pointer;
+
+    width:100%;
+
+    min-width:0;
+
+    box-sizing:border-box;
 }
 
 .customer-card::before{
@@ -81,6 +87,8 @@
     align-items:center;
 
     gap:18px;
+
+    min-width:0;
 
 }
 
@@ -156,6 +164,8 @@
 
     gap:10px;
 
+    min-width:0;
+
 }
 
 .info-row{
@@ -165,6 +175,8 @@
     align-items:center;
 
     gap:12px;
+
+    min-width:0;
 
 }
 
@@ -200,6 +212,8 @@
 
     border-bottom:1px solid rgba(255,255,255,.06);
 
+    min-width:0;
+
 }
 
 .stat{
@@ -233,6 +247,8 @@
     text-transform:uppercase;
 
     letter-spacing:.08em;
+
+    line-height:1.2;
 
 }
 
@@ -318,8 +334,28 @@
 }
 
 @media (max-width: 640px) {
+  .card-actions {
+    gap: 8px;
+    margin-right: 30px;
+  }
+
   .card-action-btn {
     width: 44px;
     height: 44px;
+  }
+
+  .stats {
+    gap: 8px;
+  }
+
+  .stat-number {
+    font-size: clamp(1.35rem, 8vw, 2rem);
+  }
+
+  .stat-label {
+    font-size: .52rem;
+    letter-spacing: .02em;
+    white-space: nowrap;
+    overflow-wrap: normal;
   }
 }

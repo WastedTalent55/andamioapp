@@ -16,6 +16,20 @@
 
 }
 
+.kpi-card {
+    min-width: 0;
+
+    background: var(--andamio-antracita);
+
+    border: 1px solid rgba(255, 255, 255, .08);
+
+    border-radius: var(--radius-card);
+
+    padding: var(--spacing-md);
+
+    transition: var(--transition-friendly);
+}
+
 .kpi-card:hover{
 
     transform:translateY(-4px);
@@ -32,7 +46,7 @@
 
     font-weight:800;
 
-    color:white;
+    color:var(--andamio-tiza);
 
 }
 
@@ -46,7 +60,7 @@
 
     letter-spacing:.18em;
 
-    color:#94A3B8;
+    color:var(--andamio-concreto);
 
 }
 
@@ -405,17 +419,24 @@
   }
 }
 
-.kpi-card {
-  min-width: 0;
-}
-
-.kpi-value,
-.kpi-label {
+.kpi-value {
   overflow-wrap: anywhere;
 }
 
 @media (max-width: 640px) {
+  .kpi-card {
+    padding: var(--spacing-sm);
+  }
+
   .kpi-value {
     font-size: clamp(1.4rem, 6vw, 2.3rem);
+  }
+
+  .kpi-label {
+    margin-top: 6px;
+    font-size: .72rem;
+    letter-spacing: .08em;
+    overflow-wrap: normal;
+    word-break: normal;
   }
 }
