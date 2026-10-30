@@ -205,6 +205,18 @@
     gap: 12px;
   }
 
+  .kpi-card {
+    padding: var(--spacing-sm);
+  }
+
+  .kpi-label {
+    margin-top: 6px;
+    font-size: .72rem;
+    letter-spacing: .08em;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
   .quote-grid {
     grid-template-columns: 1fr;
     gap: 16px;
