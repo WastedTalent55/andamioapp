@@ -167,7 +167,7 @@ h1, h2, h3, h4, .brand-heading {
 }
 
 @media (max-width: 640px) {
-  .content-container:has(> :is(app-quote-form, app-quote-list, app-customer-list, app-project-form)) {
+  .content-container:has(> :is(app-quote-form, app-quote-list, app-customer-list, app-project-form, app-tenant-form)) {
     padding-inline: 16px;
   }
 
