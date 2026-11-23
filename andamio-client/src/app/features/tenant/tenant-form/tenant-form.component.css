@@ -1,3 +1,8 @@
+
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
+
 .tenant-page {
   max-width: 1100px;
   margin: 0 auto;
@@ -19,6 +24,10 @@
   font-size: 0.8rem;
 }
 
+/* =========================================
+   TÍTULOS Y ESTRUCTURA GENERAL
+========================================= */
+
 .section-title {
   margin-top: var(--spacing-sm);
   margin-bottom: 4px;
@@ -34,24 +43,26 @@
   gap: var(--spacing-sm);
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-sm);
-}
-
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .form-group label {
   font-size: 0.8rem;
 }
 
+/* =========================================
+   CAMPOS DE ENTRADA
+========================================= */
+
 input,
 textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
   background-color: var(--andamio-fondo);
   border: 1px solid var(--andamio-gris-oscuro);
   border-radius: var(--radius-interactive);
@@ -74,15 +85,55 @@ textarea:focus {
   box-shadow: 0 0 8px rgba(255, 184, 0, 0.2);
 }
 
-.form-actions {
-  margin-top: var(--spacing-sm);
-  display: flex;
-  justify-content: flex-end;
+/* =========================================
+   IDENTIDAD DE LA EMPRESA
+========================================= */
+
+.branding-header-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--andamio-gris-oscuro);
 }
+
+.identity-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+/* =========================================
+   DATOS DE CONTACTO
+========================================= */
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+/* =========================================
+   INFORMACIÓN DE PAGO
+========================================= */
+
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+/* =========================================
+   SUBIDA DE LOGOTIPO
+========================================= */
 
 .logo-upload-section {
   padding: 10px 12px;
-  background-color: rgba(255, 255, 255, 0.02); 
+  background-color: rgba(255, 255, 255, 0.02);
   border-radius: var(--radius-card);
   border: 2px dashed var(--andamio-gris-oscuro);
   transition: var(--transition-friendly);
@@ -94,7 +145,7 @@ textarea:focus {
 
 .logo-upload-section.has-logo {
   border: 2px solid var(--andamio-oro-activo);
-  background-color: rgba(255, 184, 0, 0.05); 
+  background-color: rgba(255, 184, 0, 0.05);
 }
 
 .upload-container {
@@ -104,7 +155,6 @@ textarea:focus {
   margin-top: 4px;
 }
 
-/* Caja de vista previa del logo */
 .logo-preview-box {
   width: 44px;
   height: 44px;
@@ -114,23 +164,23 @@ textarea:focus {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 2px solid var(--andamio-verde-obra); /* El marco verde confirma que "todo está bien" */
+  border: 2px solid var(--andamio-verde-obra);
   flex-shrink: 0;
 }
 
 .logo-preview-box img {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain; /* Mantiene la proporción del logo */
+  object-fit: contain;
 }
 
 .upload-controls {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
-/* Mensaje de confirmación en Verde Obra */
 .upload-confirmation {
   display: flex;
   align-items: center;
@@ -175,25 +225,20 @@ textarea:focus {
   transform: scale(1.02);
 }
 
-.branding-header-grid {
-  margin-bottom: var(--spacing-sm);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid var(--andamio-gris-oscuro); 
-}
+/* =========================================
+   CHECKBOX
+========================================= */
 
 .checkbox-inline {
   display: flex;
   align-items: center;
   gap: 6px;
-
   margin-top: 4px;
-
   font-size: 0.78rem;
   font-weight: 500;
   color: var(--andamio-concreto);
   text-transform: none;
   letter-spacing: normal;
-
   cursor: pointer;
 }
 
@@ -204,16 +249,60 @@ textarea:focus {
   cursor: pointer;
 }
 
-@media (max-width: 640px) {
-  .form-row {
-    grid-template-columns: 1fr;
+/* =========================================
+   BOTÓN DE ACCIÓN
+========================================= */
+
+.form-actions {
+  margin-top: var(--spacing-sm);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* =========================================
+   TABLET: 768px EN ADELANTE
+========================================= */
+
+@media (min-width: 768px) {
+  .contact-grid,
+  .payment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================
+   ESCRITORIO: 901px EN ADELANTE
+========================================= */
+
+@media (min-width: 901px) {
+  .branding-header-grid {
+    grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.6fr);
+    align-items: center;
   }
 
+  .payment-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* =========================================
+   MÓVIL: HASTA 767px
+========================================= */
+
+@media (max-width: 767px) {
   .tenant-page .card-andamio {
-    padding: 14px 14px;
+    padding: 14px;
   }
 
   .upload-container {
     flex-wrap: wrap;
+  }
+
+  .form-actions {
+    justify-content: stretch;
+  }
+
+  .form-actions button {
+    width: 100%;
   }
 }
